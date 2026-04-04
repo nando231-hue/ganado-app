@@ -1402,7 +1402,7 @@ function mostrarRanking(animales){
       id: a.id,
       ganancia: parseFloat(calcularGanancia(a))
     }))
-    .filter(a => !isNaN(a.ganancia));
+   .filter(a => a.ganancia !== "-" && !isNaN(a.ganancia))
 
   lista.sort((a,b) => b.ganancia - a.ganancia);
 
