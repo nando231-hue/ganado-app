@@ -1225,10 +1225,17 @@ function importarPesos(){
           animal.pesos = [];
         }
 
-        animal.pesos.push({
-          valor: peso,
-          fecha: new Date().toISOString()
-        });
+       let fecha = new Date().toISOString().split("T")[0]; // solo fecha
+
+// evitar duplicados del mismo día
+let yaExiste = animal.pesos.some(p => p.fecha === fecha);
+
+if(!yaExiste){
+  animal.pesos.push({
+    valor: parseFloat(peso),
+    fecha: fecha
+  });
+}
 
         actualizados++;
 
