@@ -662,6 +662,8 @@ if(a.pesos && a.pesos.length >= 2){
   if(typeof cargarLotes === "function"){
     cargarLotes();
   }
+
+  obtenerRanking(animales);
 }
 
 // MAPA
@@ -1103,6 +1105,37 @@ function alertasPeso(a){
   }
 
   return alertas;
+}
+function obtenerRanking(lista){
+
+  let ranking = [];
+
+  lista.forEach(function(a){
+    let g = calcularGanancia(a);
+    if(g === "-") return;
+    ranking.push({ id: a.id, ganancia: parseFloat(g) });
+  });
+
+  if(ranking.length === 0){
+    console.log("📊 RANKING: No hay animales con datos suficientes");
+    return;
+  }
+
+  // Ordenar de mayor a menor ganancia
+  ranking.sort(function(a, b){ return b.ganancia - a.ganancia; });
+
+  let top = ranking.slice(0, 3);
+  let peor = ranking.slice(-3).reverse();
+
+  console.log("📊 TOP GANANCIA:");
+  top.forEach(function(r){
+    console.log("  ID: " + r.id + " - " + r.ganancia.toFixed(2) + " kg/día");
+  });
+
+  console.log("📊 PEOR GANANCIA:");
+  peor.forEach(function(r){
+    console.log("  ID: " + r.id + " - " + r.ganancia.toFixed(2) + " kg/día");
+  });
 }
 function calcularGanancia(a){
 
