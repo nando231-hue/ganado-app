@@ -1185,69 +1185,56 @@ function estimarPeso(a){
 
   return Math.round(pesoFinal + crecimiento * 30);
 }
-function importarPesos(){
+function importarPesos(e){
 
-  let input = document.getElementById("filePesos");
+  let archivo = e.target.files[0];
+  if(!archivo) return;
 
-  if(!input.files.length){
-    alert("Seleccioná archivo");
-    return;
-  }
+  let lector = new FileReader();
 
-  let file = input.files[0];
-  let reader = new FileReader();
+  lector.onload = function(event){
 
-  reader.onload = function(e){
+    let texto = event.target.result;
+    let lineas = texto.split("\n");
 
-    let lineas = e.target.result.split(/\r?\n/);
+    for(let i = 1; i < lineas.length; i++){
 
-    let sep = lineas[0].includes(";") ? ";" : ",";
+      let columnas = lineas[i].split(";");
 
-    let actualizados = 0;
-    let noEncontrados = 0;
+      if(columnas.length < 7) continue;
 
-    for(let i=1;i<lineas.length;i++){
+      let id = columnas[0].trim();
+      let peso = parseFloat(columnas[5]); // 👈 columna correcta
+      let fecha = columnas[6].trim();
 
-      let fila = lineas[i].trim();
-      if(!fila) continue;
+      if(!id || isNaN(peso)) continue;
 
-      let c = fila.split(sep);
+      // buscar animal
+      let animal = animales.find(a => a.id == id);
 
-      let caravana = c[0];
-      let peso = c[1];
+      if(!animal) continue;
 
-      let animal = animales.find(a => String(a.id) === String(caravana));
-
-      if(animal){
-
-        // 🔥 asegurar historial
-        if(!animal.pesos){
-          animal.pesos = [];
-        }
-
-        animal.pesos.push({
-          valor: peso,
-          fecha: new Date().toISOString()
-        });
-
-        actualizados++;
-
-      } else {
-        noEncontrados++;
+      if(!animal.pesos){
+        animal.pesos = [];
       }
+
+      animal.pesos.push({
+        valor: peso,
+        fecha: fecha
+      });
+
     }
 
-    localStorage.setItem("animales", JSON.stringify(animales));
-    mostrar();
+    console.log("Pesos cargados correctamente");
 
-    alert(
-      "Actualizados: " + actualizados +
-      "\nNo encontrados: " + noEncontrados
-    );
+    // 🔥 actualizar todo
+    mostrarAnimales(animales);
+    mostrarRanking(animales);
+
   };
 
-  reader.readAsText(file);
-  
+  lector.readAsText(archivo);
+}
 }
 function puntoDentroPoligono(point, vs) {
 
