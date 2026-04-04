@@ -161,7 +161,7 @@ button {
 
     <input id="tiempoInactivo" type="number" step="0.1">
 
-    <input type="file" id="filePesos" style="display:none;">
+    <input type="file" id="filePesos" style="display:none;" onchange="importarPesos()">
     <button onclick="document.getElementById('filePesos').click()">📥 Actualizar Pesos</button>
   </div>
 
@@ -194,7 +194,7 @@ button {
   </select>
 
   <button onclick="agregarAnimal()">Guardar</button>
-  <input type="file" id="fileInput" style="display:none;">
+  <input type="file" id="fileInput" style="display:none;" onchange="importarCSV()">
 <button onclick="document.getElementById('fileInput').click()">📂 Importar CSV</button>
 </div>
 
@@ -228,9 +228,6 @@ console.log("SUPABASE TEST:", supabase);
     const { data: animales, error: errorAnimales } = await supabase
       .from("animales")
       .select("*");
-      console.log("PESOS:", pesos);
-alert("Pesos cargados: " + (pesos ? pesos.length : "null"));
-
     console.log("Animales:", animales);
     
 
@@ -248,9 +245,6 @@ try {
 } catch (e) {
   console.error("ERROR PESOS:", e);
 }
-    if (errorPesos) {
-      console.error("Error pesos:", errorPesos);
-    }
 
     // 🔹 UNIR
     animalesConPeso = animales.map(animal => {
@@ -288,8 +282,7 @@ function mostrarAnimales(animales) {
 
     L.marker([a.lat, a.lng])
       .addTo(map)
-      .bindPopup("ID: " + a.id)
-      + "<br>Peso: " + (a.peso || "Sin datos")
+      .bindPopup("ID: " + a.id + "<br>Peso: " + (a.peso || "Sin datos"))
 
   });
 }
@@ -817,7 +810,8 @@ let marker = L.marker([lat,lng],{
     id: a.id,
     lote: a.lote,
     estado: a.estado,
-    peso: a.peso
+    peso: a.peso,
+    pesos: a.pesos
   }
 })
   .addTo(map)
