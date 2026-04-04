@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AgroTrack</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+
+<style>
+/* ================== GENERAL ================== */
+body {
+  font-family: Arial;
+  margin: 0;
+  background-image: url("https://images.unsplash.com/photo-1500382017468-9049fed747ef");
+  background-size: cover;
+}
+
+/* ================== MENU ================== */
+#menu {
+  position: fixed;
+  width: 200px;
+  height: 100%;
+  background: #1e293b;
+  color: white;
+  padding: 15px;
+}
+
+/* ================== CONTENIDO ================== */
+#contenido {
+  margin-left: 220px;
+  padding: 10px;
+  background: rgba(255,255,255,0.9);
+}
+
+/* ================== LAYOUT ================== */
+#layoutAnimales {
+  display: flex;
+  gap: 10px;
+  height: 80vh; /* 🔥 CLAVE */
+}
+
+/* ================== LISTA ANIMALES ================== */
+#listaAnimales {
+  width: 300px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* ================== MAPA + PANEL (FIX DEFINITIVO) ================== */
+#mapLayout {
+  display: flex;
+  gap: 10px;
+  flex: 1; /* 🔥 CLAVE */
+}
+
+/* PANEL LATERAL */
+#panelControles {
+  width: 220px;
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* MAPA */
+#map {
+  flex: 1;
+  height: 100%;
+  min-height: 400px;
+  border-radius: 10px;
+}
+
+/* ================== FORMULARIO ================== */
+#formulario {
+  max-width: 400px;
+  margin: auto;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+/* ================== INPUTS ================== */
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+}
+
+/* BOTONES */
+button {
+  background: #adafae;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+/* ================== CARDS ================== */
+.card {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border-left: 6px solid gray;
+}
+
+.enfermo { border-left-color: red; }
+.vacunar { border-left-color: orange; }
+.prenado { border-left-color: green; }
+</style>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+</body>
+<div id="menu">
+  <h2>🐄 AgroTrack</h2>
+  <button onclick="mostrarSeccion('animales')">🐄 Animales</button>
+  <button onclick="mostrarSeccion('formulario')">➕ Ingresar</button>
+</div>
+
+<div id="contenido">
+
+<!-- ANIMALES -->
+<div id="animales">
+  <div id="layoutAnimales">
+
+    <!-- 🐄 LATERAL -->
+    <div id="listaAnimales">
+
+      <h3>Animales</h3>
+
+      <input id="buscador" placeholder="Buscar caravana..." oninput="mostrar()">
+
+      <h4>Filtrar por lote</h4>
+      <select id="filtroLote" onchange="mostrar()">
+        <option value="todos">Todos</option>
+      </select>
+
+      <div id="lista"></div>
+
+    </div>
+
+    <!-- 🗺️ MAPA + CONTROLES -->
+    <div id="mapLayout">
+
+  <!-- PANEL IZQUIERDO -->
+  <div id="panelControles">
+    <button onclick="activarDibujo()">✏️ Dibujar zona</button>
+    <button onclick="desactivarDibujo()">🛑 Parar dibujo</button>
+    <button onclick="borrarZona()">🗑️ Borrar zona</button>
+    <button onclick="guardarZona()">Finalizar zona</button>
+    <button onclick="exportarCSV()">📥 Excel</button>
+    <button onclick="editarZona()">✏️ Editar zona</button>
+
+    <div id="alertaZona"></div>
+    <div id="panelInfo"></div>
+    <div id="panelHistorial"></div>
+
+    <input id="tiempoInactivo" type="number" step="0.1">
+
+    <input type="file" id="filePesos" style="display:none;">
+    <button onclick="document.getElementById('filePesos').click()">📥 Actualizar Pesos</button>
+  </div>
+
+  <!-- MAPA -->
+  <div id="map"></div>
+
+</div>
+
+  </div>
+</div>
+
+<!-- FORMULARIO -->
+<div id="formulario" style="display:none;">
+  <h2>Ingresar Animal</h2>
+
+  <input id="id" placeholder="Caravana">
+  <input id="edad" placeholder="Edad">
+  <input id="raza" placeholder="Raza">
+  <input id="lote" placeholder="Lote">
+  <input id="obs" placeholder="Observaciones">
+  <input id="lat" placeholder="Latitud">
+  <input id="lng" placeholder="Longitud">
+  <input id="peso" placeholder="Peso (kg)">
+
+  <select id="estado">
+    <option value="">-- Sin estado --</option>
+    <option>Vacunar</option>
+    <option>Preñado</option>
+    <option>Enfermo</option>
+  </select>
+
+  <button onclick="agregarAnimal()">Guardar</button>
+  <input type="file" id="fileInput" style="display:none;">
+<button onclick="document.getElementById('fileInput').click()">📂 Importar CSV</button>
+</div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-pip/leaflet-pip.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+  let supabaseUrl = "https://mshwegmfpxsfoqqhwqnu.supabase.co";
+let supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zaHdlZ21mcHhzZm9xcWh3cW51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwOTYzMjcsImV4cCI6MjA5MDY3MjMyN30.o3xmeC8SM63dyHkp_sGBofDGdwNkcePIPhBkeOIyQcU";
+  
+  let animalesConPeso = [];
+document.addEventListener("DOMContentLoaded", function() {
+  let map;
+
+  let supabase;
+
+  if (window.supabase) {
+    supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    console.log("Supabase OK");
+  } else {
+    console.error("Supabase NO cargó");
+  }
+async function cargarAnimales() {
+console.log("SUPABASE TEST:", supabase);
+  try {
+
+    // 🔹 ANIMALES
+    const { data: animales, error: errorAnimales } = await supabase
+      .from("animales")
+      .select("*");
+      console.log("PESOS:", pesos);
+alert("Pesos cargados: " + (pesos ? pesos.length : "null"));
+
+    console.log("Animales:", animales);
+    
+
+    if (errorAnimales) {
+      console.error("Error animales:", errorAnimales);
+    }
+
+    // 🔹 PESOS
+   let pesos = [];
+
+try {
+  const respuesta = await supabase.from("pesos").select("*");
+  pesos = respuesta.data;
+  console.log("PESOS OK:", pesos);
+} catch (e) {
+  console.error("ERROR PESOS:", e);
+}
+    if (errorPesos) {
+      console.error("Error pesos:", errorPesos);
+    }
+
+    // 🔹 UNIR
+    animalesConPeso = animales.map(animal => {
+
+  let ultimoPeso = "Sin datos";
+
+if (Array.isArray(animal.pesos) && animal.pesos.length > 0) {
+  const ultimo = animal.pesos[animal.pesos.length - 1];
+  if (ultimo && ultimo.valor) {
+    ultimoPeso = ultimo.valor;
+  }
+}
+
+      return {
+        ...animal,
+        peso: ultimoPeso
+      };
+    });
+
+    console.log("CON PESO:", animalesConPeso);
+
+    // 🔹 MOSTRAR
+    mostrarAnimales(animalesConPeso);
+
+  } catch (err) {
+    console.error("ERROR GENERAL:", err);
+  }
+}
+
+function mostrarAnimales(animales) {
+  animales.forEach(a => {
+
+    // evitar errores si no hay coordenadas
+    if (!a.lat || !a.lng) return;
+
+    L.marker([a.lat, a.lng])
+      .addTo(map)
+      .bindPopup("ID: " + a.id)
+      + "<br>Peso: " + (a.peso || "Sin datos")
+
+  });
+}
+});
+// 🔥 DB AISLADA (NO ROMPE NADA)
+
+// 🔥 DB AISLADA CORRECTA
+
+
+
+  
+
+function importarCSV(){
+
+  let input = document.getElementById("fileInput");
+
+  if(!input.files.length){
+    alert("Seleccioná archivo");
+    return;
+  }
+
+  let file = input.files[0];
+  let reader = new FileReader();
+
+  reader.onload = function(e){
+
+    let lineas = e.target.result.split(/\r?\n/);
+
+    let sep = lineas[0].includes(";") ? ";" : ",";
+
+    for(let i=1;i<lineas.length;i++){
+
+      let fila = lineas[i].trim();
+      if(!fila) continue;
+
+      let c = fila.split(sep);
+
+      if(animales.some(a => a.id === c[0])) continue;
+
+      animales.push({
+        id: c[0],
+        edad: c[1],
+        raza: c[2],
+        lote: c[3],
+        obs: c[4],
+        estado: c[5],
+        lat: c[6],
+        lng: c[7]
+      });
+    }
+
+    localStorage.setItem("animales", JSON.stringify(animales));
+    mostrar();
+
+    alert("CSV cargado correctamente");
+  };
+
+  reader.readAsText(file);
+}
+
+  
+
+function desactivarDibujo(){
+  dibujando = false;
+}
+function activarDibujo(){
+  dibujando = true;
+
+  // limpiar puntos anteriores
+  puntosZona = [];
+
+  // borrar dibujo temporal si existe
+  if(window.poligonoTemp){
+    map.removeLayer(window.poligonoTemp);
+    window.poligonoTemp = null;
+  }
+
+  alert("Modo dibujo activado. Hacé clic en el mapa.");
+}
+
+function limpiarZona(){
+  puntosZona = [];
+  zona = [];
+  localStorage.removeItem("zona");
+
+  if(window.poligono){
+    map.removeLayer(window.poligono);
+    window.poligono = null;
+  }
+}
+
+// DATOS
+let animales = JSON.parse(localStorage.getItem("animales")) || [];
+let zonas = [];
+let ahoraISO = new Date().toISOString();
+
+animales.forEach(a => {
+  if(!a.historial){
+  a.historial = [];
+}
+  // si no existe o está mal → corregir
+  if(!a.ultimaActualizacion || isNaN(new Date(a.ultimaActualizacion))){
+    a.ultimaActualizacion = ahoraISO;
+  }
+});
+localStorage.setItem("animales", JSON.stringify(animales));
+let tiempoGuardado = localStorage.getItem("tiempoInactivo");
+
+if(tiempoGuardado){
+  let inputTiempo = document.getElementById("tiempoInactivo");
+  if(inputTiempo){
+    inputTiempo.value = tiempoGuardado;
+  }
+}
+animales.forEach(a => {
+  if(!a.ultimaActualizacion){
+    a.ultimaActualizacion = new Date(0).toISOString();
+  }
+});
+animales.forEach(a => {
+  if(!a.movimientos){
+    a.movimientos = [{
+      lat: a.lat,
+      lng: a.lng,
+      fecha: new Date().toISOString()
+    }];
+  }
+});
+let puntosZona = [];
+
+// MAPA
+// CAPAS
+let normal = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+let satelite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+
+// 📦 recuperar vista guardada
+let vistaGuardada = localStorage.getItem("mapView");
+
+let centro = [-34.9, -56.2];
+let zoom = 7;
+
+if(vistaGuardada){
+  let data = JSON.parse(vistaGuardada);
+  centro = data.center;
+  zoom = data.zoom;
+}
+
+// 🗺️ crear mapa
+map = L.map('map').setView(centro, zoom);
+//cargarAnimales(); // ← ESTA LÍNEA AGREGÁS
+setTimeout(function(){
+  map.invalidateSize();
+}, 500);
+
+// capas activas
+normal.addTo(map);
+
+let zonasGuardadas = JSON.parse(localStorage.getItem("zonas")) || [];
+
+zonasGuardadas.forEach(z => {
+
+  if(!z.coords || z.coords.length < 3) return; // 🔥 evita romper mapa
+
+  let poly = L.polygon(z.coords, {color:'blue'}).addTo(map);
+
+  poly.nombre = z.nombre || "Sin nombre";
+
+  poly.on('click', function(){
+    zonas.forEach(z => z.setStyle({color:'blue'}));
+    this.setStyle({color:'red'});
+    zonaSeleccionada = this;
+
+    alert("Zona: " + this.nombre);
+  });
+
+  zonas.push(poly);
+});
+
+// selector
+L.control.layers({
+  "Mapa": normal,
+  "Satélite": satelite
+}).addTo(map);
+
+
+// 💾 guardar vista
+map.on('moveend zoomend', function(){
+
+  let c = map.getCenter();
+
+  localStorage.setItem("mapView", JSON.stringify({
+    center: [c.lat, c.lng],
+    zoom: map.getZoom()
+  }));
+});
+// CARGAR ZONA
+
+
+// CLICK MAPA (guardar coordenadas + zona)
+map.on('click', function(e){
+
+  document.getElementById("lat").value = e.latlng.lat;
+  document.getElementById("lng").value = e.latlng.lng;
+
+  if(!dibujando) return;
+
+  puntosZona.push([e.latlng.lat, e.latlng.lng]);
+
+  if(window.poligonoTemp) map.removeLayer(window.poligonoTemp);
+
+  window.poligonoTemp = L.polygon(puntosZona, {color:'red'}).addTo(map);
+});
+// CAMBIO DE SECCIÓN
+function mostrarSeccion(s){
+
+  document.getElementById("animales").style.display = "none";
+  document.getElementById("formulario").style.display = "none";
+
+  if(s==="animales") document.getElementById("animales").style.display = "block";
+  if(s==="formulario") document.getElementById("formulario").style.display = "block";
+
+  // 🔥 ESTO ARREGLA EL MAPA
+  setTimeout(function(){
+    map.invalidateSize();
+  }, 200);
+}
+
+// AGREGAR
+function agregarAnimal(){
+
+  let idInput = document.getElementById("id");
+  let edadInput = document.getElementById("edad");
+  let razaInput = document.getElementById("raza");
+  let loteInput = document.getElementById("lote");
+  let obsInput = document.getElementById("obs");
+  let estadoInput = document.getElementById("estado");
+  let latInput = document.getElementById("lat");
+  let lngInput = document.getElementById("lng");
+  let pesoInput = document.getElementById("peso");
+
+  if(!idInput) {
+    alert("Error: no encuentra campo ID");
+    return;
+  }
+
+  // ❌ evitar duplicados
+  if(animales.some(a => a.id === idInput.value)){
+    alert("⚠️ Ya existe esa caravana");
+    return;
+  }
+
+let a = {
+
+  id: idInput.value,
+  edad: edadInput ? edadInput.value : "",
+  raza: razaInput ? razaInput.value : "",
+  lote: loteInput ? loteInput.value : "",
+  obs: obsInput ? obsInput.value : "",
+  estado: estadoInput ? estadoInput.value : "",
+  lat: latInput ? latInput.value : "",
+  lng: lngInput ? lngInput.value : "",
+  historial: [], // 👈 PEGAR EXACTO ACA
+ultimaActualizacion: new Date().toISOString(),
+  movimientos: [{
+    lat: latInput.value,
+    lng: lngInput.value,
+    fecha: new Date().toISOString()
+  }], // 🔥 ESTA COMA FALTABA
+
+  pesos:[{
+    valor: pesoInput ? pesoInput.value : "",
+    fecha: new Date().toISOString()
+  }]
+};
+
+animales.push(a);
+//guardarEnDB(a);
+
+// 🔥 GUARDAR
+localStorage.setItem("animales", JSON.stringify(animales));
+
+// 🔥 MOSTRAR
+mostrar();
+
+// 🔥 LIMPIAR
+limpiarFormulario();
+
+
+}
+
+function limpiarFormulario(){
+  id.value="";
+  edad.value="";
+  raza.value="";
+  lote.value="";
+  obs.value="";
+  lat.value="";
+  lng.value="";
+  estado.value="";
+  document.getElementById("peso").value = "";
+}
+
+// MOSTRAR
+function mostrar(){
+  console.log("Animales:", animales);
+  console.log("mostrar ejecutando");
+
+  let lista = document.getElementById("lista");
+  if(!lista) return;
+
+  lista.innerHTML = "";
+
+  let texto = "";
+  let buscador = document.getElementById("buscador");
+  if(buscador){
+    texto = buscador.value.toLowerCase();
+  }
+
+  let filtro = "todos";
+  let filtroSelect = document.getElementById("filtroLote");
+  if(filtroSelect){
+    filtro = filtroSelect.value;
+  }
+
+  animales.forEach(function(a,i){
+
+    let ultimoPeso = "-";
+
+    if(a.pesos && a.pesos.length > 0){
+      ultimoPeso = a.pesos[a.pesos.length - 1].valor;
+    } else if(a.peso){
+      ultimoPeso = a.peso;
+    }
+
+    let ganancia = calcularGanancia(a);
+   let estimado = "-";
+
+if(a.pesos && a.pesos.length >= 2){
+  try {
+    estimado = estimarPeso(a);
+  } catch(e){
+    console.log("Error estimado:", a);
+  }
+}
+
+
+    let idStr = String(a.id || "").toLowerCase();
+
+    if(filtro !== "todos" && a.lote !== filtro) return;
+    if(texto && idStr.indexOf(texto) === -1) return;
+
+    let clase = "normal";
+    if(a.estado==="Enfermo") clase="enfermo";
+    if(a.estado==="Vacunar") clase="vacunar";
+    if(a.estado==="Preñado") clase="prenado";
+
+    lista.innerHTML += 
+      "<div class='card " + clase + "'>" +
+      "<b>" + a.id + "</b><br>" +
+      "Estado: " + (a.estado || "-") + "<br>" +
+      "Peso: " + ultimoPeso + " kg<br>" +
+      "Edad: " + (a.edad || "-") + "<br>" +
+      "Raza: " + (a.raza || "-") + "<br>" +
+      "Lote: " + (a.lote || "-") + "<br>" +
+      "Ganancia: " + ganancia + " kg/día<br>" +
+"Estimado 30 días: " + estimado + " kg<br>" +
+      "<button onclick='editarEstado(" + i + ")'>✏️</button>" +
+      "<button onclick='editarCaravana(" + i + ")'>🔄</button>"+
+      "<button onclick='eliminar(" + i + ")'>❌</button>" +
+      "</div>";
+  });
+
+  if(typeof mostrarEnMapa === "function"){
+    mostrarEnMapa(); 
+  }
+
+  if(typeof cargarLotes === "function"){
+    cargarLotes();
+  }
+}
+
+// MAPA
+// 🔥 VARIABLES GLOBALES RECUPERADAS
+let dibujando = false;
+let marcadores = [];
+
+let alertaActiva = false;
+let zonaSeleccionada = null;
+function mostrarEnMapa(){
+
+  // borrar solo marcadores
+ marcadores.forEach(m => map.removeLayer(m));
+marcadores = [];
+  let hayFuera = false;
+
+  animales.forEach(a=>{
+
+    try { // 🔥 PROTECCIÓN TOTAL
+
+      let lat = parseFloat(a.lat);
+      let lng = parseFloat(a.lng);
+      // 🔥 guardar historial si cambió posición
+if(!a.movimientos) a.movimientos = [];
+
+let ultimo = a.movimientos[a.movimientos.length - 1];
+
+if(!ultimo || ultimo.lat != lat || ultimo.lng != lng){
+  a.movimientos.push({
+    lat: lat,
+    lng: lng,
+    fecha: new Date().toISOString()
+  });
+
+  // guardar cambios
+  localStorage.setItem("animales", JSON.stringify(animales));
+}
+      // 🔥 registrar movimiento si cambió
+//if(!a.movimientos) a.movimientos = [];
+
+//let ultimo = a.movimientos[a.movimientos.length - 1];
+
+//if(!ultimo || ultimo.lat != lat || ultimo.lng != lng){
+ // a.movimientos.push({
+ //   lat: lat,
+ //   lng: lng,
+  //  fecha: new Date().toISOString()
+ // });
+//}
+
+      if(isNaN(lat) || isNaN(lng)) return;
+
+     let dentro = true;
+
+try {
+  dentro = estaDentroZona(lat,lng);
+} catch(e){
+  console.log("Error zona:", e);
+}
+      if(!dentro){
+  hayFuera = true;
+}
+  let horas = parseFloat(document.getElementById("tiempoInactivo")?.value) || 1;
+let inactivo = estaInactivo(a, horas);
+     let color = "blue";
+
+// 🔥 PRIORIDAD ORDENADA
+if(inactivo){
+  color = "black"; // ⚫ prioridad máxima
+} else if(!dentro){
+  color = "red";
+} else if(a.estado==="Enfermo"){
+  color="red";
+} else if(a.estado==="Vacunar"){
+  color="orange";
+} else if(a.estado==="Preñado"){
+  color="green";
+}
+
+  let icono = L.divIcon({
+  html: `
+    <div style="position:relative; width:30px; height:30px;">
+      
+      <img src="https://cdn-icons-png.flaticon.com/512/1998/1998610.png"
+           style="width:100%; height:100%; filter: drop-shadow(0 0 2px ${color});">
+
+      <div style="
+        position:absolute;
+        top:-4px;
+        right:-4px;
+        width:12px;
+        height:12px;
+        background:${color};
+        border-radius:50%;
+        border:2px solid white;
+      "></div>
+
+    </div>
+  `,
+  className: ""
+});
+
+      let ultimoPeso = "-";
+
+      if(a.pesos && a.pesos.length > 0){
+        ultimoPeso = a.pesos[a.pesos.length - 1].valor;
+      } else if(a.peso){
+        ultimoPeso = a.peso;
+      }
+
+      let ganancia = calcularGanancia(a);
+
+// ✅ ESTIMADO DEFINIDO
+let estimado = "-";
+
+if(a.pesos && a.pesos.length >= 2){
+  try {
+    estimado = estimarPeso(a);
+  } catch(e){
+    console.log("Error estimado:", a);
+  }
+}
+
+let texto = "";
+
+if(!dentro){
+  texto += "⚠️ <b style='color:red'>FUERA DE ZONA</b><br>";
+}
+
+texto +=
+  "<b>Caravana: " + a.id + "</b><br>" +
+  "Estado: " + (a.estado || "-") + "<br>" +
+  "Peso: " + ultimoPeso + " kg<br>" +
+  "Edad: " + (a.edad || "-") + "<br>" +
+  "Raza: " + (a.raza || "-") + "<br>" +
+  "Lote: " + (a.lote || "-") + "<br>" +
+  "Ganancia: " + ganancia + " kg/día<br>" +
+  "Obs: " + (a.obs || "-");
+
+if(estimado !== "-"){
+  texto += "Estimado 30 días: " + estimado + " kg<br>";
+}
+let marker = L.marker([lat,lng],{
+  icon: icono,
+  datosAnimal: {
+    id: a.id,
+    lote: a.lote,
+    estado: a.estado,
+    peso: a.peso
+  }
+})
+  .addTo(map)
+  .bindPopup(
+    texto +
+    `<br><button onclick="verHistorial('${a.id}')">📜 Historial</button>`
+  );
+
+marcadores.push(marker);
+        if(a.movimientos && a.movimientos.length > 1){
+
+  let recorrido = a.movimientos.map(p => [p.lat, p.lng]);
+
+  L.polyline(recorrido, {
+    color: 'blue',
+    weight: 2
+  }).addTo(map);
+}
+
+    } catch(e){
+      console.log("Error animal:", a, e);
+   
+    }
+
+  });
+
+  // alerta visual
+  let alertaDiv = document.getElementById("alertaZona");
+
+  if(alertaDiv){
+    if(hayFuera){
+      alertaDiv.innerHTML = "⚠️ Animales fuera de zona";
+    } else {
+      alertaDiv.innerHTML = "";
+    }
+   let panel = document.getElementById("panelInfo");
+
+if(panel){
+
+  let total = animales.length;
+  let fuera = 0;
+  let inactivos = 0;
+
+  animales.forEach(a=>{
+    let lat = parseFloat(a.lat);
+    let lng = parseFloat(a.lng);
+
+    if(isNaN(lat) || isNaN(lng)) return;
+
+    if(!estaDentroZona(lat,lng)) fuera++;
+
+    let minutos = parseFloat(document.getElementById("tiempoInactivo")?.value) || 60;
+    if(estaInactivo(a, minutos)) inactivos++;
+  });
+
+  panel.innerHTML =
+    "🐄 Total: " + total +
+    " | ⚠️ Fuera: " + fuera +
+    " | ⚫ Inactivos: " + inactivos;
+}
+  }
+}
+
+// ZONA DETECCIÓN
+function estaDentroZona(lat, lng){
+
+  if(!zonas || zonas.length === 0) return true;
+
+  for(let z of zonas){
+
+    let coordsRaw = z.getLatLngs();
+
+    // 🔥 normalizar estructura
+    let coords = Array.isArray(coordsRaw[0]) ? coordsRaw[0] : coordsRaw;
+
+    let puntos = coords.map(c => [c.lng, c.lat]);
+
+    let dentro = puntoDentroPoligono([lng, lat], puntos);
+
+    if(dentro) return true;
+  }
+
+  return false;
+}
+
+function puntoEnPoligono(lat, lng, coords){
+
+  let dentro = false;
+
+  for(let i = 0, j = coords.length - 1; i < coords.length; j = i++){
+
+    let xi = coords[i].lat;
+    let yi = coords[i].lng;
+    let xj = coords[j].lat;
+    let yj = coords[j].lng;
+
+    let intersect = ((yi > lng) != (yj > lng)) &&
+      (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi);
+
+    if(intersect) dentro = !dentro;
+  }
+
+  return dentro;
+}
+function guardarZona(){
+
+  if(puntosZona.length < 3){
+    alert("Marcá al menos 3 puntos");
+    return;
+  }
+
+  let nombre = prompt("Nombre de la zona:");
+  if(!nombre) nombre = "Zona sin nombre";
+
+  let nuevaZona = L.polygon(puntosZona, {color:'blue'}).addTo(map);
+
+  nuevaZona.nombre = nombre;
+
+  nuevaZona.on('click', function(){
+    zonas.forEach(z => z.setStyle({color:'blue'}));
+    this.setStyle({color:'red'});
+    zonaSeleccionada = this;
+
+    alert("Zona: " + this.nombre);
+  });
+
+  zonas.push(nuevaZona);
+
+  // 🔥 guardar BIEN
+  let zonasGuardar = zonas.map(z => ({
+    nombre: z.nombre,
+    coords: z.getLatLngs()[0]
+  }));
+
+  localStorage.setItem("zonas", JSON.stringify(zonasGuardar));
+
+  if(window.poligonoTemp){
+    map.removeLayer(window.poligonoTemp);
+    window.poligonoTemp = null;
+  }
+
+  puntosZona = [];
+}
+
+
+
+function borrarZona(){
+
+  if(!zonaSeleccionada){
+    alert("Seleccioná una zona");
+    return;
+  }
+
+  map.removeLayer(zonaSeleccionada);
+
+  zonas = zonas.filter(z => z !== zonaSeleccionada);
+
+  localStorage.setItem("zonas", JSON.stringify(
+  zonas.map(z => ({
+    nombre: z.nombre,
+    coords: z.getLatLngs()[0]
+  }))
+));
+
+  zonaSeleccionada = null;
+}
+
+// EDITAR
+function editarEstado(i){
+  let nuevo = prompt("Nuevo estado:");
+  if(nuevo){
+    animales[i].estado = nuevo;
+    localStorage.setItem("animales", JSON.stringify(animales));
+    mostrar();
+  }
+}
+
+// ELIMINAR
+
+
+mostrar();
+function eliminar(i){
+  animales.splice(i,1);
+  localStorage.setItem("animales", JSON.stringify(animales));
+  
+  mostrar();
+}
+
+
+function cargarLotes(){
+
+  let select = document.getElementById("filtroLote");
+
+  // limpiar (dejar "todos")
+  select.innerHTML = '<option value="todos">Todos</option>';
+
+  let lotes = [...new Set(animales.map(a => a.lote))];
+
+  lotes.forEach(l => {
+    if(l){
+      select.innerHTML += `<option value="${l}">${l}</option>`;
+    }
+  });
+}
+function exportarCSV(){
+
+  // Tomar todos los marcadores del mapa
+  let capas = Object.values(map._layers);
+
+  // Filtrar solo los marcadores (los animales)
+  let marcadores = capas.filter(l => l.getLatLng);
+
+  if(marcadores.length === 0){
+    alert("No hay animales para exportar");
+    return;
+  }
+
+  let csv = "ID;Lote;Estado;Lat;Lng;Peso\r\n";
+
+  marcadores.forEach(m => {
+
+    // Recuperar datos que ya usaste para el popup
+    let a = m.options.datosAnimal || {};
+
+    csv += (a.id || "") + ";" +
+           (a.lote || "") + ";" +
+           (a.estado || "") + ";" +
+           (m.getLatLng().lat || "") + ";" +
+           (m.getLatLng().lng || "") + ";" +
+           (
+  a.pesos && a.pesos.length > 0
+    ? a.pesos[a.pesos.length - 1].valor
+    : ""
+) +
+           "\r\n";
+  });
+
+  let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+  let link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "animales.csv";
+  link.click();
+}
+function calcularGanancia(a){
+
+  if(!a.pesos || a.pesos.length < 2) return "-";
+
+  let primero = a.pesos[0];
+  let ultimo = a.pesos[a.pesos.length - 1];
+
+  let pesoInicial = parseFloat(primero.valor);
+  let pesoFinal = parseFloat(ultimo.valor);
+
+  let fechaInicial = new Date(primero.fecha);
+  let fechaFinal = new Date(ultimo.fecha);
+
+  let dias = (fechaFinal - fechaInicial) / (1000 * 60 * 60 * 24);
+
+  if(dias < 1) return "-";
+
+  let ganancia = (pesoFinal - pesoInicial) / dias;
+
+  return ganancia.toFixed(2);
+}
+function estimarPeso(a){
+
+  if(!a.pesos || a.pesos.length < 2) return "-";
+
+  let primero = a.pesos[0];
+  let ultimo = a.pesos[a.pesos.length - 1];
+
+  let pesoInicial = parseFloat(primero.valor);
+  let pesoFinal = parseFloat(ultimo.valor);
+
+  if(isNaN(pesoInicial) || isNaN(pesoFinal)) return "-";
+
+  let fechaInicial = new Date(primero.fecha);
+  let fechaFinal = new Date(ultimo.fecha);
+
+  let dias = (fechaFinal - fechaInicial) / (1000*60*60*24);
+  if(dias <= 0) return "-";
+
+  let aumento = pesoFinal - pesoInicial;
+  let crecimiento = aumento / dias;
+
+  return Math.round(pesoFinal + crecimiento * 30);
+}
+function importarPesos(){
+
+  let input = document.getElementById("filePesos");
+
+  if(!input.files.length){
+    alert("Seleccioná archivo");
+    return;
+  }
+
+  let file = input.files[0];
+  let reader = new FileReader();
+
+  reader.onload = function(e){
+
+    let lineas = e.target.result.split(/\r?\n/);
+
+    let sep = lineas[0].includes(";") ? ";" : ",";
+
+    let actualizados = 0;
+    let noEncontrados = 0;
+
+    for(let i=1;i<lineas.length;i++){
+
+      let fila = lineas[i].trim();
+      if(!fila) continue;
+
+      let c = fila.split(sep);
+
+      let caravana = c[0];
+      let peso = c[1];
+
+      let animal = animales.find(a => String(a.id) === String(caravana));
+
+      if(animal){
+
+        // 🔥 asegurar historial
+        if(!animal.pesos){
+          animal.pesos = [];
+        }
+
+        animal.pesos.push({
+          valor: peso,
+          fecha: new Date().toISOString()
+        });
+
+        actualizados++;
+
+      } else {
+        noEncontrados++;
+      }
+    }
+
+    localStorage.setItem("animales", JSON.stringify(animales));
+    mostrar();
+
+    alert(
+      "Actualizados: " + actualizados +
+      "\nNo encontrados: " + noEncontrados
+    );
+  };
+
+  reader.readAsText(file);
+  
+}
+function puntoDentroPoligono(point, vs) {
+
+  let x = point[0], y = point[1];
+  let inside = false;
+
+  for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+
+    let xi = vs[i][0], yi = vs[i][1];
+    let xj = vs[j][0], yj = vs[j][1];
+
+    let intersect = ((yi > y) != (yj > y)) &&
+      (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+    if (intersect) inside = !inside;
+  }
+
+  return inside;
+}
+function reproducirAlerta(){
+  let audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+  audio.play();
+}
+function editarCaravana(i){
+
+  let nuevo = prompt("Nueva caravana:");
+
+  if(!nuevo) return;
+
+  // evitar duplicados
+  if(animales.some((a, index) => a.id === nuevo && index !== i)){
+    alert("⚠️ Ya existe esa caravana");
+    return;
+  }
+
+  animales[i].id = nuevo;
+
+  localStorage.setItem("animales", JSON.stringify(animales));
+
+  mostrar();
+}
+function estaInactivo(a, horas){
+
+  let ultima = new Date(a.ultimaActualizacion);
+  let ahora = new Date();
+
+  let diffHoras = (ahora - ultima) / (1000 * 60 * 60);
+
+  return diffHoras >= horas;
+}
+function verHistorial(id){
+
+  let animal = animales.find(a => String(a.id) === String(id));
+  if(!animal) return;
+
+  let panel = document.getElementById("panelHistorial");
+
+  let html = "<h3>Historial</h3>";
+
+  if(animal.historial.length === 0){
+    html += "<p>Sin registros</p>";
+  } else {
+    animal.historial.forEach((h,i)=>{
+      html += `
+        <div style="border-bottom:1px solid #ccc; margin-bottom:5px;">
+          <b>${h.tipo}</b> - ${h.fecha}<br>
+          ${h.detalle || ""}
+          <button onclick="borrarEvento('${animal.id}', ${i})">❌</button>
+        </div>
+      `;
+    });
+  }
+
+  panel.innerHTML = html;
+}
+function borrarEvento(id, index){
+
+  let animal = animales.find(a => String(a.id) === String(id));
+  if(!animal) return;
+
+  animal.historial.splice(index,1);
+
+  localStorage.setItem("animales", JSON.stringify(animales));
+
+  verHistorial(id);
+}
+function agregarEvento(id, tipo, detalle){
+
+  let animal = animales.find(a => String(a.id) === String(id));
+  if(!animal) return;
+
+  animal.historial.push({
+    tipo: tipo,
+    detalle: detalle,
+    fecha: new Date().toISOString()
+  });
+
+  localStorage.setItem("animales", JSON.stringify(animales));
+}
+//setInterval(() => {
+//  mostrar();
+//}, 5000);
+function guardarTiempo(){
+  let valor = document.getElementById("tiempoInactivo").value;
+  localStorage.setItem("tiempoInactivo", valor);
+}
+function resetTiempo(){
+
+  let ahora = new Date().toISOString();
+
+  animales.forEach(a => {
+    a.ultimaActualizacion = ahora;
+  });
+
+  localStorage.setItem("animales", JSON.stringify(animales));
+
+  alert("Actividad reiniciada");
+mostrar();
+}
+function editarZona(){
+
+  if(!zonaSeleccionada){
+    alert("Seleccioná una zona");
+    return;
+  }
+
+  let nuevoNombre = prompt("Nuevo nombre:", zonaSeleccionada.nombre);
+
+  if(!nuevoNombre) return;
+
+  zonaSeleccionada.nombre = nuevoNombre;
+
+  // actualizar localStorage
+  let zonasGuardadas = JSON.parse(localStorage.getItem("zonas")) || [];
+
+  zonasGuardadas = zonasGuardadas.map(z => {
+    if(JSON.stringify(z.coords) === JSON.stringify(zonaSeleccionada.getLatLngs()[0])){
+      z.nombre = nuevoNombre;
+    }
+    return z;
+  });
+
+  localStorage.setItem("zonas", JSON.stringify(zonasGuardadas));
+
+  alert("Nombre actualizado");
+}
+// 🔥 PARCHE FINAL PARA RECUPERAR APP
+
+
+
+
+
+
+</script>
+
+</body>
+</html>
