@@ -1093,7 +1093,7 @@ function estimarPeso(a){
   let fechaFinal = new Date(ultimo.fecha);
 
   let dias = (fechaFinal - fechaInicial) / (1000*60*60*24);
-  if(dias <= 0) return "-";
+  if(dias < 1) return "-";
 
   let aumento = pesoFinal - pesoInicial;
   let crecimiento = aumento / dias;
