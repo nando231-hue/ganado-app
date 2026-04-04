@@ -804,6 +804,15 @@ texto +=
 if(estimado !== "-"){
   texto += "Estimado 30 días: " + estimado + " kg<br>";
 }
+
+let alertas = alertasPeso(a);
+if(alertas.length > 0){
+  texto += "<br><div style='background:#fff3cd;border:1px solid #ffc107;border-radius:5px;padding:5px;margin-top:5px;'>";
+  texto += "<b>🔔 Alertas:</b><br>";
+  alertas.forEach(function(al){ texto += al + "<br>"; });
+  texto += "</div>";
+  console.log("Alerta peso - Caravana " + a.id + ":", alertas);
+}
 let marker = L.marker([lat,lng],{
   icon: icono,
   datosAnimal: {
@@ -1060,6 +1069,40 @@ function exportarCSV(){
   link.href = URL.createObjectURL(blob);
   link.download = "animales.csv";
   link.click();
+}
+function alertasPeso(a){
+
+  let alertas = [];
+
+  if(!a.pesos || a.pesos.length < 2) return alertas;
+
+  // Comparar los dos últimos registros de peso
+  let penultimo = a.pesos[a.pesos.length - 2];
+  let ultimo = a.pesos[a.pesos.length - 1];
+
+  let pesoPenultimo = parseFloat(penultimo.valor);
+  let pesoUltimo = parseFloat(ultimo.valor);
+
+  if(isNaN(pesoPenultimo) || isNaN(pesoUltimo)) return alertas;
+
+  // Alerta: peso disminuyó
+  if(pesoUltimo < pesoPenultimo){
+    alertas.push("⚠️ Bajando peso (" + pesoPenultimo + " → " + pesoUltimo + " kg)");
+  }
+
+  // Alerta: crecimiento lento (ganancia diaria < 0.3 kg/día)
+  let fechaPenultimo = new Date(penultimo.fecha);
+  let fechaUltimo = new Date(ultimo.fecha);
+  let dias = (fechaUltimo - fechaPenultimo) / (1000 * 60 * 60 * 24);
+
+  if(dias >= 1){
+    let gananciaDiaria = (pesoUltimo - pesoPenultimo) / dias;
+    if(gananciaDiaria >= 0 && gananciaDiaria < 0.3){
+      alertas.push("🐢 Crecimiento lento (" + gananciaDiaria.toFixed(2) + " kg/día)");
+    }
+  }
+
+  return alertas;
 }
 function calcularGanancia(a){
 
