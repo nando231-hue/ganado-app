@@ -1029,7 +1029,7 @@ function exportarCSV(){
     return;
   }
 
-  let csv = "ID;Lote;Estado;Lat;Lng;Peso\r\n";
+  let csv = "ID;Lote;Estado;Lat;Lng;Peso;Fecha\r\n";
 
   marcadores.forEach(m => {
 
@@ -1044,6 +1044,11 @@ function exportarCSV(){
            (
   a.pesos && a.pesos.length > 0
     ? a.pesos[a.pesos.length - 1].valor
+    : ""
+) + ";" +
+           (
+  a.pesos && a.pesos.length > 0 && a.pesos[a.pesos.length - 1].fecha
+    ? (function(f){ let d = new Date(f); return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear(); })(a.pesos[a.pesos.length - 1].fecha)
     : ""
 ) +
            "\r\n";
