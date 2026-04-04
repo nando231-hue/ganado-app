@@ -142,7 +142,11 @@ button {
       <div id="lista"></div>
 
     </div>
-
+<div id="ranking" style="padding:10px; background:#111; color:#fff; margin:10px;">
+  <h3>📊 Ranking de animales</h3>
+  <div id="top"></div>
+  <div id="peor"></div>
+</div>
     <!-- 🗺️ MAPA + CONTROLES -->
     <div id="mapLayout">
 
@@ -1391,7 +1395,33 @@ function editarZona(){
   alert("Nombre actualizado");
 }
 // 🔥 PARCHE FINAL PARA RECUPERAR APP
+function mostrarRanking(animales){
 
+  let lista = animales
+    .map(a => ({
+      id: a.id,
+      ganancia: parseFloat(calcularGanancia(a))
+    }))
+    .filter(a => !isNaN(a.ganancia));
+
+  lista.sort((a,b) => b.ganancia - a.ganancia);
+
+  let top = lista.slice(0,3);
+  let peor = lista.slice(-3).reverse();
+
+  let topHTML = "<h4>🔥 Mejores</h4>";
+  top.forEach(a => {
+    topHTML += `ID: ${a.id} - ${a.ganancia} kg/día<br>`;
+  });
+
+  let peorHTML = "<h4>⚠️ Peores</h4>";
+  peor.forEach(a => {
+    peorHTML += `ID: ${a.id} - ${a.ganancia} kg/día<br>`;
+  });
+
+  document.getElementById("top").innerHTML = topHTML;
+  document.getElementById("peor").innerHTML = peorHTML;
+}
 
 
 
