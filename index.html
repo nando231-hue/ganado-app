@@ -3,6 +3,9 @@
 <head>
   <title>AgroTrack</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
 <style>
@@ -98,13 +101,79 @@ button {
   border-radius: 8px;
 }
 
-/* ================== CARDS ================== */
-.card {
+/* ================== HISTORIAL LATERAL ================== */
+#panelLateral {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 320px;
+}
+
+#historialPanel {
+  display: none;
   background: white;
   padding: 10px;
   border-radius: 10px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#historialPanel h3 {
+  margin-top: 0;
+}
+
+/* ================== CHAT ASISTENTE ================== */
+#chatPanel {
+  display: none;
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#chatConversacion {
+  height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
   margin-bottom: 10px;
-  border-left: 6px solid gray;
+  background: #f9f9f9;
+}
+
+#chatInput {
+  width: calc(100% - 60px);
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#chatEnviar {
+  width: 50px;
+  padding: 8px;
+  background: #adafae;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* ================== REBAÑOS ================== */
+#rebanosPanel {
+  display: none;
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* 📱 MOBILE */
+@media (max-width: 768px) {
+
+  #map {
+    height: 300px;
+  }
 }
 
 .enfermo { border-left-color: red; }
@@ -114,11 +183,36 @@ button {
 </head>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-</body>
+<body>
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+  <div style="background: white; padding: 30px; border-radius: 10px; text-align: center; max-width: 400px; width: 90%;">
+    <h2>🐄 AgroTrack</h2>
+    <div id="authTabs" style="display: flex; margin-bottom: 20px;">
+      <button id="tabLogin" onclick="showLogin()" style="flex: 1; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px 0 0 5px; cursor: pointer;">Iniciar Sesión</button>
+      <button id="tabRegister" onclick="showRegister()" style="flex: 1; padding: 10px; background: #ccc; color: black; border: none; border-radius: 0 5px 5px 0; cursor: pointer;">Registrarse</button>
+    </div>
+    <div id="loginForm">
+      <input id="loginEmail" type="email" placeholder="Email" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+      <input id="loginPass" type="password" placeholder="Contraseña" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+      <button onclick="login()" style="width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;">Iniciar Sesión</button>
+    </div>
+    <div id="registerForm" style="display: none;">
+      <input id="registerEmail" type="email" placeholder="Email" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+      <input id="registerPass" type="password" placeholder="Contraseña" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+      <button onclick="register()" style="width: 100%; padding: 12px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;">Registrarse</button>
+    </div>
+    <div id="authMessage" style="margin-top: 15px; color: red;"></div>
+  </div>
+</div>
+
+<div id="appContent">
 <div id="menu">
   <h2>🐄 AgroTrack</h2>
-  <button onclick="mostrarSeccion('animales')">🐄 Animales</button>
-  <button onclick="mostrarSeccion('formulario')">➕ Ingresar</button>
+  <button onclick="mostrarVista('animales')">🐄 Animales</button>
+  <button onclick="mostrarVista('ingreso')">➕ Ingresar</button>
+  <button onclick="mostrarVista('rebanos')">🐑 Rebaños</button>
+  <button onclick="mostrarVista('ayuda')">❓ Ayuda</button>
 </div>
 
 <div id="contenido">
@@ -127,52 +221,71 @@ button {
 <div id="animales">
   <div id="layoutAnimales">
 
-    <!-- 🐄 LATERAL -->
-    <div id="listaAnimales">
+    <!-- 🐄 PANEL LATERAL -->
+    <div id="panelLateral">
+      <div id="listaPanel">
+        <div id="listaAnimales">
 
-      <h3>Animales</h3>
+          <h3>Animales</h3>
 
-      <input id="buscador" placeholder="Buscar caravana..." oninput="mostrar()">
+          <input id="buscador" placeholder="Buscar caravana..." oninput="mostrar()">
 
-      <h4>Filtrar por lote</h4>
-      <select id="filtroLote" onchange="mostrar()">
-        <option value="todos">Todos</option>
-      </select>
+          <h4>Filtrar por lote</h4>
+          <select id="filtroLote" onchange="mostrar()">
+            <option value="todos">Todos</option>
+          </select>
 
-      <div id="lista"></div>
+          <div id="lista"></div>
 
+          <div id="ranking" style="padding:10px; background:#111; color:#fff; margin:10px;">
+            <h3>📊 Ranking de animales</h3>
+            <div id="top"></div>
+            <div id="peor"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="historialPanel"></div>
+
+      <div id="chatPanel">
+        <h3>🤖 Asistente AgroTrack</h3>
+        <div id="chatConversacion"></div>
+        <input type="text" id="chatInput" placeholder="Escribe tu pregunta...">
+        <button id="chatEnviar" onclick="enviarPregunta()">Enviar</button>
+      </div>
+
+      <div id="rebanosPanel" style="display:none;">
+        <h3>🐑 Rebaños</h3>
+        <div id="rebanosContenido"></div>
+      </div>
     </div>
-<div id="ranking" style="padding:10px; background:#111; color:#fff; margin:10px;">
-  <h3>📊 Ranking de animales</h3>
-  <div id="top"></div>
-  <div id="peor"></div>
-</div>
+
     <!-- 🗺️ MAPA + CONTROLES -->
     <div id="mapLayout">
 
-  <!-- PANEL IZQUIERDO -->
-  <div id="panelControles">
-    <button onclick="activarDibujo()">✏️ Dibujar zona</button>
-    <button onclick="desactivarDibujo()">🛑 Parar dibujo</button>
-    <button onclick="borrarZona()">🗑️ Borrar zona</button>
-    <button onclick="guardarZona()">Finalizar zona</button>
-    <button onclick="exportarCSV()">📥 Excel</button>
-    <button onclick="editarZona()">✏️ Editar zona</button>
+      <!-- PANEL IZQUIERDO -->
+      <div id="panelControles">
+        <button onclick="activarDibujo()">✏️ Dibujar zona</button>
+        <button onclick="desactivarDibujo()">🛑 Parar dibujo</button>
+        <button onclick="borrarZona()">🗑️ Borrar zona</button>
+        <button onclick="guardarZona()">Finalizar zona</button>
+        <button onclick="exportarCSV()">📥 Excel</button>
+        <button onclick="editarZona()">✏️ Editar zona</button>
 
-    <div id="alertaZona"></div>
-    <div id="panelInfo"></div>
-    <div id="panelHistorial"></div>
+        <div id="alertaZona"></div>
+        <div id="panelInfo"></div>
 
-    <input id="tiempoInactivo" type="number" step="0.1">
+        <input id="tiempoInactivo" type="number" step="0.1">
 
-    <input type="file" id="filePesos" style="display:none;" onchange="importarPesos()">
-    <button onclick="document.getElementById('filePesos').click()">📥 Actualizar Pesos</button>
-  </div>
+        <input type="file" id="filePesos" style="display:none;" onchange="importarPesos()">
+        <button onclick="document.getElementById('filePesos').click()">📥 Actualizar Pesos</button>
+      </div>
 
-  <!-- MAPA -->
-  <div id="map"></div>
+      <!-- MAPA -->
+      <div id="map"></div>
 
-</div>
+    </div>
 
   </div>
 </div>
@@ -212,18 +325,143 @@ button {
   let supabaseUrl = "https://mshwegmfpxsfoqqhwqnu.supabase.co";
 let supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zaHdlZ21mcHhzZm9xcWh3cW51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwOTYzMjcsImV4cCI6MjA5MDY3MjMyN30.o3xmeC8SM63dyHkp_sGBofDGdwNkcePIPhBkeOIyQcU";
   
+  // Inicializar Supabase
+  let supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+  
+  // SISTEMA DE USUARIO CON SUPABASE
+  async function checkLogin() {
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (session && !error) {
+        document.getElementById("loginScreen").style.display = "none";
+        // Agregar botón de logout al menú
+        let menu = document.getElementById("menu");
+        if (menu && !document.getElementById("logoutBtn")) {
+          let logoutBtn = document.createElement("button");
+          logoutBtn.id = "logoutBtn";
+          logoutBtn.innerHTML = "🚪 Cerrar Sesión";
+          logoutBtn.onclick = logout;
+          logoutBtn.style.cssText = "background: #f44336; color: white; border: none; border-radius: 5px; padding: 8px 12px; cursor: pointer; margin-top: 10px;";
+          menu.appendChild(logoutBtn);
+        }
+      } else {
+        document.getElementById("loginScreen").style.display = "flex";
+        showLogin(); // Mostrar formulario de login por defecto
+      }
+    } catch (err) {
+      console.error("Error checking login:", err);
+      document.getElementById("loginScreen").style.display = "flex";
+    }
+  }
+
+  function showLogin() {
+    document.getElementById("loginForm").style.display = "block";
+    document.getElementById("registerForm").style.display = "none";
+    document.getElementById("tabLogin").style.background = "#4CAF50";
+    document.getElementById("tabLogin").style.color = "white";
+    document.getElementById("tabRegister").style.background = "#ccc";
+    document.getElementById("tabRegister").style.color = "black";
+    document.getElementById("authMessage").innerText = "";
+  }
+
+  function showRegister() {
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("registerForm").style.display = "block";
+    document.getElementById("tabRegister").style.background = "#2196F3";
+    document.getElementById("tabRegister").style.color = "white";
+    document.getElementById("tabLogin").style.background = "#ccc";
+    document.getElementById("tabLogin").style.color = "black";
+    document.getElementById("authMessage").innerText = "";
+  }
+
+  async function login() {
+    let email = document.getElementById("loginEmail").value;
+    let pass = document.getElementById("loginPass").value;
+    
+    if (!email || !pass) {
+      document.getElementById("authMessage").innerText = "Ingresa email y contraseña";
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: pass
+      });
+
+      if (error) {
+        document.getElementById("authMessage").innerText = error.message;
+      } else {
+        checkLogin();
+      }
+    } catch (err) {
+      document.getElementById("authMessage").innerText = "Error al iniciar sesión";
+    }
+  }
+
+  async function register() {
+    let email = document.getElementById("registerEmail").value;
+    let pass = document.getElementById("registerPass").value;
+    
+    if (!email || !pass) {
+      document.getElementById("authMessage").innerText = "Ingresa email y contraseña";
+      return;
+    }
+
+    if (pass.length < 6) {
+      document.getElementById("authMessage").innerText = "La contraseña debe tener al menos 6 caracteres";
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: pass
+      });
+
+      if (error) {
+        document.getElementById("authMessage").innerText = error.message;
+      } else {
+        document.getElementById("authMessage").innerText = "Registro exitoso. Revisa tu email para confirmar.";
+        // Opcional: cambiar a login después de registro
+        setTimeout(() => showLogin(), 2000);
+      }
+    } catch (err) {
+      document.getElementById("authMessage").innerText = "Error al registrarse";
+    }
+  }
+
+  async function logout() {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Error logging out:", error);
+      }
+      // Remover botón de logout
+      let logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) logoutBtn.remove();
+      checkLogin();
+    } catch (err) {
+      console.error("Error logging out:", err);
+    }
+  }
+
   let animalesConPeso = [];
 document.addEventListener("DOMContentLoaded", function() {
-  let map;
+  checkLogin(); // Verificar login al cargar
 
-  let supabase;
-
-  if (window.supabase) {
-    supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-    console.log("Supabase OK");
-  } else {
-    console.error("Supabase NO cargó");
+  // Registrar Service Worker para PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(registration => {
+        console.log('Service Worker registrado:', registration);
+      })
+      .catch(error => {
+        console.log('Error registrando Service Worker:', error);
+      });
   }
+
+  let map;
 async function cargarAnimales() {
 console.log("SUPABASE TEST:", supabase);
   try {
@@ -653,6 +891,8 @@ if(a.pesos && a.pesos.length >= 2){
       "Lote: " + (a.lote || "-") + "<br>" +
       "Ganancia: " + ganancia + " kg/día<br>" +
 "Estimado 30 días: " + estimado + " kg<br>" +
+      "<button onclick=\"verHistorial('" + a.id + "')\">📜 Historial</button>" +
+      "<button onclick=\"mostrarGrafico('" + a.id + "')\">📊 Gráfico</button>" +
       "<button onclick='editarEstado(" + i + ")'>✏️</button>" +
       "<button onclick='editarCaravana(" + i + ")'>🔄</button>"+
       "<button onclick='eliminar(" + i + ")'>❌</button>" +
@@ -667,7 +907,7 @@ if(a.pesos && a.pesos.length >= 2){
     cargarLotes();
   }
 
-  obtenerRanking(animales);
+  mostrarRanking(animales);
 }
 
 // MAPA
@@ -1101,9 +1341,10 @@ function alertasPeso(a){
   let fechaUltimo = new Date(ultimo.fecha);
   let dias = (fechaUltimo - fechaPenultimo) / (1000 * 60 * 60 * 24);
 
-  if(dias >= 1){
+  if(dias >= 1 && dias <= 365){
     let gananciaDiaria = (pesoUltimo - pesoPenultimo) / dias;
-    if(gananciaDiaria >= 0 && gananciaDiaria < 0.3){
+    // Solo mostrar alerta si el crecimiento es realista (no detectar valores glitchy)
+    if(gananciaDiaria >= 0 && gananciaDiaria < 0.3 && gananciaDiaria <= 2){
       alertas.push("🐢 Crecimiento lento (" + gananciaDiaria.toFixed(2) + " kg/día)");
     }
   }
@@ -1151,14 +1392,22 @@ function calcularGanancia(a){
   let pesoInicial = parseFloat(primero.valor);
   let pesoFinal = parseFloat(ultimo.valor);
 
+  // Validar que los pesos sean números válidos y positivos
+  if(isNaN(pesoInicial) || isNaN(pesoFinal) || pesoInicial <= 0 || pesoFinal <= 0) return "-";
+
   let fechaInicial = new Date(primero.fecha);
   let fechaFinal = new Date(ultimo.fecha);
 
   let dias = (fechaFinal - fechaInicial) / (1000 * 60 * 60 * 24);
 
-  if(dias < 1) return "-";
+  // Validar que haya al menos 1 día y máximo 1000 días (validez de datos)
+  if(dias < 1 || dias > 1000) return "-";
 
   let ganancia = (pesoFinal - pesoInicial) / dias;
+
+  // Limitar a valores realistas: ganado puede crecer max ~2 kg/día
+  // Y puede perder max ~1 kg/día (enfermedad, estrés)
+  if(ganancia > 2 || ganancia < -1) return "-";
 
   return ganancia.toFixed(2);
 }
@@ -1172,16 +1421,21 @@ function estimarPeso(a){
   let pesoInicial = parseFloat(primero.valor);
   let pesoFinal = parseFloat(ultimo.valor);
 
-  if(isNaN(pesoInicial) || isNaN(pesoFinal)) return "-";
+  if(isNaN(pesoInicial) || isNaN(pesoFinal) || pesoInicial <= 0 || pesoFinal <= 0) return "-";
 
   let fechaInicial = new Date(primero.fecha);
   let fechaFinal = new Date(ultimo.fecha);
 
   let dias = (fechaFinal - fechaInicial) / (1000*60*60*24);
-  if(dias < 1) return "-";
+  
+  // Validar período de datos realista
+  if(dias < 1 || dias > 1000) return "-";
 
   let aumento = pesoFinal - pesoInicial;
   let crecimiento = aumento / dias;
+
+  // Validar que el crecimiento proyectado sea realista
+  if(crecimiento > 2 || crecimiento < -1) return "-";
 
   return Math.round(pesoFinal + crecimiento * 30);
 }
@@ -1306,29 +1560,136 @@ function estaInactivo(a, horas){
   return diffHoras >= horas;
 }
 function verHistorial(id){
-
   let animal = animales.find(a => String(a.id) === String(id));
   if(!animal) return;
 
-  let panel = document.getElementById("panelHistorial");
+  let panel = document.getElementById("panelLateral");
+  if(!panel) return;
 
-  let html = "<h3>Historial</h3>";
+  let html = `<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">`;
+  html += `<button onclick="mostrarVista('animales')" style="padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">⬅️ Volver a Animales</button><br><br>`;
+  html += `<h3>Historial de Pesos - Animal ${animal.id}</h3>`;
 
-  if(animal.historial.length === 0){
-    html += "<p>Sin registros</p>";
+  if(!animal.pesos || animal.pesos.length === 0){
+    html += "<p>Sin registros de peso</p>";
   } else {
-    animal.historial.forEach((h,i)=>{
+    let pesosOrdenados = animal.pesos.slice().sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
+    pesosOrdenados.forEach(p => {
       html += `
-        <div style="border-bottom:1px solid #ccc; margin-bottom:5px;">
-          <b>${h.tipo}</b> - ${h.fecha}<br>
-          ${h.detalle || ""}
-          <button onclick="borrarEvento('${animal.id}', ${i})">❌</button>
+        <div style="border-bottom:1px solid #ccc; margin-bottom:10px; padding-bottom:10px;">
+          <b>Fecha:</b> ${p.fecha}<br>
+          <b>Peso:</b> ${p.valor} kg
         </div>
       `;
     });
   }
+  html += `</div>`;
 
   panel.innerHTML = html;
+}
+function mostrarGrafico(id){
+  let animal = animales.find(a => String(a.id) === String(id));
+  if(!animal) return;
+
+  let panel = document.getElementById("panelLateral");
+  if(!panel) return;
+
+  let html = `<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">`;
+  html += `<button onclick="mostrarVista('animales')" style="padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">⬅️ Volver a Animales</button><br><br>`;
+  html += `<h3>📊 Evolución de Peso - Animal ${animal.id}</h3>`;
+
+  if(!animal.pesos || animal.pesos.length < 2){
+    html += "<p>Necesitas al menos 2 registros de peso para ver el gráfico</p>";
+  } else {
+    html += `<canvas id="graficoPeso" width="300" height="200" style="border:1px solid #ccc;"></canvas>`;
+  }
+  html += `</div>`;
+
+  panel.innerHTML = html;
+
+  // Dibujar gráfico si hay datos suficientes
+  if(animal.pesos && animal.pesos.length >= 2){
+    dibujarGrafico(animal.pesos);
+  }
+}
+function dibujarGrafico(pesos){
+  let canvas = document.getElementById("graficoPeso");
+  if(!canvas) return;
+
+  let ctx = canvas.getContext("2d");
+  let width = canvas.width;
+  let height = canvas.height;
+
+  // Ordenar pesos por fecha
+  let datos = pesos.slice().sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
+
+  // Encontrar min/max
+  let pesosVal = datos.map(p => parseFloat(p.valor));
+  let minPeso = Math.min(...pesosVal);
+  let maxPeso = Math.max(...pesosVal);
+  let rangoPeso = maxPeso - minPeso || 1;
+
+  // Fechas
+  let fechas = datos.map(p => new Date(p.fecha));
+  let minFecha = Math.min(...fechas);
+  let maxFecha = Math.max(...fechas);
+  let rangoFecha = maxFecha - minFecha || 1;
+
+  // Limpiar canvas
+  ctx.clearRect(0, 0, width, height);
+
+  // Dibujar ejes
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(40, 20);
+  ctx.lineTo(40, height - 20);
+  ctx.lineTo(width - 20, height - 20);
+  ctx.stroke();
+
+  // Etiquetas eje Y
+  ctx.fillStyle = "#000";
+  ctx.font = "10px Arial";
+  ctx.fillText(maxPeso + "kg", 5, 25);
+  ctx.fillText(minPeso + "kg", 5, height - 15);
+
+  // Etiquetas eje X
+  let fechaInicio = new Date(datos[0].fecha).toLocaleDateString();
+  let fechaFin = new Date(datos[datos.length-1].fecha).toLocaleDateString();
+  ctx.fillText(fechaInicio, 45, height - 5);
+  ctx.fillText(fechaFin, width - 80, height - 5);
+
+  // Dibujar línea
+  ctx.strokeStyle = "#007bff";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+
+  datos.forEach((p, i) => {
+    let x = 40 + ((new Date(p.fecha) - minFecha) / rangoFecha) * (width - 60);
+    let y = height - 20 - ((parseFloat(p.valor) - minPeso) / rangoPeso) * (height - 40);
+    if(i === 0){
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  });
+  ctx.stroke();
+
+  // Puntos
+  ctx.fillStyle = "#007bff";
+  datos.forEach(p => {
+    let x = 40 + ((new Date(p.fecha) - minFecha) / rangoFecha) * (width - 60);
+    let y = height - 20 - ((parseFloat(p.valor) - minPeso) / rangoPeso) * (height - 40);
+    ctx.beginPath();
+    ctx.arc(x, y, 3, 0, 2 * Math.PI);
+    ctx.fill();
+  });
+}
+function mostrarChat(){
+  document.getElementById("listaPanel").style.display = "none";
+  document.getElementById("historialPanel").style.display = "none";
+  document.getElementById("chatPanel").style.display = "block";
+  mostrarSeccion('animales'); // Asegurar que esté en la sección animales
 }
 function borrarEvento(id, index){
 
@@ -1430,11 +1791,366 @@ function mostrarRanking(animales){
   document.getElementById("peor").innerHTML = peorHTML;
 }
 
+function enviarPregunta() {
+  const input = document.getElementById("chatInput");
+  const pregunta = input.value.trim();
+  if (!pregunta) return;
 
+  const conversacion = document.getElementById("chatConversacion");
+  conversacion.innerHTML += `<p><strong>Tú:</strong> ${pregunta}</p>`;
+  input.value = "";
 
+  const respuesta = responderIA(pregunta);
+  conversacion.innerHTML += `<p><strong>Asistente:</strong> ${respuesta}</p>`;
+  conversacion.scrollTop = conversacion.scrollHeight;
+}
 
+function responderIA(pregunta) {
+  const q = pregunta.toLowerCase();
+  if (q.includes("cargar") || q.includes("subir") || q.includes("actualizar") || q.includes("csv") || q.includes("peso") || q.includes("pesos") || q.includes("importar")) {
+    return "Para cargar pesos, haz clic en '📥 Actualizar Pesos' en el panel de controles. Selecciona un archivo CSV con columnas ID y peso. El sistema actualizará los pesos de los animales correspondientes.";
+  } else if (q.includes("historial") || q.includes("eventos") || q.includes("registro") || q.includes("ver historial") || q.includes("pesos anteriores")) {
+    return "El historial muestra todos los pesos registrados de cada animal ordenados por fecha. Haz clic en '📜 Historial' en la lista de animales para verlo.";
+  } else if (q.includes("ganancia") || q.includes("aumento") || q.includes("peso diario") || q.includes("crecimiento") || q.includes("ganancia diaria")) {
+    return "La ganancia se calcula como el aumento de peso diario basado en los registros de peso. Se muestra en el ranking de mejores y peores animales.";
+  } else if (q.includes("ranking") || q.includes("top") || q.includes("mejores") || q.includes("peores") || q.includes("clasificación") || q.includes("mejor animal")) {
+    return "El ranking muestra los animales con mejor y peor ganancia de peso diaria. Los mejores están en la parte superior del panel lateral.";
+  } else if (q.includes("rebaño") || q.includes("rebanos") || q.includes("grupo") || q.includes("lote")) {
+    return "Los rebaños permiten agrupar animales. Haz clic en '🐑 Rebaños' para crear grupos, calcular promedios y exportar datos en CSV.";
+  } else if (q.includes("exportar") || q.includes("descargar") || q.includes("archivo")) {
+    return "Puedes exportar datos en CSV desde:\\n- Rebaño: botón '📥 Exportar CSV' en la vista del rebaño (con ID, Peso y Ganancia).\\n- Todos los animales: botón '📥 Excel' en el panel de controles.";
+  } else if (q.includes("eliminar") || q.includes("borrar") || q.includes("quitar")) {
+    return "Puedes eliminar: animales del rebaño con ❌, o eliminar el rebaño completo con el botón 'Eliminar rebaño'.";
+  } else {
+    return "Preguntas que puedo ayudarte:\\n- 'Cargar pesos' - cómo actualizar datos\\n- 'Historial' - ver pesos anteriores\\n- 'Ganancia' - qué es la ganancia diaria\\n- 'Ranking' - mejores y peores animales\\n- 'Rebaños' - cómo crear grupos\\n- 'Exportar' - descargar en CSV";
+  }
+}
+
+// REBAÑOS
+let rebanos = JSON.parse(localStorage.getItem("rebanos")) || [];
+
+function mostrarRebanos(){
+  document.getElementById("listaPanel").style.display = "none";
+  document.getElementById("historialPanel").style.display = "none";
+  document.getElementById("chatPanel").style.display = "none";
+  document.getElementById("rebanosPanel").style.display = "block";
+  mostrarSeccion('animales'); // Asegurar que esté en la sección animales
+  renderizarRebanos();
+}
+
+function renderizarRebanos(){
+  let panel = document.getElementById("panelLateral");
+  if(!panel) return;
+  
+  let html = `<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">`;
+  html += `<h3>🐑 Rebaños</h3>`;
+  html += `<input id="nuevoRebanoNombre" placeholder="Nombre del rebaño" style="width: calc(100% - 80px); padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px;">`;
+  html += `<button onclick="crearRebano()" style="padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 5px;">Crear</button><br><br>`;
+  html += `<h4>Rebaños Existentes:</h4>`;
+  
+  if(rebanos.length === 0){
+    html += `<p>No hay rebaños</p>`;
+  } else {
+    rebanos.forEach((r, i) => {
+      html += `<div style="border:1px solid #ccc; padding:10px; margin:10px 0; border-radius: 5px; background: #f9f9f9;">
+        <b>${r.nombre}</b> (${r.animales.length} animales)
+        <button onclick="verRebano(${i})" style="padding: 5px 10px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 5px;">Ver</button>
+      </div>`;
+    });
+  }
+  html += `</div>`;
+  
+  panel.innerHTML = html;
+}
+
+function crearRebano(){
+  let nombre = document.getElementById("nuevoRebanoNombre").value.trim();
+  if(!nombre) return;
+  rebanos.push({nombre: nombre, animales: []});
+  localStorage.setItem("rebanos", JSON.stringify(rebanos));
+  renderizarRebanos();
+}
+
+function obtenerUltimoPeso(animal){
+  if(!animal) return null;
+  if(animal.pesos && animal.pesos.length > 0){
+    return animal.pesos[animal.pesos.length - 1].valor;
+  } else if(animal.peso && animal.peso !== "Sin datos"){
+    return animal.peso;
+  }
+  return null;
+}
+
+function verRebano(index){
+  if(!rebanos[index]) return;
+  let rebano = rebanos[index];
+  let panel = document.getElementById("panelLateral");
+  if(!panel) return;
+  
+  let html = `<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">`;
+  html += `<button onclick="mostrarVista('rebanos')" style="padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 5px;">⬅️ Volver a Rebaños</button>`;
+  html += `<button onclick="exportarRebano(${index})" style="margin-left: 5px; padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">📥 Exportar</button>`;
+  html += `<button onclick="eliminarRebano(${index})" style="margin-left: 5px; padding: 8px 15px; background: #d32f2f; color: white; border: none; border-radius: 5px; cursor: pointer;">🗑️ Eliminar</button><br><br>`;
+  html += `<h3>Rebaño: ${rebano.nombre}</h3>`;
+  html += `<p><b>Cantidad de animales:</b> ${rebano.animales.length}</p>`;
+  
+  let pesos = [];
+  let ganancias = [];
+  rebano.animales.forEach(id => {
+    let animal = animales.find(a => String(a.id) == String(id));
+    if(animal){
+      let peso = obtenerUltimoPeso(animal);
+      if(peso !== null && peso !== undefined) pesos.push(parseFloat(peso));
+      let gan = calcularGanancia(animal);
+      if(gan !== "-" && !isNaN(parseFloat(gan))) ganancias.push(parseFloat(gan));
+    }
+  });
+  
+  let promedioPeso = pesos.length > 0 ? (pesos.reduce((a,b)=>a+b,0)/pesos.length).toFixed(2) + ' kg' : "Sin datos";
+  let promedioGanancia = ganancias.length > 0 ? (ganancias.reduce((a,b)=>a+b,0)/ganancias.length).toFixed(2) + ' kg/día' : "Sin datos";
+  
+  html += `<p><b>Peso promedio:</b> ${promedioPeso}</p>`;
+  html += `<p><b>Ganancia promedio:</b> ${promedioGanancia}</p><br>`;
+  
+  html += `<h4>📋 Animales en el rebaño:</h4>`;
+  if(rebano.animales.length === 0){
+    html += `<p>Ninguno</p>`;
+  } else {
+    html += `<div style="background: #f9f9f9; padding: 10px; border-radius: 5px; margin-bottom: 10px;">`;
+    rebano.animales.forEach(id => {
+      let animal = animales.find(a => String(a.id) == String(id));
+      if(!animal) return;
+      let peso = obtenerUltimoPeso(animal);
+      let pesoStr = peso !== null ? peso + ' kg' : 'Sin datos';
+      html += `<div style="padding: 5px; margin: 5px 0; background: white; border-radius: 3px; display: flex; justify-content: space-between; align-items: center;">
+        <span>${id} - ${pesoStr}</span>
+        <button onclick="quitarAnimalDelRebano(${index}, '${id}')" style="background: #ff5722; color: white; padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">❌ Quitar</button>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+  
+  html += `<h4>➕ Agregar animales:</h4>`;
+  html += `<input id="buscadorAnimales" placeholder="Buscar por ID..." oninput="actualizarListaAnimales(${index})" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;"><br><br>`;
+  html += `<div id="listaAnimalesRebano"></div>`;
+  html += `</div>`;
+  
+  panel.innerHTML = html;
+  actualizarListaAnimales(index);
+}
+
+function actualizarListaAnimales(rebanoIndex){
+  if(!rebanos[rebanoIndex]) return;
+  let rebano = rebanos[rebanoIndex];
+  let inputBuscador = document.getElementById("buscadorAnimales");
+  let busqueda = inputBuscador ? inputBuscador.value.toLowerCase() : "";
+  let html = "";
+  
+  animales.forEach(a => {
+    let idStr = String(a.id || "").toLowerCase();
+    if(!rebano.animales.includes(a.id) && idStr.includes(busqueda)){
+      html += `<label><input type="checkbox" value="${a.id}" onchange="toggleAnimalRebano(${rebanoIndex}, '${a.id}', this.checked)"> ${a.id}</label><br>`;
+    }
+  });
+  
+  if(html === "") html = "<p>No hay animales disponibles</p>";
+  let listaDiv = document.getElementById("listaAnimalesRebano");
+  if(listaDiv) listaDiv.innerHTML = html;
+}
+
+function toggleAnimalRebano(rebanoIndex, animalId, checked){
+  if(!rebanos[rebanoIndex]) return;
+  
+  if(checked){
+    if(!rebanos[rebanoIndex].animales.includes(animalId)){
+      rebanos[rebanoIndex].animales.push(animalId);
+    }
+  } else {
+    rebanos[rebanoIndex].animales = rebanos[rebanoIndex].animales.filter(id => String(id) !== String(animalId));
+  }
+  localStorage.setItem("rebanos", JSON.stringify(rebanos));
+}
+
+function exportarRebano(index){
+  if(index === undefined || !rebanos[index]) {
+    alert("Error: Rebaño no encontrado");
+    return;
+  }
+  
+  let rebano = rebanos[index];
+  console.log("Exportando rebaño:", rebano.nombre, "IDs:", rebano.animales);
+  
+  if(!rebano.animales || rebano.animales.length === 0){
+    alert("El rebaño no tiene animales para exportar");
+    return;
+  }
+  
+  let lineas = ["ID;Peso;Ganancia"];
+  let animalesExportados = 0;
+  
+  rebano.animales.forEach(function(idAnimal) {
+    console.log("Buscando animal con ID:", idAnimal);
+    let animal = null;
+    
+    for(let i = 0; i < animales.length; i++){
+      if(String(animales[i].id) === String(idAnimal)){
+        animal = animales[i];
+        break;
+      }
+    }
+    
+    if(animal){
+      console.log("Animal encontrado:", animal);
+      animalesExportados++;
+      let peso = obtenerUltimoPeso(animal);
+      let pesoStr = (peso !== null && peso !== undefined) ? String(peso) : "Sin datos";
+      let ganancia = calcularGanancia(animal);
+      let gananciaStr = (ganancia && ganancia !== "-") ? String(ganancia) : "Sin datos";
+      let linea = String(idAnimal) + ";" + pesoStr + ";" + gananciaStr;
+      console.log("Línea CSV:", linea);
+      lineas.push(linea);
+    } else {
+      console.log("Animal NO encontrado con ID:", idAnimal);
+    }
+  });
+  
+  console.log("Animales exportados:", animalesExportados, "Total:", lineas.length - 1);
+  
+  
+  if(animalesExportados === 0){
+    alert("No se encontraron animales válidos en el rebaño para exportar");
+    return;
+  }
+  
+  // Construir CSV con BOM UTF-8 para Excel
+  let csv = '\uFEFF';  // BOM UTF-8 - necesario para Excel
+  csv += lineas.join("\r\n") + "\r\n";
+  
+  console.log("CSV con BOM generado, tamaño:", csv.length, "bytes");
+  console.log("Primeros caracteres:", csv.substring(0, 50));
+  
+  // Crear Blob correctamente con charset utf-8
+  let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  
+  console.log("Blob creado, tamaño:", blob.size, "bytes");
+  
+  // Crear link
+  let link = document.createElement("a");
+  
+  // Asignar URL del blob
+  let url = URL.createObjectURL(blob);
+  link.href = url;
+  
+  // Asignar nombre con timestamp opcional para evitar caché
+  let nombreArchivo = rebano.nombre.replace(/[^a-z0-9]/gi, "_").toLowerCase() + ".csv";
+  link.download = nombreArchivo;
+  
+  console.log("Descargando:", nombreArchivo, "| Tamaño Blob:", blob.size, "bytes");
+  
+  // Agregar al DOM
+  document.body.appendChild(link);
+  
+  // Ejecutar click
+  link.click();
+  
+  console.log("Click ejecutado en link de descarga");
+  
+  // Limpiar recursos
+  setTimeout(function() {
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    console.log("Recurso liberado");
+    alert("✓ Rebaño exportado a Excel: " + nombreArchivo);
+  }, 250);
+}
+
+function quitarAnimalDelRebano(rebanoIndex, animalId){
+  if(!rebanos[rebanoIndex]) return;
+  rebanos[rebanoIndex].animales = rebanos[rebanoIndex].animales.filter(id => String(id) !== String(animalId));
+  localStorage.setItem("rebanos", JSON.stringify(rebanos));
+  verRebano(rebanoIndex);
+}
+
+function eliminarRebano(index){
+  if(!rebanos[index]) return;
+  if(confirm("¿Estás seguro de que deseas eliminar el rebaño '" + rebanos[index].nombre + "'?")){
+    rebanos.splice(index, 1);
+    localStorage.setItem("rebanos", JSON.stringify(rebanos));
+    renderizarRebanos();
+  }
+}
+
+// SISTEMA DE VISTAS
+function mostrarVista(tipo){
+  let panel = document.getElementById("panelLateral");
+  if(!panel) return;
+  
+  mostrarSeccion('animales');
+  
+  if(tipo === 'animales'){
+    panel.innerHTML = vistaAnimales();
+    mostrar();
+    mostrarRanking(animales);
+  } else if(tipo === 'ingreso'){
+    panel.innerHTML = vistaIngreso();
+  } else if(tipo === 'rebanos'){
+    renderizarRebanos();
+  } else if(tipo === 'ayuda'){
+    panel.innerHTML = vistaAyuda();
+  }
+}
+
+function vistaAnimales(){
+  let html = '<div id="listaPanel" style="padding: 10px;"><div id="listaAnimales">';
+  html += '<h3>🐄 Animales</h3>';
+  html += '<input id="buscador" placeholder="Buscar caravana..." oninput="mostrar()" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px;">';
+  html += '<h4>Filtrar por lote</h4>';
+  html += '<select id="filtroLote" onchange="mostrar()" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px;">';
+  html += '<option value="todos">Todos</option></select>';
+  html += '<div id="lista"></div>';
+  html += '<div id="ranking" style="padding: 10px; background: #111; color: white; margin: 10px 0; border-radius: 5px;">';
+  html += '<h3>📊 Ranking</h3>';
+  html += '<div id="top"></div><div id="peor"></div></div>';
+  html += '</div></div>';
+  return html;
+}
+
+function vistaIngreso(){
+  let html = '<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">';
+  html += '<h3>➕ Ingresar Animal</h3>';
+  html += '<input id="id" placeholder="Caravana" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+  html += '<input id="edad" placeholder="Edad" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+  html += '<input id="raza" placeholder="Raza" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+  html += '<input id="lote" placeholder="Lote" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+  html += '<input id="obs" placeholder="Observaciones" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+  html += '<input id="lat" placeholder="Latitud" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+  html += '<input id="lng" placeholder="Longitud" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+  html += '<input id="peso" placeholder="Peso (kg)" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+  html += '<select id="estado" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;"><option value="">-- Sin estado --</option><option>Vacunar</option><option>Preñado</option><option>Enfermo</option></select>';
+  html += '<button onclick="agregarAnimal()" style="width: 100%; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px 0; font-weight: bold;">Guardar</button>';
+  html += '<button onclick="document.getElementById(\'fileInput\').click()" style="width: 100%; padding: 10px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px 0;">📂 Importar CSV</button>';
+  html += '<input type="file" id="fileInput" style="display:none;" onchange="importarCSV()">';
+  html += '</div>';
+  return html;
+}
+
+function vistaRebaños(){
+  return '<div id="rebanosPanel" style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;"><h3>🐑 Rebaños</h3><div id="rebanosContenido"></div></div>';
+}
+
+function vistaAyuda(){
+  let html = '<div id="chatPanel" style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto; display: flex; flex-direction: column;">';
+  html += '<h3>🤖 Asistente</h3>';
+  html += '<div id="chatConversacion" style="height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #f9f9f9; flex: 1; border-radius: 5px;"></div>';
+  html += '<div style="display: flex; gap: 5px;">';
+  html += '<input type="text" id="chatInput" placeholder="Escribe tu pregunta..." style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">';
+  html += '<button id="chatEnviar" onclick="enviarPregunta()" style="padding: 8px 15px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Enviar</button>';
+  html += '</div></div>';
+  return html;
+}
 
 </script>
 
+</div>
 </body>
 </html>
