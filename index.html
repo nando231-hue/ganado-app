@@ -181,8 +181,6 @@ button {
 .prenado { border-left-color: green; }
 </style>
 </head>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
 <body>
 <!-- LOGIN SCREEN -->
 <div id="loginScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
@@ -194,13 +192,13 @@ button {
     </div>
     <div id="loginForm">
       <input id="loginEmail" type="email" placeholder="Email" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
-      <input id="loginPass" type="password" placeholder="Contraseña" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
-      <button onclick="login()" style="width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;">Iniciar Sesión</button>
+      <input id="password" type="password" placeholder="Contraseña" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+      <button id="loginButton" onclick="login()" style="width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;">Iniciar Sesión</button>
     </div>
     <div id="registerForm" style="display: none;">
       <input id="email" type="email" placeholder="Email" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
-      <input id="password" type="password" placeholder="Contraseña" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
-      <button onclick="register()" style="width: 100%; padding: 12px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;">Registrarse</button>
+      <input type="password" id="registerPass" placeholder="Contraseña" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+      <button id="registerButton" onclick="register()" style="width: 100%; padding: 12px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;">Registrarse</button>
     </div>
     <div id="authMessage" style="margin-top: 15px; color: red;"></div>
   </div>
@@ -319,6 +317,7 @@ button {
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-pip/leaflet-pip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
@@ -326,7 +325,8 @@ button {
 let supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zaHdlZ21mcHhzZm9xcWh3cW51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwOTYzMjcsImV4cCI6MjA5MDY3MjMyN30.o3xmeC8SM63dyHkp_sGBofDGdwNkcePIPhBkeOIyQcU";
   
   // Inicializar Supabase
-  let supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+  window.supabaseClient = window.supabaseClient || window.supabase.createClient(supabaseUrl, supabaseKey);
+  var supabase = window.supabaseClient;
   
   // SISTEMA DE USUARIO CON SUPABASE
   async function checkLogin() {
@@ -375,33 +375,47 @@ let supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIs
   }
 
   async function login() {
-    let email = document.getElementById("loginEmail").value;
-    let pass = document.getElementById("loginPass").value;
-    
-    if (!email || !pass) {
+    let emailInput = document.getElementById("loginEmail");
+    let passwordInput = document.getElementById("password");
+    let email = emailInput ? emailInput.value : "";
+    let password = passwordInput ? passwordInput.value : "";
+
+    if (!email || !password) {
       document.getElementById("authMessage").innerText = "Ingresa email y contraseña";
       return;
     }
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: pass
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
       });
 
       if (error) {
         document.getElementById("authMessage").innerText = error.message;
+        console.error('login error', error);
       } else {
-        checkLogin();
+        console.log('login success', email);
+        document.getElementById("loginScreen").style.display = "none";
+        showLogin();
       }
     } catch (err) {
+      console.error('login exception', err);
       document.getElementById("authMessage").innerText = "Error al iniciar sesión";
     }
   }
 
   async function register() {
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
+    console.log('register clicked');
+    let emailInput = document.getElementById("email");
+    let passwordInput = document.getElementById("registerPass");
+    let email = emailInput ? emailInput.value : "";
+    let password = passwordInput ? passwordInput.value : "";
+
+    if (!email || !password) {
+      alert("Ingresa email y contraseña");
+      return;
+    }
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -410,9 +424,43 @@ let supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIs
 
     if (error) {
       alert(error.message);
+      console.error('register error', error);
     } else {
-      alert("Usuario creado correctamente, ahora puedes iniciar sesión");
+      alert("Usuario creado correctamente");
+      console.log('register success', email);
     }
+  }
+
+  function actualizarContadoresZonas() {
+    if (!zonas || zonas.length === 0) return;
+    zonas.forEach(z => {
+      try {
+        const cantidad = contarAnimalesEnZona(z);
+        z.bindPopup("Zona: " + (z.nombre || "Sin nombre") + "<br>Animales en zona: " + cantidad);
+      } catch (e) {
+        console.error('Error actualizando contador de zona:', e);
+      }
+    });
+  }
+
+  function contarAnimalesEnZona(zona) {
+    let dentro = 0;
+    if (!zona || typeof turf === 'undefined') return dentro;
+
+    animales.forEach(a => {
+      if (!a.lat || !a.lng) return;
+      const lat = parseFloat(a.lat);
+      const lng = parseFloat(a.lng);
+      if (isNaN(lat) || isNaN(lng)) return;
+
+      const punto = turf.point([lng, lat]);
+      const poligono = zona.toGeoJSON();
+      if (turf.booleanPointInPolygon(punto, poligono)) {
+        dentro++;
+      }
+    });
+
+    return dentro;
   }
 
   async function logout() {
@@ -430,9 +478,42 @@ let supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIs
     }
   }
 
+  window.login = login;
+  window.register = register;
+  window.showLogin = showLogin;
+  window.showRegister = showRegister;
+
+  function attachAuthListeners() {
+    console.log('attachAuthListeners');
+    const loginBtn = document.getElementById('loginButton');
+    const registerBtn = document.getElementById('registerButton');
+    if (loginBtn) {
+      loginBtn.addEventListener('click', function(event) {
+        console.log('login button event');
+        login();
+      });
+    }
+    if (registerBtn) {
+      registerBtn.addEventListener('click', function(event) {
+        console.log('register button event');
+        register();
+      });
+    }
+  }
+
   let animalesConPeso = [];
 document.addEventListener("DOMContentLoaded", function() {
   checkLogin(); // Verificar login al cargar
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    console.log('Supabase auth event:', event, session);
+    if (session) {
+      document.getElementById('loginScreen').style.display = 'none';
+    } else {
+      document.getElementById('loginScreen').style.display = 'flex';
+      showLogin();
+    }
+  });
 
   // Registrar Service Worker para PWA
   if ('serviceWorker' in navigator) {
@@ -676,11 +757,13 @@ zonasGuardadas.forEach(z => {
 
   poly.nombre = z.nombre || "Sin nombre";
 
+  const cantidad = contarAnimalesEnZona(poly);
+  poly.bindPopup("Zona: " + poly.nombre + "<br>Animales en zona: " + cantidad);
+
   poly.on('click', function(){
     zonas.forEach(z => z.setStyle({color:'blue'}));
     this.setStyle({color:'red'});
     zonaSeleccionada = this;
-
     alert("Zona: " + this.nombre);
   });
 
@@ -790,11 +873,7 @@ animales.push(a);
 // 🔥 GUARDAR
 localStorage.setItem("animales", JSON.stringify(animales));
 
-// 🔥 MOSTRAR
-mostrar();
-
-// 🔥 LIMPIAR
-limpiarFormulario();
+  actualizarContadoresZonas();
 
 
 }
@@ -1168,6 +1247,9 @@ function guardarZona(){
   let nuevaZona = L.polygon(puntosZona, {color:'blue'}).addTo(map);
 
   nuevaZona.nombre = nombre;
+
+  const cantidad = contarAnimalesEnZona(nuevaZona);
+  nuevaZona.bindPopup("Zona: " + nombre + "<br>Animales en zona: " + cantidad);
 
   nuevaZona.on('click', function(){
     zonas.forEach(z => z.setStyle({color:'blue'}));
@@ -2132,7 +2214,6 @@ function vistaAyuda(){
   html += '</div></div>';
   return html;
 }
-
 </script>
 
 </div>
