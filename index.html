@@ -972,7 +972,6 @@
         // 
         // CREATE TABLE animales (
         //   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-        //   user_id UUID NOT NULL REFERENCES auth.users(id),
         //   caravana TEXT NOT NULL,
         //   edad TEXT,
         //   raza TEXT,
@@ -987,7 +986,7 @@
         //   movimientos JSONB DEFAULT '[]',
         //   pesos JSONB DEFAULT '[]',
         //   created_at TIMESTAMP DEFAULT NOW(),
-        //   UNIQUE(user_id, caravana)
+        //   UNIQUE(caravana)
         // );
         //
         // CREATE TABLE tanques (
@@ -1110,8 +1109,8 @@
 
         async function actualizarAnimalEnSupabase(animalId, actualizaciones) {
           try {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
+            const { data: sessWrap } = await supabase.auth.getSession();
+            if (!sessWrap?.session) {
               console.error("Usuario no autenticado");
               return false;
             }
@@ -1119,8 +1118,7 @@
             const { error } = await supabase
               .from("animales")
               .update(actualizaciones)
-              .eq("caravana", animalId)
-              .eq("user_id", user.id);
+              .eq("caravana", animalId);
 
             if (error) {
               console.error("Error actualizando animal:", error);
@@ -1606,6 +1604,11 @@
 
         // AGREGAR
         async function agregarAnimal() {
+          if (window.guardandoAnimal) return;
+          window.guardandoAnimal = true;
+          const btn = document.getElementById("btnGuardar");
+          if (btn) btn.disabled = true;
+          console.log("INICIO GUARDADO");
           try {
             console.log("🔥 CLICK GUARDAR");
             console.log("[agregarAnimal] INICIO click Guardar");
@@ -1685,6 +1688,10 @@
           } catch (err) {
             console.error("[agregarAnimal] ERROR NO CONTROLADO:", err);
             alert("Error en agregarAnimal: " + (err && err.message ? err.message : String(err)));
+          } finally {
+            window.guardandoAnimal = false;
+            if (btn) btn.disabled = false;
+            console.log("FIN GUARDADO");
           }
         }
 
@@ -3122,7 +3129,7 @@
           html += '<input id="lng" placeholder="Longitud" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
           html += '<input id="peso" placeholder="Peso (kg)" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
           html += '<select id="estado" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;"><option value="">-- Sin estado --</option><option>Vacunar</option><option>Preñado</option><option>Enfermo</option></select>';
-          html += '<button onclick="agregarAnimal()" style="width: 100%; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px 0; font-weight: bold;">Guardar</button>';
+          html += '<button id="btnGuardar" type="button" onclick="agregarAnimal()" style="width: 100%; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px 0; font-weight: bold;">Guardar</button>';
           html += '<button onclick="document.getElementById(\'fileInput\').click()" style="width: 100%; padding: 10px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px 0;">📂 Importar CSV</button>';
           html += '<input type="file" id="fileInput" style="display:none;" onchange="importarCSV()">';
           html += '</div>';
