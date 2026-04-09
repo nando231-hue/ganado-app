@@ -1,1086 +1,1918 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>AgroTrack</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#000000">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
-<style>
-/* ================== GENERAL ================== */
-html, body {
-  height: 100%;
-  margin: 0;
-}
-body {
-  font-family: Arial;
-  background-image: url("https://images.unsplash.com/photo-1500382017468-9049fed747ef");
-  background-size: cover;
-}
+  <style>
+    /* ================== GENERAL ================== */
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
 
-/* ================== MENU ================== */
-#menu {
-  position: fixed;
-  width: 200px;
-  height: 100%;
-  background: #1e293b;
-  color: white;
-  padding: 15px;
-}
+    body {
+      font-family: Arial;
+      background-image: url("https://images.unsplash.com/photo-1500382017468-9049fed747ef");
+      background-size: cover;
+    }
 
-/* ================== CONTENIDO ================== */
-#contenido {
-  margin-left: 220px;
-  padding: 10px;
-  background: rgba(255,255,255,0.9);
-}
+    /* ================== MENU ================== */
+    #menu {
+      position: fixed;
+      width: 200px;
+      height: 100%;
+      background: #1e293b;
+      color: white;
+      padding: 15px;
+    }
 
-/* ================== LAYOUT ================== */
-#layoutAnimales {
-  display: flex;
-  gap: 10px;
-  height: 80vh; /* 🔥 CLAVE */
-}
+    /* ================== CONTENIDO ================== */
+    #contenido {
+      margin-left: 220px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.9);
+    }
 
-/* ================== LISTA ANIMALES ================== */
-#listaAnimales {
-  width: 300px;
-  max-height: 80vh;
-  overflow-y: auto;
-  background: white;
-  padding: 10px;
-  border-radius: 10px;
-}
+    /* ================== LAYOUT ================== */
+    #layoutAnimales {
+      display: flex;
+      gap: 10px;
+      height: 80vh;
+      /* 🔥 CLAVE */
+    }
 
-/* ================== MAPA + PANEL (FIX DEFINITIVO) ================== */
-#mapLayout {
-  display: flex;
-  gap: 10px;
-  flex: 1; /* 🔥 CLAVE */
-}
+    /* ================== LISTA ANIMALES ================== */
+    #listaAnimales {
+      width: 300px;
+      max-height: 80vh;
+      overflow-y: auto;
+      background: white;
+      padding: 10px;
+      border-radius: 10px;
+    }
 
-/* PANEL LATERAL */
-#panelControles {
-  width: 220px;
-  background: white;
-  padding: 10px;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
+    /* ================== MAPA + PANEL (FIX DEFINITIVO) ================== */
+    #mapLayout {
+      display: flex;
+      gap: 10px;
+      flex: 1;
+      /* 🔥 CLAVE */
+    }
 
-/* MAPA */
-#map {
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  min-height: 400px;
-  border-radius: 10px;
-}
+    /* PANEL LATERAL */
+    #panelControles {
+      width: 220px;
+      background: white;
+      padding: 10px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
 
-/* ================== FORMULARIO ================== */
-#formulario {
-  max-width: 400px;
-  margin: auto;
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
-}
+    /* MAPA */
+    #map {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 400px;
+      border-radius: 10px;
+    }
 
-/* ================== INPUTS ================== */
-input, select, button {
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-}
+    /* ================== FORMULARIO ================== */
+    #formulario {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+    }
 
-/* BOTONES */
-button {
-  background: #adafae;
-  color: white;
-  border: none;
-  border-radius: 8px;
-}
+    /* ================== INPUTS ================== */
+    input,
+    select,
+    button {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+    }
 
-/* ================== HISTORIAL LATERAL ================== */
-#panelLateral {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 320px;
-}
+    /* BOTONES */
+    button {
+      background: #adafae;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
 
-#historialPanel {
-  display: none;
-  background: white;
-  padding: 10px;
-  border-radius: 10px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
+    /* ================== HISTORIAL LATERAL ================== */
+    #panelLateral {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 320px;
+    }
 
-#historialPanel h3 {
-  margin-top: 0;
-}
+    #historialPanel {
+      display: none;
+      background: white;
+      padding: 10px;
+      border-radius: 10px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
 
-/* ================== CHAT ASISTENTE ================== */
-#chatPanel {
-  display: none;
-  background: white;
-  padding: 10px;
-  border-radius: 10px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
+    #historialPanel h3 {
+      margin-top: 0;
+    }
 
-#chatConversacion {
-  height: 300px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin-bottom: 10px;
-  background: #f9f9f9;
-}
+    /* ================== CHAT ASISTENTE ================== */
+    #chatPanel {
+      display: none;
+      background: white;
+      padding: 10px;
+      border-radius: 10px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
 
-#chatInput {
-  width: calc(100% - 60px);
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
+    #chatConversacion {
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #f9f9f9;
+    }
 
-#chatEnviar {
-  width: 50px;
-  padding: 8px;
-  background: #adafae;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+    #chatInput {
+      width: calc(100% - 60px);
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
 
-/* ================== REBAÑOS ================== */
-#rebanosPanel {
-  display: none;
-  background: white;
-  padding: 10px;
-  border-radius: 10px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
+    #chatEnviar {
+      width: 50px;
+      padding: 8px;
+      background: #adafae;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-/* 📱 MOBILE */
-@media (max-width: 768px) {
-  #menu {
-    position: relative;
-    width: 100%;
-    height: auto;
-  }
+    /* ================== REBAÑOS ================== */
+    #rebanosPanel {
+      display: none;
+      background: white;
+      padding: 10px;
+      border-radius: 10px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
 
-  #contenido {
-    margin-left: 0;
-  }
+    /* ================== TANQUE AGUA (LoRa) ================== */
+    #tanque {
+      display: none;
+      max-width: 520px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
 
-  #layoutAnimales {
-    flex-direction: column;
-    height: auto;
-  }
+    #tanque h2 {
+      margin-top: 0;
+      color: #0f172a;
+    }
 
-  #mapLayout {
-    flex-direction: column;
-    height: auto;
-  }
+    .tanque-visual {
+      display: flex;
+      gap: 24px;
+      align-items: flex-end;
+      margin: 20px 0;
+    }
 
-  #panelLateral,
-  #panelControles {
-    width: 100%;
-  }
+    .tanque-cilindro {
+      width: 72px;
+      height: 220px;
+      border: 3px solid #334155;
+      border-radius: 8px 8px 12px 12px;
+      background: #e2e8f0;
+      position: relative;
+      overflow: hidden;
+    }
 
-  #map {
-    height: 60vh;
-    min-height: 300px;
-  }
-}
+    .tanque-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 0%;
+      transition: height 0.35s ease, background 0.25s ease;
+      border-radius: 0 0 8px 8px;
+    }
 
-.enfermo { border-left-color: red; }
-.vacunar { border-left-color: orange; }
-.prenado { border-left-color: green; }
-</style>
+    .tanque-fill.tanque-ok {
+      background: linear-gradient(180deg, #4ade80, #22c55e);
+    }
+
+    .tanque-fill.tanque-medio {
+      background: linear-gradient(180deg, #facc15, #eab308);
+    }
+
+    .tanque-fill.tanque-bajo {
+      background: linear-gradient(180deg, #f87171, #ef4444);
+    }
+
+    .tanque-stats {
+      flex: 1;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .tanque-stats strong {
+      color: #0f172a;
+    }
+
+    #tanqueHistorial {
+      max-height: 140px;
+      overflow-y: auto;
+      padding: 10px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* 📱 MOBILE */
+    @media (max-width: 768px) {
+      #menu {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+
+      #contenido {
+        margin-left: 0;
+      }
+
+      #layoutAnimales {
+        flex-direction: column;
+        height: auto;
+      }
+
+      #mapLayout {
+        flex-direction: column;
+        height: auto;
+      }
+
+      #panelLateral,
+      #panelControles {
+        width: 100%;
+      }
+
+      #map {
+        height: 60vh;
+        min-height: 300px;
+      }
+    }
+
+    .enfermo {
+      border-left-color: red;
+    }
+
+    .vacunar {
+      border-left-color: orange;
+    }
+
+    .prenado {
+      border-left-color: green;
+    }
+
+    /* ================== TARJETAS ANIMALES (lista) ================== */
+    #lista {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .animal-card {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      background: #1e1e2f;
+      color: white;
+      padding: 12px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      border: 2px solid transparent;
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .animal-card.selected {
+      border: 2px solid #00ff9d;
+    }
+
+    .animal-card .left {
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .animal-card .center {
+      flex: 1;
+      min-width: 0;
+      text-align: left;
+    }
+
+    .animal-card .title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .animal-card .info {
+      font-size: 13px;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+
+    .animal-card .right {
+      font-weight: bold;
+      color: #00ff9d;
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    .animal-card .peso {
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .animal-card .select-animal {
+      width: auto;
+      height: auto;
+      margin: 0;
+      cursor: pointer;
+      accent-color: #00ff9d;
+    }
+
+    .animal-card-actions {
+      flex: 1 1 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    #lista .animal-card-actions button {
+      width: auto;
+      margin: 0;
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .animal-card.enfermo {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 4px 0 0 #ef4444;
+    }
+
+    .animal-card.vacunar {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 4px 0 0 #f59e0b;
+    }
+
+    .animal-card.prenado {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 4px 0 0 #22c55e;
+    }
+  </style>
 </head>
+
 <body>
-<!-- LOGIN SCREEN -->
-<div id="loginScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
-  <div style="background: white; padding: 30px; border-radius: 10px; text-align: center; max-width: 400px; width: 90%;">
-    <h2>🐄 AgroTrack</h2>
-    <div id="authTabs" style="display: flex; margin-bottom: 20px;">
-      <button id="tabLogin" onclick="showLogin()" style="flex: 1; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px 0 0 5px; cursor: pointer;">Iniciar Sesión</button>
-      <button id="tabRegister" onclick="showRegister()" style="flex: 1; padding: 10px; background: #ccc; color: black; border: none; border-radius: 0 5px 5px 0; cursor: pointer;">Registrarse</button>
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen"
+    style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+    <div
+      style="background: white; padding: 30px; border-radius: 10px; text-align: center; max-width: 420px; width: 90%; max-height: 92vh; overflow-y: auto;">
+      <h2>🐄 AgroTrack</h2>
+      <div id="authTabs" style="display: flex; margin-bottom: 20px;">
+        <button id="tabLogin" onclick="showLogin()"
+          style="flex: 1; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px 0 0 5px; cursor: pointer;">Iniciar
+          Sesión</button>
+        <button id="tabRegister" onclick="showRegister()"
+          style="flex: 1; padding: 10px; background: #ccc; color: black; border: none; border-radius: 0 5px 5px 0; cursor: pointer;">Registrarse</button>
+      </div>
+      <div id="loginForm">
+        <input id="loginEmail" type="email" placeholder="Email"
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+        <input id="password" type="password" placeholder="Contraseña"
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+        <button id="loginButton" onclick="login()"
+          style="width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;">Iniciar
+          Sesión</button>
+      </div>
+      <div id="registerForm" style="display: none;">
+        <input id="registerNombre" type="text" placeholder="Nombre"
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+        <input id="registerApellido" type="text" placeholder="Apellido"
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+        <input id="registerCiudad" type="text" placeholder="Ciudad"
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+        <input id="registerTelefono" type="tel" placeholder="Teléfono"
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+        <input id="email" type="email" placeholder="Email"
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+        <input type="password" id="registerPass" placeholder="Contraseña"
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+        <button id="registerButton" onclick="register()"
+          style="width: 100%; padding: 12px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;">Registrarse</button>
+      </div>
+      <div id="authMessage" style="margin-top: 15px; color: red;"></div>
     </div>
-    <div id="loginForm">
-      <input id="loginEmail" type="email" placeholder="Email" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
-      <input id="password" type="password" placeholder="Contraseña" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
-      <button id="loginButton" onclick="login()" style="width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;">Iniciar Sesión</button>
-    </div>
-    <div id="registerForm" style="display: none;">
-      <input id="email" type="email" placeholder="Email" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
-      <input type="password" id="registerPass" placeholder="Contraseña" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
-      <button id="registerButton" onclick="register()" style="width: 100%; padding: 12px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;">Registrarse</button>
-    </div>
-    <div id="authMessage" style="margin-top: 15px; color: red;"></div>
   </div>
-</div>
 
-<div id="appContent">
-<div id="menu">
-  <h2>🐄 AgroTrack</h2>
-  <button onclick="mostrarVista('animales')">🐄 Animales</button>
-  <button onclick="mostrarVista('ingreso')">➕ Ingresar</button>
-  <button onclick="mostrarVista('rebanos')">🐑 Rebaños</button>
-  <button onclick="mostrarVista('ayuda')">❓ Ayuda</button>
-</div>
+  <div id="appContent">
+    <div id="menu">
+      <h2>🐄 AgroTrack</h2>
+      <div id="userProfileLabel" style="display: none; padding: 6px 10px; margin: 4px 0 8px 0; font-size: 13px; color: #1b4332; background: #e8f5e9; border-radius: 6px; text-align: left;"></div>
+      <button onclick="mostrarVista('animales')">🐄 Animales</button>
+      <button onclick="mostrarVista('ingreso')">➕ Ingresar</button>
+      <button onclick="mostrarVista('rebanos')">🐑 Rebaños</button>
+      <button onclick="mostrarVista('tanque')">💧 Tanque</button>
+      <button onclick="mostrarVista('ayuda')">❓ Ayuda</button>
+    </div>
 
-<div id="contenido">
+    <div id="contenido">
 
-<!-- ANIMALES -->
-<div id="animales">
-  <div id="layoutAnimales">
+      <!-- ANIMALES -->
+      <div id="animales">
+        <div id="layoutAnimales">
 
-    <!-- 🐄 PANEL LATERAL -->
-    <div id="panelLateral">
-      <div id="listaPanel">
-        <div id="listaAnimales">
+          <!-- 🐄 PANEL LATERAL -->
+          <div id="panelLateral">
+            <div id="listaPanel">
+              <div id="listaAnimales">
 
-          <h3>Animales</h3>
+                <h3>Animales</h3>
 
-          <input id="buscador" placeholder="Buscar caravana..." oninput="mostrar()">
+                <input id="buscador" placeholder="Buscar caravana..." oninput="mostrar()">
+                <button type="button" onclick="eliminarSeleccionados()" style="width: 100%; padding: 8px; margin: 0 0 8px 0; background: #c62828; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Eliminar seleccionados</button>
 
-          <h4>Filtrar por lote</h4>
-          <select id="filtroLote" onchange="mostrar()">
-            <option value="todos">Todos</option>
-          </select>
+                <h4>Filtrar por lote</h4>
+                <select id="filtroLote" onchange="mostrar()">
+                  <option value="todos">Todos</option>
+                </select>
 
-          <div id="lista"></div>
+                <div id="lista"></div>
 
-          <div id="ranking" style="padding:10px; background:#111; color:#fff; margin:10px;">
-            <h3>📊 Ranking de animales</h3>
-            <div id="top"></div>
-            <div id="peor"></div>
+                <div id="ranking" style="padding:10px; background:#111; color:#fff; margin:10px;">
+                  <h3>📊 Ranking de animales</h3>
+                  <div id="top"></div>
+                  <div id="peor"></div>
+                </div>
+
+              </div>
+            </div>
+
+            <div id="historialPanel"></div>
+
+            <div id="chatPanel">
+              <h3>🤖 Asistente AgroTrack</h3>
+              <div id="chatConversacion"></div>
+              <input type="text" id="chatInput" placeholder="Escribe tu pregunta...">
+              <button id="chatEnviar" onclick="enviarPregunta()">Enviar</button>
+            </div>
+
+            <div id="rebanosPanel" style="display:none;">
+              <h3>🐑 Rebaños</h3>
+              <div id="rebanosContenido"></div>
+            </div>
+          </div>
+
+          <!-- 🗺️ MAPA + CONTROLES -->
+          <div id="mapLayout">
+
+            <!-- PANEL IZQUIERDO -->
+            <div id="panelControles">
+              <button onclick="activarDibujo()">✏️ Dibujar zona</button>
+              <button onclick="desactivarDibujo()">🛑 Parar dibujo</button>
+              <button onclick="borrarZona()">🗑️ Borrar zona</button>
+              <button onclick="guardarZona()">Finalizar zona</button>
+              <button onclick="exportarCSV()">📥 Excel</button>
+              <button onclick="editarZona()">✏️ Editar zona</button>
+
+              <div id="alertaZona"></div>
+              <div id="panelInfo"></div>
+
+              <input id="tiempoInactivo" type="number" step="0.1">
+
+              <input type="file" id="filePesos" style="display:none;" onchange="importarPesos()">
+              <button onclick="document.getElementById('filePesos').click()">📥 Actualizar Pesos</button>
+            </div>
+
+            <!-- MAPA -->
+            <div id="map"></div>
+
           </div>
 
         </div>
       </div>
 
-      <div id="historialPanel"></div>
+      <!-- FORMULARIO -->
+      <div id="formulario" style="display:none;">
+        <h2>Ingresar Animal</h2>
 
-      <div id="chatPanel">
-        <h3>🤖 Asistente AgroTrack</h3>
-        <div id="chatConversacion"></div>
-        <input type="text" id="chatInput" placeholder="Escribe tu pregunta...">
-        <button id="chatEnviar" onclick="enviarPregunta()">Enviar</button>
+        <input id="id" placeholder="Caravana">
+        <input id="edad" placeholder="Edad">
+        <input id="raza" placeholder="Raza">
+        <input id="lote" placeholder="Lote">
+        <input id="obs" placeholder="Observaciones">
+        <input id="lat" placeholder="Latitud">
+        <input id="lng" placeholder="Longitud">
+        <input id="peso" placeholder="Peso (kg)">
+
+        <select id="estado">
+          <option value="">-- Sin estado --</option>
+          <option>Vacunar</option>
+          <option>Preñado</option>
+          <option>Enfermo</option>
+        </select>
+
+        <button>Guardar</button>
+        <input type="file" id="fileInput" style="display:none;" onchange="importarCSV()">
+        <button onclick="document.getElementById('fileInput').click()">📂 Importar CSV</button>
       </div>
 
-      <div id="rebanosPanel" style="display:none;">
-        <h3>🐑 Rebaños</h3>
-        <div id="rebanosContenido"></div>
+      <!-- TANQUE AGUA (LoRa) -->
+      <div id="tanque" style="display:none;">
+        <h2>💧 Tanque de agua</h2>
+        <p style="color:#64748b;font-size:14px;margin-top:0;">Monitor de nivel · compatible con lecturas LoRa</p>
+        <div class="tanque-visual">
+          <div class="tanque-cilindro" aria-hidden="true">
+            <div id="tanqueNivelFill" class="tanque-fill tanque-ok"></div>
+          </div>
+          <div class="tanque-stats">
+            <p>Nivel actual: <strong id="tanquePct">0</strong> %</p>
+            <p>Litros actuales: <strong id="tanqueLitros">0</strong> L</p>
+            <p>Capacidad total: <strong id="tanqueCapDisplay">0</strong> L</p>
+            <p>Llenado (litros / capacidad): <strong id="tanquePctRel">0</strong> %</p>
+          </div>
+        </div>
+        <label for="tanqueCapacidadInput">Capacidad del tanque (litros)</label>
+        <input type="number" id="tanqueCapacidadInput" min="1" step="1" placeholder="Ej. 5000">
+        <label for="tanqueNivelInput">Nivel actual manual (%)</label>
+        <input type="number" id="tanqueNivelInput" min="0" max="100" step="0.1" placeholder="0–100">
+        <button type="button" onclick="guardarConfigTanque()">Guardar configuración</button>
+        <h4 style="margin-top:18px;">Simular lectura LoRa (nivel %)</h4>
+        <input type="number" id="tanqueSimInput" min="0" max="100" step="0.1" placeholder="Valor 0–100">
+        <button type="button" onclick="simularLecturaTanque()">Aplicar lectura</button>
+        <h4 style="margin-top:18px;">Histórico reciente</h4>
+        <div id="tanqueHistorial"></div>
       </div>
+
     </div>
 
-    <!-- 🗺️ MAPA + CONTROLES -->
-    <div id="mapLayout">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-pip/leaflet-pip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
 
-      <!-- PANEL IZQUIERDO -->
-      <div id="panelControles">
-        <button onclick="activarDibujo()">✏️ Dibujar zona</button>
-        <button onclick="desactivarDibujo()">🛑 Parar dibujo</button>
-        <button onclick="borrarZona()">🗑️ Borrar zona</button>
-        <button onclick="guardarZona()">Finalizar zona</button>
-        <button onclick="exportarCSV()">📥 Excel</button>
-        <button onclick="editarZona()">✏️ Editar zona</button>
-
-        <div id="alertaZona"></div>
-        <div id="panelInfo"></div>
-
-        <input id="tiempoInactivo" type="number" step="0.1">
-
-        <input type="file" id="filePesos" style="display:none;" onchange="importarPesos()">
-        <button onclick="document.getElementById('filePesos').click()">📥 Actualizar Pesos</button>
-      </div>
-
-      <!-- MAPA -->
-      <div id="map"></div>
-
-    </div>
-
-  </div>
-</div>
-
-<!-- FORMULARIO -->
-<div id="formulario" style="display:none;">
-  <h2>Ingresar Animal</h2>
-
-  <input id="id" placeholder="Caravana">
-  <input id="edad" placeholder="Edad">
-  <input id="raza" placeholder="Raza">
-  <input id="lote" placeholder="Lote">
-  <input id="obs" placeholder="Observaciones">
-  <input id="lat" placeholder="Latitud">
-  <input id="lng" placeholder="Longitud">
-  <input id="peso" placeholder="Peso (kg)">
-
-  <select id="estado">
-    <option value="">-- Sin estado --</option>
-    <option>Vacunar</option>
-    <option>Preñado</option>
-    <option>Enfermo</option>
-  </select>
-
-  <button onclick="agregarAnimal()">Guardar</button>
-  <input type="file" id="fileInput" style="display:none;" onchange="importarCSV()">
-<button onclick="document.getElementById('fileInput').click()">📂 Importar CSV</button>
-</div>
-
-</div>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-pip/leaflet-pip.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-  let supabaseUrl = "https://mshwegmfpxsfoqqhwqnu.supabase.co";
-let supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zaHdlZ21mcHhzZm9xcWh3cW51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwOTYzMjcsImV4cCI6MjA5MDY3MjMyN30.o3xmeC8SM63dyHkp_sGBofDGdwNkcePIPhBkeOIyQcU";
-  
-  // Inicializar Supabase
-  window.supabaseClient = window.supabaseClient || window.supabase.createClient(supabaseUrl, supabaseKey);
-  var supabase = window.supabaseClient;
-  
-  // SISTEMA DE USUARIO CON SUPABASE
-  async function checkLogin() {
-    try {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (session && !error) {
-        document.getElementById("loginScreen").style.display = "none";
-        // Agregar botón de logout al menú
-        let menu = document.getElementById("menu");
-        if (menu && !document.getElementById("logoutBtn")) {
-          let logoutBtn = document.createElement("button");
-          logoutBtn.id = "logoutBtn";
-          logoutBtn.innerHTML = "🚪 Cerrar Sesión";
-          logoutBtn.onclick = logout;
-          logoutBtn.style.cssText = "background: #f44336; color: white; border: none; border-radius: 5px; padding: 8px 12px; cursor: pointer; margin-top: 10px;";
-          menu.appendChild(logoutBtn);
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+      (function () {
+        if (window.__AGROTRACK_APP_INIT__) {
+          console.warn("AgroTrack script ya inicializado. Se evita doble ejecución.");
+          return;
         }
-      } else {
-        document.getElementById("loginScreen").style.display = "flex";
-        showLogin(); // Mostrar formulario de login por defecto
-      }
-    } catch (err) {
-      console.error("Error checking login:", err);
-      document.getElementById("loginScreen").style.display = "flex";
-    }
-  }
+        window.__AGROTRACK_APP_INIT__ = true;
 
-  function showLogin() {
-    document.getElementById("loginForm").style.display = "block";
-    document.getElementById("registerForm").style.display = "none";
-    document.getElementById("tabLogin").style.background = "#4CAF50";
-    document.getElementById("tabLogin").style.color = "white";
-    document.getElementById("tabRegister").style.background = "#ccc";
-    document.getElementById("tabRegister").style.color = "black";
-    document.getElementById("authMessage").innerText = "";
-  }
+      const SUPABASE_URL = "https://dpsrcvfaunvamluvyysy.supabase.co";
+      const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwc3JjdmZhdW52YW1sdXZ5eXN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NjY3NTYsImV4cCI6MjA5MTI0Mjc1Nn0.VFaFR97BDFe6G-rD1wvnOq4tsMIHbXwI5_fBKSdBjeA";
 
-  function showRegister() {
-    document.getElementById("loginForm").style.display = "none";
-    document.getElementById("registerForm").style.display = "block";
-    document.getElementById("tabRegister").style.background = "#2196F3";
-    document.getElementById("tabRegister").style.color = "white";
-    document.getElementById("tabLogin").style.background = "#ccc";
-    document.getElementById("tabLogin").style.color = "black";
-    document.getElementById("authMessage").innerText = "";
-  }
-
-  async function login() {
-    let emailInput = document.getElementById("loginEmail");
-    let passwordInput = document.getElementById("password");
-    let email = emailInput ? emailInput.value : "";
-    let password = passwordInput ? passwordInput.value : "";
-
-    if (!email || !password) {
-      document.getElementById("authMessage").innerText = "Ingresa email y contraseña";
-      return;
-    }
-
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
+      // Inicializar Supabase (única instancia)
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      console.log("✅ Supabase listo:", supabase);
+      window.onerror = console.error;
+      window.addEventListener("error", function (ev) {
+        console.error("💥 window.error:", ev.message, ev.filename, ev.lineno, ev.colno, ev.error);
+      });
+      window.addEventListener("unhandledrejection", function (ev) {
+        console.error("💥 unhandledrejection:", ev.reason);
       });
 
-      if (error) {
-        document.getElementById("authMessage").innerText = error.message;
-        console.error('login error', error);
-      } else {
-        console.log('login success', email);
-        document.getElementById("loginScreen").style.display = "none";
-        showLogin();
+      // SISTEMA DE USUARIO CON SUPABASE
+      // Perfil extendido: tabla public.usuarios (id = auth.users.id, PK para upsert sin duplicados)
+      //   nombre TEXT, apellido TEXT, ciudad TEXT, telefono TEXT
+      let perfilUsuario = null;
+
+      function updatePerfilUI() {
+        const el = document.getElementById("userProfileLabel");
+        if (!el) return;
+        if (perfilUsuario && (perfilUsuario.nombre || perfilUsuario.apellido)) {
+          const nombreCompleto = [perfilUsuario.nombre, perfilUsuario.apellido].filter(Boolean).join(" ").trim();
+          el.textContent = nombreCompleto || perfilUsuario.ciudad || perfilUsuario.telefono || "";
+          el.title = [perfilUsuario.ciudad, perfilUsuario.telefono].filter(Boolean).join(" · ");
+          el.style.display = "block";
+        } else if (perfilUsuario && (perfilUsuario.ciudad || perfilUsuario.telefono)) {
+          el.textContent = [perfilUsuario.ciudad, perfilUsuario.telefono].filter(Boolean).join(" · ");
+          el.title = "";
+          el.style.display = "block";
+        } else {
+          el.textContent = "";
+          el.title = "";
+          el.style.display = "none";
+        }
       }
-    } catch (err) {
-      console.error('login exception', err);
-      document.getElementById("authMessage").innerText = "Error al iniciar sesión";
-    }
-  }
 
-  async function register() {
-    console.log('register clicked');
-    let emailInput = document.getElementById("email");
-    let passwordInput = document.getElementById("registerPass");
-    let email = emailInput ? emailInput.value : "";
-    let password = passwordInput ? passwordInput.value : "";
-
-    if (!email || !password) {
-      alert("Ingresa email y contraseña");
-      return;
-    }
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password
-    });
-
-    if (error) {
-      alert(error.message);
-      console.error('register error', error);
-    } else {
-      alert("Usuario creado correctamente");
-      console.log('register success', email);
-    }
-  }
-
-  function actualizarContadoresZonas() {
-    if (!zonas || zonas.length === 0) return;
-    zonas.forEach(z => {
-      try {
-        const cantidad = contarAnimalesEnZona(z);
-        z.bindPopup("Zona: " + (z.nombre || "Sin nombre") + "<br>Animales en zona: " + cantidad);
-      } catch (e) {
-        console.error('Error actualizando contador de zona:', e);
+      async function cargarPerfilUsuario() {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) {
+            perfilUsuario = null;
+            updatePerfilUI();
+            return;
+          }
+          const { data, error } = await supabase
+            .from("usuarios")
+            .select("nombre, apellido, ciudad, telefono")
+            .eq("id", user.id)
+            .maybeSingle();
+          if (error) {
+            console.warn("cargarPerfilUsuario:", error);
+            perfilUsuario = null;
+          } else {
+            perfilUsuario = data;
+          }
+        } catch (e) {
+          console.warn("cargarPerfilUsuario:", e);
+          perfilUsuario = null;
+        }
+        updatePerfilUI();
       }
-    });
-  }
 
-  function contarAnimalesEnZona(zona) {
-    let dentro = 0;
-    if (!zona || typeof turf === 'undefined') return dentro;
-
-    animales.forEach(a => {
-      if (!a.lat || !a.lng) return;
-      const lat = parseFloat(a.lat);
-      const lng = parseFloat(a.lng);
-      if (isNaN(lat) || isNaN(lng)) return;
-
-      const punto = turf.point([lng, lat]);
-      const poligono = zona.toGeoJSON();
-      if (turf.booleanPointInPolygon(punto, poligono)) {
-        dentro++;
+      async function checkLogin() {
+        try {
+          const { data, error } = await supabase.auth.getSession();
+          const session = data?.session;
+          console.log("SESSION ACTIVA:", session);
+          if (session && !error) {
+            document.getElementById("loginScreen").style.display = "none";
+            // Agregar botón de logout al menú
+            let menu = document.getElementById("menu");
+            if (menu && !document.getElementById("logoutBtn")) {
+              let logoutBtn = document.createElement("button");
+              logoutBtn.id = "logoutBtn";
+              logoutBtn.innerHTML = "🚪 Cerrar Sesión";
+              logoutBtn.onclick = logout;
+              logoutBtn.style.cssText = "background: #f44336; color: white; border: none; border-radius: 5px; padding: 8px 12px; cursor: pointer; margin-top: 10px;";
+              menu.appendChild(logoutBtn);
+            }
+            await cargarPerfilUsuario();
+            // Datos: solo vía onAuthStateChange (SIGNED_IN)
+          } else {
+            document.getElementById("loginScreen").style.display = "flex";
+            showLogin(); // Mostrar formulario de login por defecto
+            perfilUsuario = null;
+            updatePerfilUI();
+          }
+        } catch (err) {
+          console.error("Error checking login:", err);
+          document.getElementById("loginScreen").style.display = "flex";
+          perfilUsuario = null;
+          updatePerfilUI();
+        }
       }
-    });
 
-    return dentro;
-  }
-
-  async function logout() {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error("Error logging out:", error);
+      function showLogin() {
+        document.getElementById("loginForm").style.display = "block";
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("tabLogin").style.background = "#4CAF50";
+        document.getElementById("tabLogin").style.color = "white";
+        document.getElementById("tabRegister").style.background = "#ccc";
+        document.getElementById("tabRegister").style.color = "black";
+        document.getElementById("authMessage").innerText = "";
       }
-      // Remover botón de logout
-      let logoutBtn = document.getElementById("logoutBtn");
-      if (logoutBtn) logoutBtn.remove();
-      checkLogin();
-    } catch (err) {
-      console.error("Error logging out:", err);
-    }
-  }
-
-  window.login = login;
-  window.register = register;
-  window.showLogin = showLogin;
-  window.showRegister = showRegister;
-
-  function attachAuthListeners() {
-    console.log('attachAuthListeners');
-    const loginBtn = document.getElementById('loginButton');
-    const registerBtn = document.getElementById('registerButton');
-    if (loginBtn) {
-      loginBtn.addEventListener('click', function(event) {
-        console.log('login button event');
-        login();
-      });
-    }
-    if (registerBtn) {
-      registerBtn.addEventListener('click', function(event) {
-        console.log('register button event');
-        register();
-      });
-    }
-  }
-
-  let animalesConPeso = [];
-document.addEventListener("DOMContentLoaded", function() {
-  checkLogin(); // Verificar login al cargar
-
-  supabase.auth.onAuthStateChange((event, session) => {
-    console.log('Supabase auth event:', event, session);
-    if (session) {
-      document.getElementById('loginScreen').style.display = 'none';
-    } else {
-      document.getElementById('loginScreen').style.display = 'flex';
-      showLogin();
-    }
-  });
-
-  // Registrar Service Worker para PWA
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(registration => {
-        console.log('Service Worker registrado:', registration);
-      })
-      .catch(error => {
-        console.log('Error registrando Service Worker:', error);
-      });
-  }
-
-  let map;
-async function cargarAnimales() {
-console.log("SUPABASE TEST:", supabase);
-  try {
-
-    // 🔹 ANIMALES
-    const { data: animales, error: errorAnimales } = await supabase
-      .from("animales")
-      .select("*");
-    console.log("Animales:", animales);
-    
-
-    if (errorAnimales) {
-      console.error("Error animales:", errorAnimales);
-    }
-
-    // 🔹 PESOS
-   let pesos = [];
-
-try {
-  const respuesta = await supabase.from("pesos").select("*");
-  pesos = respuesta.data;
-  console.log("PESOS OK:", pesos);
-} catch (e) {
-  console.error("ERROR PESOS:", e);
-}
-
-    // 🔹 UNIR
-    animalesConPeso = animales.map(animal => {
-
-  let ultimoPeso = "Sin datos";
-
-if (Array.isArray(animal.pesos) && animal.pesos.length > 0) {
-  const ultimo = animal.pesos[animal.pesos.length - 1];
-  if (ultimo && ultimo.valor) {
-    ultimoPeso = ultimo.valor;
-  }
-}
-
-      return {
-        ...animal,
-        peso: ultimoPeso
-      };
-    });
 
-    console.log("CON PESO:", animalesConPeso);
-
-    // 🔹 MOSTRAR
-    mostrarAnimales(animalesConPeso);
-
-  } catch (err) {
-    console.error("ERROR GENERAL:", err);
-  }
-}
-
-function mostrarAnimales(animales) {
-  animales.forEach(a => {
-
-    // evitar errores si no hay coordenadas
-    if (!a.lat || !a.lng) return;
-
-    L.marker([a.lat, a.lng])
-      .addTo(map)
-      .bindPopup("ID: " + a.id + "<br>Peso: " + (a.peso || "Sin datos"))
-
-  });
-}
-});
-// 🔥 DB AISLADA (NO ROMPE NADA)
-
-// 🔥 DB AISLADA CORRECTA
-
-
-
-  
-
-function importarCSV(){
-
-  let input = document.getElementById("fileInput");
-
-  if(!input.files.length){
-    alert("Seleccioná archivo");
-    return;
-  }
-
-  let file = input.files[0];
-  let reader = new FileReader();
-
-  reader.onload = function(e){
-
-    let lineas = e.target.result.split(/\r?\n/);
-
-    let sep = lineas[0].includes(";") ? ";" : ",";
-
-    for(let i=1;i<lineas.length;i++){
-
-      let fila = lineas[i].trim();
-      if(!fila) continue;
-
-      let c = fila.split(sep);
-
-      if(animales.some(a => a.id === c[0])) continue;
-
-      animales.push({
-        id: c[0],
-        edad: c[1],
-        raza: c[2],
-        lote: c[3],
-        obs: c[4],
-        estado: c[5],
-        lat: c[6],
-        lng: c[7]
-      });
-    }
-
-    localStorage.setItem("animales", JSON.stringify(animales));
-    mostrar();
-
-    alert("CSV cargado correctamente");
-  };
-
-  reader.readAsText(file);
-}
-
-  
-
-function desactivarDibujo(){
-  dibujando = false;
-}
-function activarDibujo(){
-  dibujando = true;
-
-  // limpiar puntos anteriores
-  puntosZona = [];
-
-  // borrar dibujo temporal si existe
-  if(window.poligonoTemp){
-    map.removeLayer(window.poligonoTemp);
-    window.poligonoTemp = null;
-  }
-
-  alert("Modo dibujo activado. Hacé clic en el mapa.");
-}
-
-function limpiarZona(){
-  puntosZona = [];
-  zona = [];
-  localStorage.removeItem("zona");
-
-  if(window.poligono){
-    map.removeLayer(window.poligono);
-    window.poligono = null;
-  }
-}
-
-// DATOS
-let animales = JSON.parse(localStorage.getItem("animales")) || [];
-let zonas = [];
-let ahoraISO = new Date().toISOString();
-
-animales.forEach(a => {
-  if(!a.historial){
-  a.historial = [];
-}
-  // si no existe o está mal → corregir
-  if(!a.ultimaActualizacion || isNaN(new Date(a.ultimaActualizacion))){
-    a.ultimaActualizacion = ahoraISO;
-  }
-});
-localStorage.setItem("animales", JSON.stringify(animales));
-let tiempoGuardado = localStorage.getItem("tiempoInactivo");
-
-if(tiempoGuardado){
-  let inputTiempo = document.getElementById("tiempoInactivo");
-  if(inputTiempo){
-    inputTiempo.value = tiempoGuardado;
-  }
-}
-animales.forEach(a => {
-  if(!a.ultimaActualizacion){
-    a.ultimaActualizacion = new Date(0).toISOString();
-  }
-});
-animales.forEach(a => {
-  if(!a.movimientos){
-    a.movimientos = [{
-      lat: a.lat,
-      lng: a.lng,
-      fecha: new Date().toISOString()
-    }];
-  }
-});
-let puntosZona = [];
-
-// MAPA
-// CAPAS
-let normal = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-let satelite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
-
-// 📦 recuperar vista guardada
-let vistaGuardada = localStorage.getItem("mapView");
-
-let centro = [-34.9, -56.2];
-let zoom = 7;
-
-if(vistaGuardada){
-  let data = JSON.parse(vistaGuardada);
-  centro = data.center;
-  zoom = data.zoom;
-}
-
-// 🗺️ crear mapa
-map = L.map('map').setView(centro, zoom);
-//cargarAnimales(); // ← ESTA LÍNEA AGREGÁS
-setTimeout(function(){
-  map.invalidateSize();
-}, 500);
-
-// capas activas
-normal.addTo(map);
-
-let zonasGuardadas = JSON.parse(localStorage.getItem("zonas")) || [];
-
-zonasGuardadas.forEach(z => {
-
-  if(!z.coords || z.coords.length < 3) return; // 🔥 evita romper mapa
-
-  let poly = L.polygon(z.coords, {color:'blue'}).addTo(map);
-
-  poly.nombre = z.nombre || "Sin nombre";
-
-  const cantidad = contarAnimalesEnZona(poly);
-  poly.bindPopup("Zona: " + poly.nombre + "<br>Animales en zona: " + cantidad);
-
-  poly.on('click', function(){
-    zonas.forEach(z => z.setStyle({color:'blue'}));
-    this.setStyle({color:'red'});
-    zonaSeleccionada = this;
-    alert("Zona: " + this.nombre);
-  });
-
-  zonas.push(poly);
-});
-
-// selector
-L.control.layers({
-  "Mapa": normal,
-  "Satélite": satelite
-}).addTo(map);
-
-
-// 💾 guardar vista
-map.on('moveend zoomend', function(){
-
-  let c = map.getCenter();
-
-  localStorage.setItem("mapView", JSON.stringify({
-    center: [c.lat, c.lng],
-    zoom: map.getZoom()
-  }));
-});
-// CARGAR ZONA
-
-
-// CLICK MAPA (guardar coordenadas + zona)
-map.on('click', function(e){
-
-  document.getElementById("lat").value = e.latlng.lat;
-  document.getElementById("lng").value = e.latlng.lng;
-
-  if(!dibujando) return;
-
-  puntosZona.push([e.latlng.lat, e.latlng.lng]);
-
-  if(window.poligonoTemp) map.removeLayer(window.poligonoTemp);
-
-  window.poligonoTemp = L.polygon(puntosZona, {color:'red'}).addTo(map);
-});
-// CAMBIO DE SECCIÓN
-function mostrarSeccion(s){
-
-  document.getElementById("animales").style.display = "none";
-  document.getElementById("formulario").style.display = "none";
-
-  if(s==="animales") document.getElementById("animales").style.display = "block";
-  if(s==="formulario") document.getElementById("formulario").style.display = "block";
-
-  // 🔥 ESTO ARREGLA EL MAPA
-  setTimeout(function(){
-    map.invalidateSize();
-  }, 200);
-}
-
-// AGREGAR
-function agregarAnimal(){
-
-  let idInput = document.getElementById("id");
-  let edadInput = document.getElementById("edad");
-  let razaInput = document.getElementById("raza");
-  let loteInput = document.getElementById("lote");
-  let obsInput = document.getElementById("obs");
-  let estadoInput = document.getElementById("estado");
-  let latInput = document.getElementById("lat");
-  let lngInput = document.getElementById("lng");
-  let pesoInput = document.getElementById("peso");
-
-  if(!idInput) {
-    alert("Error: no encuentra campo ID");
-    return;
-  }
-
-  // ❌ evitar duplicados
-  if(animales.some(a => a.id === idInput.value)){
-    alert("⚠️ Ya existe esa caravana");
-    return;
-  }
-
-let a = {
-
-  id: idInput.value,
-  edad: edadInput ? edadInput.value : "",
-  raza: razaInput ? razaInput.value : "",
-  lote: loteInput ? loteInput.value : "",
-  obs: obsInput ? obsInput.value : "",
-  estado: estadoInput ? estadoInput.value : "",
-  lat: latInput ? latInput.value : "",
-  lng: lngInput ? lngInput.value : "",
-  historial: [], // 👈 PEGAR EXACTO ACA
-ultimaActualizacion: new Date().toISOString(),
-  movimientos: [{
-    lat: latInput.value,
-    lng: lngInput.value,
-    fecha: new Date().toISOString()
-  }], // 🔥 ESTA COMA FALTABA
-
-  pesos:[{
-    valor: pesoInput ? pesoInput.value : "",
-    fecha: new Date().toISOString()
-  }]
-};
-
-animales.push(a);
-//guardarEnDB(a);
-
-// 🔥 GUARDAR
-localStorage.setItem("animales", JSON.stringify(animales));
-
-  actualizarContadoresZonas();
-
-
-}
-
-function limpiarFormulario(){
-  id.value="";
-  edad.value="";
-  raza.value="";
-  lote.value="";
-  obs.value="";
-  lat.value="";
-  lng.value="";
-  estado.value="";
-  document.getElementById("peso").value = "";
-}
-
-// MOSTRAR
-function mostrar(){
-  console.log("Animales:", animales);
-  console.log("mostrar ejecutando");
-
-  let lista = document.getElementById("lista");
-  if(!lista) return;
-
-  lista.innerHTML = "";
-
-  let texto = "";
-  let buscador = document.getElementById("buscador");
-  if(buscador){
-    texto = buscador.value.toLowerCase();
-  }
-
-  let filtro = "todos";
-  let filtroSelect = document.getElementById("filtroLote");
-  if(filtroSelect){
-    filtro = filtroSelect.value;
-  }
-
-  animales.forEach(function(a,i){
-
-    let ultimoPeso = "-";
-
-    if(a.pesos && a.pesos.length > 0){
-      ultimoPeso = a.pesos[a.pesos.length - 1].valor;
-    } else if(a.peso){
-      ultimoPeso = a.peso;
-    }
-
-    let ganancia = calcularGanancia(a);
-   let estimado = "-";
-
-if(a.pesos && a.pesos.length >= 2){
-  try {
-    estimado = estimarPeso(a);
-  } catch(e){
-    console.log("Error estimado:", a);
-  }
-}
-
-
-    let idStr = String(a.id || "").toLowerCase();
-
-    if(filtro !== "todos" && a.lote !== filtro) return;
-    if(texto && idStr.indexOf(texto) === -1) return;
-
-    let clase = "normal";
-    if(a.estado==="Enfermo") clase="enfermo";
-    if(a.estado==="Vacunar") clase="vacunar";
-    if(a.estado==="Preñado") clase="prenado";
-
-    lista.innerHTML += 
-      "<div class='card " + clase + "'>" +
-      "<b>" + a.id + "</b><br>" +
-      "Estado: " + (a.estado || "-") + "<br>" +
-      "Peso: " + ultimoPeso + " kg<br>" +
-      "Edad: " + (a.edad || "-") + "<br>" +
-      "Raza: " + (a.raza || "-") + "<br>" +
-      "Lote: " + (a.lote || "-") + "<br>" +
-      "Ganancia: " + ganancia + " kg/día<br>" +
-"Estimado 30 días: " + estimado + " kg<br>" +
-      "<button onclick=\"verHistorial('" + a.id + "')\">📜 Historial</button>" +
-      "<button onclick=\"mostrarGrafico('" + a.id + "')\">📊 Gráfico</button>" +
-      "<button onclick='editarEstado(" + i + ")'>✏️</button>" +
-      "<button onclick='editarCaravana(" + i + ")'>🔄</button>"+
-      "<button onclick='eliminar(" + i + ")'>❌</button>" +
-      "</div>";
-  });
-
-  if(typeof mostrarEnMapa === "function"){
-    mostrarEnMapa(); 
-  }
-
-  if(typeof cargarLotes === "function"){
-    cargarLotes();
-  }
-
-  mostrarRanking(animales);
-}
-
-// MAPA
-// 🔥 VARIABLES GLOBALES RECUPERADAS
-let dibujando = false;
-let marcadores = [];
-
-let alertaActiva = false;
-let zonaSeleccionada = null;
-function mostrarEnMapa(){
-
-  // borrar solo marcadores
- marcadores.forEach(m => map.removeLayer(m));
-marcadores = [];
-  let hayFuera = false;
-
-  animales.forEach(a=>{
-
-    try { // 🔥 PROTECCIÓN TOTAL
-
-      let lat = parseFloat(a.lat);
-      let lng = parseFloat(a.lng);
-      // 🔥 guardar historial si cambió posición
-if(!a.movimientos) a.movimientos = [];
-
-let ultimo = a.movimientos[a.movimientos.length - 1];
-
-if(!ultimo || ultimo.lat != lat || ultimo.lng != lng){
-  a.movimientos.push({
-    lat: lat,
-    lng: lng,
-    fecha: new Date().toISOString()
-  });
-
-  // guardar cambios
-  localStorage.setItem("animales", JSON.stringify(animales));
-}
-      // 🔥 registrar movimiento si cambió
-//if(!a.movimientos) a.movimientos = [];
-
-//let ultimo = a.movimientos[a.movimientos.length - 1];
-
-//if(!ultimo || ultimo.lat != lat || ultimo.lng != lng){
- // a.movimientos.push({
- //   lat: lat,
- //   lng: lng,
-  //  fecha: new Date().toISOString()
- // });
-//}
-
-      if(isNaN(lat) || isNaN(lng)) return;
-
-     let dentro = true;
-
-try {
-  dentro = estaDentroZona(lat,lng);
-} catch(e){
-  console.log("Error zona:", e);
-}
-      if(!dentro){
-  hayFuera = true;
-}
-  let horas = parseFloat(document.getElementById("tiempoInactivo")?.value) || 1;
-let inactivo = estaInactivo(a, horas);
-     let color = "blue";
-
-// 🔥 PRIORIDAD ORDENADA
-if(inactivo){
-  color = "black"; // ⚫ prioridad máxima
-} else if(!dentro){
-  color = "red";
-} else if(a.estado==="Enfermo"){
-  color="red";
-} else if(a.estado==="Vacunar"){
-  color="orange";
-} else if(a.estado==="Preñado"){
-  color="green";
-}
-
-  let icono = L.divIcon({
-  html: `
+      function showRegister() {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("registerForm").style.display = "block";
+        document.getElementById("tabRegister").style.background = "#2196F3";
+        document.getElementById("tabRegister").style.color = "white";
+        document.getElementById("tabLogin").style.background = "#ccc";
+        document.getElementById("tabLogin").style.color = "black";
+        document.getElementById("authMessage").innerText = "";
+      }
+
+      async function login() {
+        let emailInput = document.getElementById("loginEmail");
+        let passwordInput = document.getElementById("password");
+        let email = emailInput ? emailInput.value : "";
+        let password = passwordInput ? passwordInput.value : "";
+
+        if (!email || !password) {
+          document.getElementById("authMessage").innerText = "Ingresa email y contraseña";
+          return;
+        }
+
+        try {
+          const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
+
+          if (error) {
+            document.getElementById("authMessage").innerText = error.message;
+            console.error('login error', error);
+          } else {
+            console.log('login success', email);
+            document.getElementById("loginScreen").style.display = "none";
+            // Agregar botón de logout dinámicamente
+            let menu = document.getElementById("menu");
+            if (menu && !document.getElementById("logoutBtn")) {
+              let logoutBtn = document.createElement("button");
+              logoutBtn.id = "logoutBtn";
+              logoutBtn.innerHTML = "🚪 Cerrar Sesión";
+              logoutBtn.onclick = logout;
+              logoutBtn.style.cssText = "background: #f44336; color: white; border: none; border-radius: 5px; padding: 8px 12px; cursor: pointer; margin-top: 10px;";
+              menu.appendChild(logoutBtn);
+            }
+            await cargarPerfilUsuario();
+            // UI de auth: onAuthStateChange (SIGNED_IN) dispara cargarAnimales()
+          }
+        } catch (err) {
+          console.error('login exception', err);
+          document.getElementById("authMessage").innerText = "Error al iniciar sesión";
+        }
+      }
+
+      async function register() {
+        console.log('register clicked');
+        let emailInput = document.getElementById("email");
+        let passwordInput = document.getElementById("registerPass");
+        let nombreInput = document.getElementById("registerNombre");
+        let apellidoInput = document.getElementById("registerApellido");
+        let ciudadInput = document.getElementById("registerCiudad");
+        let telefonoInput = document.getElementById("registerTelefono");
+        let email = emailInput ? String(emailInput.value).trim() : "";
+        let password = passwordInput ? passwordInput.value : "";
+        let nombre = nombreInput ? String(nombreInput.value).trim() : "";
+        let apellido = apellidoInput ? String(apellidoInput.value).trim() : "";
+        let ciudad = ciudadInput ? String(ciudadInput.value).trim() : "";
+        let telefono = telefonoInput ? String(telefonoInput.value).trim() : "";
+
+        if (!email || !password) {
+          alert("Ingresa email y contraseña");
+          return;
+        }
+        if (!nombre || !apellido) {
+          alert("Ingresa nombre y apellido");
+          return;
+        }
+
+        const { data: signData, error } = await supabase.auth.signUp({
+          email,
+          password
+        });
+
+        if (error) {
+          alert(error.message);
+          console.error('register error', error);
+          return;
+        }
+
+        const { data: { user } } = await supabase.auth.getUser();
+        // Tras signUp, la sesión puede existir ya o no (p. ej. confirmación por email); usar usuario de getUser() o el devuelto por signUp.
+        const authUser = user && user.id ? user : (signData && signData.user && signData.user.id ? signData.user : null);
+        if (!authUser) {
+          document.getElementById("authMessage").innerText = "Revisa tu correo para confirmar la cuenta. Luego inicia sesión para completar o ver tu perfil.";
+          console.log('register success (pendiente confirmación)', email);
+          return;
+        }
+
+        const { error: perfilError } = await supabase.from("usuarios").upsert(
+          [{
+            id: authUser.id,
+            nombre: nombre,
+            apellido: apellido,
+            ciudad: ciudad || null,
+            telefono: telefono || null
+          }],
+          { onConflict: "id" }
+        );
+
+        if (perfilError) {
+          console.error("Error guardando perfil en usuarios:", perfilError);
+          alert("Cuenta creada, pero no se pudo guardar el perfil: " + (perfilError.message || String(perfilError)));
+        } else {
+          alert("Usuario creado correctamente");
+          console.log('register success', email);
+          await cargarPerfilUsuario();
+        }
+      }
+
+      function actualizarContadoresZonas() {
+        if (!zonas || zonas.length === 0) return;
+        zonas.forEach(z => {
+          try {
+            const cantidad = contarAnimalesEnZona(z);
+            z.bindPopup("Zona: " + (z.nombre || "Sin nombre") + "<br>Animales en zona: " + cantidad);
+          } catch (e) {
+            console.error('Error actualizando contador de zona:', e);
+          }
+        });
+      }
+
+      function contarAnimalesEnZona(zona) {
+        let dentro = 0;
+        if (!zona || typeof turf === 'undefined') return dentro;
+
+        animales.forEach(a => {
+          if (!a.lat || !a.lng) return;
+          const lat = parseFloat(a.lat);
+          const lng = parseFloat(a.lng);
+          if (isNaN(lat) || isNaN(lng)) return;
+
+          const punto = turf.point([lng, lat]);
+          const poligono = zona.toGeoJSON();
+          if (turf.booleanPointInPolygon(punto, poligono)) {
+            dentro++;
+          }
+        });
+
+        return dentro;
+      }
+
+      async function logout() {
+        try {
+          const { error } = await supabase.auth.signOut();
+          if (error) {
+            console.error("Error logging out:", error);
+          }
+          // Remover botón de logout
+          let logoutBtn = document.getElementById("logoutBtn");
+          if (logoutBtn) logoutBtn.remove();
+          checkLogin();
+        } catch (err) {
+          console.error("Error logging out:", err);
+        }
+      }
+
+      window.login = login;
+      window.register = register;
+      window.showLogin = showLogin;
+      window.showRegister = showRegister;
+      window.cargarPerfilUsuario = cargarPerfilUsuario;
+
+      function attachAuthListeners() {
+        console.log('attachAuthListeners');
+        const loginBtn = document.getElementById('loginButton');
+        const registerBtn = document.getElementById('registerButton');
+        if (loginBtn) {
+          loginBtn.addEventListener('click', function (event) {
+            console.log('login button event');
+            login();
+          });
+        }
+        if (registerBtn) {
+          registerBtn.addEventListener('click', function (event) {
+            console.log('register button event');
+            register();
+          });
+        }
+      }
+
+      let animalesConPeso = [];
+      let animales = []; // Mismo ámbito que checkLogin / contarAnimalesEnZona (carga desde Supabase tras login)
+      let selectedAnimales = []; // caravanas seleccionadas para borrado múltiple
+      let zonas = [];
+      document.addEventListener("DOMContentLoaded", async function () {
+
+        // Registrar Service Worker para PWA
+       // if ('serviceWorker' in navigator) {
+         // navigator.serviceWorker.register('sw.js')
+         //   .then(registration => {
+          //    console.log('Service Worker registrado:', registration);
+           // })
+           // .catch(error => {
+            //  console.log('Error registrando Service Worker:', error);
+           // });
+        //}
+
+        let map;
+        async function cargarAnimales() {
+          console.log("Cargando animales desde Supabase...");
+          try {
+            const { data: sessWrap } = await supabase.auth.getSession();
+            const sessionActiva = sessWrap?.session;
+            console.log("SESSION ACTIVA:", sessionActiva);
+            if (!sessionActiva) {
+              console.warn("cargarAnimales: sin sesión, no se consulta Supabase");
+              animales = [];
+              selectedAnimales = [];
+              mostrar();
+              return;
+            }
+
+            const { data, error } = await supabase
+              .from("animales")
+              .select("*");
+
+            console.log("DATOS CRUDOS:", data);
+            console.log("ERROR:", error);
+
+            if (error) {
+              console.error("Error cargando animales:", error);
+              animales = [];
+              selectedAnimales = [];
+              mostrar();
+              return;
+            }
+
+            animales = (data || []).map(function (a) {
+              var pesosArr = normalizePesosFromDb(a.pesos);
+              var numPeso = normalizeNumPeso(a.peso);
+              return {
+                id: a.caravana,
+                edad: a.edad,
+                raza: a.raza,
+                lote: a.lote,
+                obs: a.obs,
+                estado: a.estado,
+                lat: a.lat,
+                lng: a.lng,
+                peso: numPeso != null ? numPeso : null,
+                pesos: pesosArr
+              };
+            });
+            mostrar();
+
+          } catch (err) {
+            console.error("ERROR al cargar animales:", err);
+            animales = [];
+            selectedAnimales = [];
+            mostrar();
+          }
+        }
+
+        window.cargarAnimales = cargarAnimales;
+
+        // FUNCIONES HELPER PARA SUPABASE
+        // 
+        // INSTRUCCIONES PARA CREAR LA TABLA EN SUPABASE:
+        // 
+        // CREATE TABLE animales (
+        //   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        //   user_id UUID NOT NULL REFERENCES auth.users(id),
+        //   caravana TEXT NOT NULL,
+        //   edad TEXT,
+        //   raza TEXT,
+        //   lote TEXT,
+        //   obs TEXT,
+        //   estado TEXT,
+        //   lat FLOAT,
+        //   lng FLOAT,
+        //   peso FLOAT,
+        //   historial JSONB DEFAULT '[]',
+        //   ultimaActualizacion TEXT,
+        //   movimientos JSONB DEFAULT '[]',
+        //   pesos JSONB DEFAULT '[]',
+        //   created_at TIMESTAMP DEFAULT NOW(),
+        //   UNIQUE(user_id, caravana)
+        // );
+        //
+        // CREATE TABLE tanques (
+        //   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        //   capacidad DOUBLE PRECISION NOT NULL DEFAULT 0,
+        //   nivel_actual DOUBLE PRECISION NOT NULL DEFAULT 0,
+        //   updated_at TIMESTAMPTZ DEFAULT NOW(),
+        //   historial JSONB DEFAULT '[]'
+        // );
+
+        function coordenadaONull(val) {
+          if (val === null || val === undefined) return null;
+          const t = String(val).trim();
+          if (t === "") return null;
+          const n = parseFloat(t.replace(",", "."));
+          return isNaN(n) ? null : n;
+        }
+
+        function normalizeNumPeso(v) {
+          if (v === null || v === undefined || v === "") return null;
+          const n = parseFloat(String(v).replace(",", "."));
+          return isNaN(n) ? null : n;
+        }
+
+        function normalizePesosFromDb(raw) {
+          if (raw == null) return [];
+          let arr = raw;
+          if (typeof raw === "string") {
+            try {
+              arr = JSON.parse(raw);
+            } catch (e) {
+              return [];
+            }
+          }
+          if (!Array.isArray(arr)) return [];
+          return arr.map(function (p) {
+            if (!p || typeof p !== "object") return { valor: 0, fecha: "" };
+            const nv = normalizeNumPeso(p.valor);
+            return {
+              valor: nv != null ? nv : 0,
+              fecha: p.fecha != null ? String(p.fecha) : ""
+            };
+          });
+        }
+
+        function pesosOrdenadosPorFecha(a) {
+          if (!a || !a.pesos || !a.pesos.length) return [];
+          return a.pesos.slice().sort(function (x, y) {
+            return new Date(x.fecha) - new Date(y.fecha);
+          });
+        }
+
+        /** Peso actual (columna DB) para UI; si falta, último del historial ordenado por fecha. */
+        function pesoParaMostrar(a) {
+          if (!a) return "-";
+          var n = normalizeNumPeso(a.peso);
+          if (n != null) return n;
+          var ord = pesosOrdenadosPorFecha(a);
+          if (ord.length > 0) {
+            var nl = normalizeNumPeso(ord[ord.length - 1].valor);
+            if (nl != null) return nl;
+          }
+          return "-";
+        }
+
+        async function guardarAnimalDB(animal) {
+          console.log("🗄️ guardarAnimalDB INICIO", animal);
+
+          try {
+            const { data: sessWrap } = await supabase.auth.getSession();
+            const sessionActiva = sessWrap?.session;
+            console.log("SESSION ACTIVA:", sessionActiva);
+            if (!sessionActiva) {
+              console.error("guardarAnimalDB: sin sesión activa");
+              return false;
+            }
+
+            var pesosArr = normalizePesosFromDb(animal.pesos);
+            var pesoNum = normalizeNumPeso(animal.peso);
+            if (pesoNum == null && pesosArr.length > 0) {
+              pesoNum = normalizeNumPeso(pesosArr[pesosArr.length - 1].valor);
+            }
+            if (pesoNum == null) pesoNum = 0;
+
+            const payload = {
+              caravana: animal.id,
+              edad: animal.edad,
+              raza: animal.raza,
+              lote: animal.lote,
+              obs: animal.obs,
+              estado: animal.estado,
+              lat: parseFloat(animal.lat) || null,
+              lng: parseFloat(animal.lng) || null,
+              peso: pesoNum,
+              pesos: pesosArr
+            };
+
+            console.log("📦 PAYLOAD:", payload);
+
+            const res = await supabase
+              .from("animales")
+              .insert([payload])
+              .select();
+
+            console.log("📡 RESPUESTA COMPLETA:", res);
+            console.log("❌ ERROR:", res.error || null);
+
+            if (res.error) {
+              return false;
+            }
+
+            console.log("✅ INSERT OK:", res.data);
+            return true;
+
+          } catch (err) {
+            console.error("💥 ERROR CRÍTICO:", err);
+            return false;
+          }
+        }
+
+        async function actualizarAnimalEnSupabase(animalId, actualizaciones) {
+          try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+              console.error("Usuario no autenticado");
+              return false;
+            }
+
+            const { error } = await supabase
+              .from("animales")
+              .update(actualizaciones)
+              .eq("caravana", animalId)
+              .eq("user_id", user.id);
+
+            if (error) {
+              console.error("Error actualizando animal:", error);
+              alert("Error al actualizar animal: " + (error.message || String(error)));
+              return false;
+            }
+
+            console.log("Animal actualizado:", animalId);
+            return true;
+          } catch (err) {
+            console.error("Error en actualizarAnimalEnSupabase:", err);
+            return false;
+          }
+        }
+
+        async function eliminarAnimalEnSupabase(animalId) {
+          try {
+            const { error } = await supabase
+              .from("animales")
+              .delete()
+              .eq("caravana", animalId);
+
+            if (error) {
+              console.error("Error eliminando animal:", error);
+              alert("Error al eliminar animal: " + (error.message || String(error)));
+              return false;
+            }
+
+            console.log("Animal eliminado:", animalId);
+            return true;
+          } catch (err) {
+            console.error("Error en eliminarAnimalEnSupabase:", err);
+            return false;
+          }
+        }
+
+        let tanqueRowIdLocal = null;
+
+        async function guardarTanque(capacidad, nivel) {
+          let historialExistente = [];
+          let rowId = tanqueRowIdLocal;
+
+          if (rowId) {
+            const { data: existing, error: fetchErr } = await supabase
+              .from("tanques")
+              .select("historial")
+              .eq("id", rowId)
+              .maybeSingle();
+            if (fetchErr) {
+              console.error("[tanque] error leyendo historial:", fetchErr);
+            } else if (existing && Array.isArray(existing.historial)) {
+              historialExistente = existing.historial;
+            }
+          } else {
+            const { data: rows, error: fetchRowErr } = await supabase
+              .from("tanques")
+              .select("id, historial")
+              .order("updated_at", { ascending: false })
+              .limit(1);
+            if (fetchRowErr) {
+              console.error("[tanque] error leyendo fila tanque:", fetchRowErr);
+            } else if (rows && rows.length) {
+              rowId = rows[0].id;
+              tanqueRowIdLocal = rowId;
+              if (Array.isArray(rows[0].historial)) {
+                historialExistente = rows[0].historial;
+              }
+            }
+          }
+
+          const nuevoRegistro = {
+            nivel: parseFloat(nivel),
+            fecha: new Date().toISOString()
+          };
+          const historial = [...historialExistente, nuevoRegistro];
+
+          const row = {
+            capacidad: parseFloat(capacidad),
+            nivel_actual: parseFloat(nivel),
+            updated_at: new Date().toISOString(),
+            historial
+          };
+          if (rowId) row.id = rowId;
+
+          const { data, error } = await supabase
+            .from("tanques")
+            .upsert([row])
+            .select();
+
+          console.log("TANQUE:", data, error);
+
+          if (!error && data && data[0] && data[0].id) {
+            tanqueRowIdLocal = data[0].id;
+            pintarHistorialTanque(data[0].historial, data[0].capacidad);
+          }
+
+          return !error;
+        }
+
+        function renderTanqueUI(capacidad, nivelPct) {
+          const cap = Math.max(0, parseFloat(capacidad) || 0);
+          const pct = Math.min(100, Math.max(0, parseFloat(nivelPct) || 0));
+          const litros = (cap * pct) / 100;
+          const fill = document.getElementById("tanqueNivelFill");
+          const elPct = document.getElementById("tanquePct");
+          const elL = document.getElementById("tanqueLitros");
+          const elC = document.getElementById("tanqueCapDisplay");
+          const elPctRel = document.getElementById("tanquePctRel");
+          if (!fill || !elPct) return;
+          elPct.textContent = pct.toFixed(1);
+          if (elL) elL.textContent = litros.toFixed(1);
+          if (elC) elC.textContent = cap.toFixed(0);
+          if (elPctRel) {
+            elPctRel.textContent = cap > 0 ? ((litros / cap) * 100).toFixed(1) : "0.0";
+          }
+          fill.style.height = pct + "%";
+          fill.classList.remove("tanque-ok", "tanque-medio", "tanque-bajo");
+          if (pct > 50) fill.classList.add("tanque-ok");
+          else if (pct >= 25) fill.classList.add("tanque-medio");
+          else fill.classList.add("tanque-bajo");
+        }
+
+        function pintarHistorialTanque(historial, capacidadLitros) {
+          const div = document.getElementById("tanqueHistorial");
+          if (!div) return;
+          const cap = Math.max(0, parseFloat(capacidadLitros) || 0);
+          const list = Array.isArray(historial) ? historial : [];
+          const slice = list.slice(-12).reverse();
+          if (slice.length === 0) {
+            div.innerHTML = "<em>Sin lecturas registradas.</em>";
+            return;
+          }
+          div.innerHTML = slice.map(function (h) {
+            const fechaIso = h.fecha || h.t;
+            const d = fechaIso ? new Date(fechaIso) : new Date();
+            const n = parseFloat(h.nivel);
+            const nivelNum = isNaN(n) ? 0 : n;
+            const litros = cap > 0 ? (cap * nivelNum) / 100 : 0;
+            return "<div style=\"border-bottom:1px solid #e2e8f0;padding:4px 0;\">" + d.toLocaleString() + " — " + nivelNum.toFixed(1) + " % (" + litros.toFixed(1) + " L)</div>";
+          }).join("");
+        }
+
+        async function cargarTanqueDesdeSupabase() {
+          try {
+            const { data: rows, error } = await supabase
+              .from("tanques")
+              .select("*")
+              .order("updated_at", { ascending: false })
+              .limit(1);
+            const data = rows && rows.length ? rows[0] : null;
+
+            if (error) {
+              console.error("[tanque] Error cargando:", error);
+              alert("Error al cargar tanque: " + (error.message || String(error)));
+              return;
+            }
+
+            if (data) {
+              tanqueRowIdLocal = data.id;
+              const capIn = document.getElementById("tanqueCapacidadInput");
+              const nivIn = document.getElementById("tanqueNivelInput");
+              if (capIn) capIn.value = data.capacidad != null ? data.capacidad : "";
+              if (nivIn) nivIn.value = data.nivel_actual != null ? data.nivel_actual : "";
+              renderTanqueUI(data.capacidad, data.nivel_actual);
+              pintarHistorialTanque(data.historial, data.capacidad);
+            } else {
+              tanqueRowIdLocal = null;
+              const capIn = document.getElementById("tanqueCapacidadInput");
+              const nivIn = document.getElementById("tanqueNivelInput");
+              renderTanqueUI(
+                capIn && capIn.value ? capIn.value : 0,
+                nivIn && nivIn.value ? nivIn.value : 0
+              );
+              pintarHistorialTanque([], 0);
+            }
+          } catch (e) {
+            console.error("[tanque] cargarTanqueDesdeSupabase:", e);
+            alert("Error al cargar tanque: " + (e.message || String(e)));
+          }
+        }
+
+        async function guardarConfigTanque() {
+          try {
+            const cap = parseFloat(document.getElementById("tanqueCapacidadInput").value);
+            const niv = parseFloat(document.getElementById("tanqueNivelInput").value);
+            if (isNaN(cap) || cap <= 0) {
+              alert("Indicá una capacidad válida (litros).");
+              return;
+            }
+            if (isNaN(niv) || niv < 0 || niv > 100) {
+              alert("El nivel debe estar entre 0 y 100 %.");
+              return;
+            }
+            const ok = await guardarTanque(cap, niv);
+            if (!ok) {
+              alert("Error al guardar tanque en Supabase (ver consola).");
+              return;
+            }
+            renderTanqueUI(cap, niv);
+            alert("Configuración del tanque guardada.");
+          } catch (err) {
+            console.error("guardarConfigTanque:", err);
+            alert("Error: " + (err.message || String(err)));
+          }
+        }
+
+        async function actualizarNivelTanque(valor) {
+          try {
+            const v = parseFloat(valor);
+            if (isNaN(v)) {
+              alert("Valor de nivel no válido.");
+              return;
+            }
+            const nivel = Math.min(100, Math.max(0, v));
+            const capIn = document.getElementById("tanqueCapacidadInput");
+            let cap = capIn ? parseFloat(capIn.value) : NaN;
+            if (isNaN(cap) || cap <= 0) {
+              const disp = document.getElementById("tanqueCapDisplay");
+              cap = disp ? parseFloat(disp.textContent.replace(/[^\d.,]/g, "").replace(",", ".")) : NaN;
+            }
+            if (isNaN(cap) || cap <= 0) {
+              alert("Configurá primero la capacidad (litros) y guardá con «Guardar configuración».");
+              return;
+            }
+            const ok = await guardarTanque(cap, nivel);
+            if (!ok) {
+              alert("Error al guardar nivel en Supabase (ver consola).");
+              return;
+            }
+            const nivIn = document.getElementById("tanqueNivelInput");
+            if (nivIn) nivIn.value = nivel;
+            const simIn = document.getElementById("tanqueSimInput");
+            if (simIn) simIn.value = nivel;
+            renderTanqueUI(cap, nivel);
+          } catch (e) {
+            console.error("actualizarNivelTanque:", e);
+            alert("Error: " + (e.message || String(e)));
+          }
+        }
+
+        async function simularLecturaTanque() {
+          const v = parseFloat(document.getElementById("tanqueSimInput").value);
+          if (isNaN(v)) {
+            alert("Ingresá un número entre 0 y 100.");
+            return;
+          }
+          await actualizarNivelTanque(v);
+        }
+
+        function importarCSV() {
+
+          let input = document.getElementById("fileInput");
+
+          if (!input.files.length) {
+            alert("Seleccioná archivo");
+            return;
+          }
+
+          let file = input.files[0];
+          let reader = new FileReader();
+
+          reader.onload = async function (e) {
+
+            let lineas = e.target.result.split(/\r?\n/);
+
+            let sep = lineas[0].includes(";") ? ";" : ",";
+            let agregados = 0;
+            let duplicados = 0;
+
+            for (let i = 1; i < lineas.length; i++) {
+
+              let fila = lineas[i].trim();
+              if (!fila) continue;
+
+              let c = fila.split(sep);
+
+              // Evitar duplicados
+              if (animales.some(a => a.id === c[0])) {
+                duplicados++;
+                continue;
+              }
+
+              let nuevoAnimal = {
+                id: c[0],
+                edad: c[1] || "",
+                raza: c[2] || "",
+                lote: c[3] || "",
+                obs: c[4] || "",
+                estado: c[5] || "",
+                lat: c[6] || "",
+                lng: c[7] || "",
+                historial: [],
+                ultimaActualizacion: new Date().toISOString(),
+                movimientos: [{
+                  lat: c[6] || "",
+                  lng: c[7] || "",
+                  fecha: new Date().toISOString()
+                }],
+                peso: 0,
+                pesos: [{
+                  valor: 0,
+                  fecha: new Date().toISOString()
+                }]
+              };
+
+              // Guardar en Supabase
+              const guardado = await guardarAnimalDB(nuevoAnimal);
+
+              if (guardado) {
+                animales.push(nuevoAnimal);
+                agregados++;
+              }
+            }
+
+            mostrar();
+
+            alert(
+              "Animales agregados: " + agregados +
+              "\nDuplicados: " + duplicados
+            );
+          };
+
+          reader.readAsText(file);
+        }
+
+
+
+        function desactivarDibujo() {
+          dibujando = false;
+        }
+        function activarDibujo() {
+          dibujando = true;
+
+          // limpiar puntos anteriores
+          puntosZona = [];
+
+          // borrar dibujo temporal si existe
+          if (window.poligonoTemp) {
+            map.removeLayer(window.poligonoTemp);
+            window.poligonoTemp = null;
+          }
+
+          alert("Modo dibujo activado. Hacé clic en el mapa.");
+        }
+
+        function limpiarZona() {
+          puntosZona = [];
+          zona = [];
+          localStorage.removeItem("zona");
+
+          if (window.poligono) {
+            map.removeLayer(window.poligono);
+            window.poligono = null;
+          }
+        }
+
+        // DATOS
+        let ahoraISO = new Date().toISOString();
+        let tiempoGuardado = localStorage.getItem("tiempoInactivo");
+
+        if (tiempoGuardado) {
+          let inputTiempo = document.getElementById("tiempoInactivo");
+          if (inputTiempo) {
+            inputTiempo.value = tiempoGuardado;
+          }
+        }
+        animales.forEach(a => {
+          if (!a.ultimaActualizacion) {
+            a.ultimaActualizacion = new Date(0).toISOString();
+          }
+        });
+        animales.forEach(a => {
+          if (!a.movimientos) {
+            a.movimientos = [{
+              lat: a.lat,
+              lng: a.lng,
+              fecha: new Date().toISOString()
+            }];
+          }
+        });
+        let puntosZona = [];
+
+        // MAPA
+        // CAPAS
+        let normal = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+        let satelite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+
+        // 📦 recuperar vista guardada
+        let vistaGuardada = localStorage.getItem("mapView");
+
+        let centro = [-34.9, -56.2];
+        let zoom = 7;
+
+        if (vistaGuardada) {
+          let data = JSON.parse(vistaGuardada);
+          centro = data.center;
+          zoom = data.zoom;
+        }
+
+        // 🗺️ crear mapa
+        map = L.map('map').setView(centro, zoom);
+        //cargarAnimales(); // ← ESTA LÍNEA AGREGÁS
+        setTimeout(function () {
+          map.invalidateSize();
+        }, 500);
+
+        // capas activas
+        normal.addTo(map);
+
+        let zonasGuardadas = JSON.parse(localStorage.getItem("zonas")) || [];
+
+        zonasGuardadas.forEach(z => {
+
+          if (!z.coords || z.coords.length < 3) return; // 🔥 evita romper mapa
+
+          let poly = L.polygon(z.coords, { color: 'blue' }).addTo(map);
+
+          poly.nombre = z.nombre || "Sin nombre";
+
+          const cantidad = contarAnimalesEnZona(poly);
+          poly.bindPopup("Zona: " + poly.nombre + "<br>Animales en zona: " + cantidad);
+
+          poly.on('click', function () {
+            zonas.forEach(z => z.setStyle({ color: 'blue' }));
+            this.setStyle({ color: 'red' });
+            zonaSeleccionada = this;
+            alert("Zona: " + this.nombre);
+          });
+
+          zonas.push(poly);
+        });
+
+        // selector
+        L.control.layers({
+          "Mapa": normal,
+          "Satélite": satelite
+        }).addTo(map);
+
+
+        // 💾 guardar vista
+        map.on('moveend zoomend', function () {
+
+          let c = map.getCenter();
+
+          localStorage.setItem("mapView", JSON.stringify({
+            center: [c.lat, c.lng],
+            zoom: map.getZoom()
+          }));
+        });
+        // CARGAR ZONA
+
+
+        // CLICK MAPA (guardar coordenadas + zona)
+        map.on('click', function (e) {
+
+          document.getElementById("lat").value = e.latlng.lat;
+          document.getElementById("lng").value = e.latlng.lng;
+
+          if (!dibujando) return;
+
+          puntosZona.push([e.latlng.lat, e.latlng.lng]);
+
+          if (window.poligonoTemp) map.removeLayer(window.poligonoTemp);
+
+          window.poligonoTemp = L.polygon(puntosZona, { color: 'red' }).addTo(map);
+        });
+        // CAMBIO DE SECCIÓN
+        function mostrarSeccion(s) {
+
+          document.getElementById("animales").style.display = "none";
+          document.getElementById("formulario").style.display = "none";
+          document.getElementById("tanque").style.display = "none";
+
+          if (s === "animales") document.getElementById("animales").style.display = "block";
+          if (s === "formulario") document.getElementById("formulario").style.display = "block";
+          if (s === "tanque") document.getElementById("tanque").style.display = "block";
+
+          // 🔥 ESTO ARREGLA EL MAPA
+          setTimeout(function () {
+            map.invalidateSize();
+          }, 200);
+        }
+
+        // AGREGAR
+        async function agregarAnimal() {
+          try {
+            console.log("🔥 CLICK GUARDAR");
+            console.log("[agregarAnimal] INICIO click Guardar");
+
+            let idInput = document.getElementById("id");
+            let edadInput = document.getElementById("edad");
+            let razaInput = document.getElementById("raza");
+            let loteInput = document.getElementById("lote");
+            let obsInput = document.getElementById("obs");
+            let estadoInput = document.getElementById("estado");
+            let latInput = document.getElementById("lat");
+            let lngInput = document.getElementById("lng");
+            let pesoInput = document.getElementById("peso");
+
+            console.log("[agregarAnimal] inputs resueltos:", {
+              idInput: !!idInput,
+              edadInput: !!edadInput,
+              caravana: idInput ? idInput.value : "(sin nodo id)",
+              lat: latInput ? latInput.value : "",
+              lng: lngInput ? lngInput.value : ""
+            });
+
+            if (!idInput) {
+              console.warn("[agregarAnimal] ABORT: no existe #id en el DOM");
+              alert("Error: no encuentra campo ID");
+              return;
+            }
+
+            // ❌ evitar duplicados
+            if (animales.some(a => a.id === idInput.value)) {
+              console.warn("[agregarAnimal] ABORT: caravana duplicada en lista local");
+              alert("⚠️ Ya existe esa caravana");
+              return;
+            }
+
+            var pv = normalizeNumPeso(pesoInput && pesoInput.value);
+            var fechaPeso = new Date().toISOString();
+            let a = {
+
+              id: idInput.value,
+              edad: edadInput ? edadInput.value : "",
+              raza: razaInput ? razaInput.value : "",
+              lote: loteInput ? loteInput.value : "",
+              obs: obsInput ? obsInput.value : "",
+              estado: estadoInput ? estadoInput.value : "",
+              lat: latInput ? latInput.value : "",
+              lng: lngInput ? lngInput.value : "",
+              historial: [],
+              ultimaActualizacion: new Date().toISOString(),
+              movimientos: [{
+                lat: latInput ? latInput.value : "",
+                lng: lngInput ? lngInput.value : "",
+                fecha: new Date().toISOString()
+              }],
+              peso: pv != null ? pv : 0,
+              pesos: pv != null ? [{ valor: pv, fecha: fechaPeso }] : []
+            };
+
+            console.log("[agregarAnimal] objeto animal listo, llamando guardarAnimalDB…", a);
+            console.log("📦 llamando guardarAnimalDB", a);
+
+            // Guardado adicional en Supabase (sin afectar flujo actual)
+            const guardado = await guardarAnimalDB(a);
+
+            console.log("[agregarAnimal] resultado guardarAnimalDB:", guardado);
+            if (!guardado) {
+              console.warn("[agregarAnimal] no se pudo guardar en Supabase");
+              alert("No se pudo guardar en Supabase");
+              return;
+            }
+
+            // Actualizar desde fuente única (Supabase)
+            await cargarAnimales();
+            actualizarContadoresZonas();
+            limpiarFormulario();
+            alert("Animal guardado correctamente");
+          } catch (err) {
+            console.error("[agregarAnimal] ERROR NO CONTROLADO:", err);
+            alert("Error en agregarAnimal: " + (err && err.message ? err.message : String(err)));
+          }
+        }
+
+        function limpiarFormulario() {
+          ["id", "edad", "raza", "lote", "obs", "lat", "lng", "estado", "peso"].forEach(function (nom) {
+            var n = document.getElementById(nom);
+            if (n) n.value = "";
+          });
+        }
+
+        function escapeAttr(s) {
+          return String(s)
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/</g, "&lt;");
+        }
+
+        function escapeHtml(s) {
+          return String(s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
+        function syncAnimalCardSelectedClass(checkbox) {
+          var card = checkbox && checkbox.closest ? checkbox.closest(".animal-card") : null;
+          if (!card) return;
+          if (checkbox.checked) card.classList.add("selected");
+          else card.classList.remove("selected");
+        }
+
+        function toggleSeleccionAnimal(checkbox) {
+          var id = checkbox.getAttribute("data-caravana");
+          if (id == null || id === "") id = checkbox.value;
+          if (id == null || id === "") return;
+          if (checkbox.checked) {
+            if (!selectedAnimales.some(function (x) { return String(x) === String(id); })) {
+              selectedAnimales.push(id);
+            }
+          } else {
+            selectedAnimales = selectedAnimales.filter(function (x) { return String(x) !== String(id); });
+          }
+          syncAnimalCardSelectedClass(checkbox);
+        }
+
+        function onAnimalCardClick(ev) {
+          if (ev.target.closest && ev.target.closest("button")) return;
+          if (ev.target.closest && ev.target.closest(".select-animal")) return;
+          if (ev.target.closest && ev.target.closest(".animal-card-actions")) return;
+          var card = ev.currentTarget;
+          var cb = card.querySelector(".select-animal");
+          if (!cb) return;
+          cb.checked = !cb.checked;
+          toggleSeleccionAnimal(cb);
+        }
+
+        async function eliminarSeleccionados() {
+          if (selectedAnimales.length === 0) return;
+
+          if (!confirm("¿Eliminar " + selectedAnimales.length + " animal(es) seleccionado(s)?")) return;
+
+          const { error } = await supabase
+            .from("animales")
+            .delete()
+            .in("caravana", selectedAnimales);
+
+          console.log("DELETE:", error);
+
+          if (!error) {
+            await cargarAnimales();
+            selectedAnimales = [];
+          } else {
+            alert("Error al eliminar: " + (error.message || String(error)));
+          }
+        }
+
+        // MOSTRAR
+        function mostrar() {
+          console.log("Animales:", animales);
+          console.log("mostrar ejecutando");
+
+          let lista = document.getElementById("lista");
+          if (!lista) return;
+
+          lista.innerHTML = "";
+
+          let texto = "";
+          let buscador = document.getElementById("buscador");
+          if (buscador) {
+            texto = buscador.value.toLowerCase();
+          }
+
+          let filtro = "todos";
+          let filtroSelect = document.getElementById("filtroLote");
+          if (filtroSelect) {
+            filtro = filtroSelect.value;
+          }
+
+          animales.forEach(function (a, i) {
+
+            let ultimoPeso = pesoParaMostrar(a);
+
+            let idStr = String(a.id || "").toLowerCase();
+
+            if (filtro !== "todos" && a.lote !== filtro) return;
+            if (texto && idStr.indexOf(texto) === -1) return;
+
+            let clase = "normal";
+            if (a.estado === "Enfermo") clase = "enfermo";
+            if (a.estado === "Vacunar") clase = "vacunar";
+            if (a.estado === "Preñado") clase = "prenado";
+
+            var sel = selectedAnimales.some(function (s) { return String(s) === String(a.id); });
+            var attrId = escapeAttr(a.id);
+            var cardClasses = "animal-card " + clase + (sel ? " selected" : "");
+
+            lista.innerHTML +=
+              "<div class=\"" + cardClasses + "\" onclick='onAnimalCardClick(event)'>" +
+              "<div class='left'>" +
+              "<input type='checkbox' class='select-animal' value=\"" + attrId + "\"" + (sel ? " checked" : "") +
+              " data-caravana=\"" + attrId + "\" onchange='toggleSeleccionAnimal(this)' onclick='event.stopPropagation()'>" +
+              "</div>" +
+              "<div class='center'>" +
+              "<div class='title'>Caravana: " + escapeHtml(a.id) + "</div>" +
+              "<div class='info'>Raza: " + escapeHtml(a.raza || "-") + "</div>" +
+              "<div class='info'>Lote: " + escapeHtml(a.lote || "-") + "</div>" +
+              "</div>" +
+              "<div class='right'>" +
+              "<div class='peso'>Peso: " + escapeHtml(String(ultimoPeso)) + " kg</div>" +
+              "</div>" +
+              "<div class='animal-card-actions' onclick='event.stopPropagation()'>" +
+              "<button type='button' onclick=\"verHistorial('" + a.id + "')\">📜 Historial</button>" +
+              "<button type='button' onclick=\"mostrarGrafico('" + a.id + "')\">📊 Gráfico</button>" +
+              "<button type='button' onclick='editarEstado(" + i + ")'>✏️ Estado</button>" +
+              "<button type='button' onclick='editarCaravana(" + i + ")'>🔄 Caravana</button>" +
+              "<button type='button' onclick='eliminar(" + i + ")'>❌</button>" +
+              "</div>" +
+              "</div>";
+          });
+
+          if (typeof mostrarEnMapa === "function") {
+            mostrarEnMapa();
+          }
+
+          if (typeof cargarLotes === "function") {
+            cargarLotes();
+          }
+
+          mostrarRanking(animales);
+        }
+
+        // MAPA
+        // 🔥 VARIABLES GLOBALES RECUPERADAS
+        let dibujando = false;
+        let marcadores = [];
+
+        let alertaActiva = false;
+        let zonaSeleccionada = null;
+        function mostrarEnMapa() {
+
+          // borrar solo marcadores
+          marcadores.forEach(m => map.removeLayer(m));
+          marcadores = [];
+          let hayFuera = false;
+
+          animales.forEach(a => {
+
+            try { // 🔥 PROTECCIÓN TOTAL
+
+              let lat = parseFloat(a.lat);
+              let lng = parseFloat(a.lng);
+              // 🔥 guardar historial si cambió posición
+              if (!a.movimientos) a.movimientos = [];
+
+              let ultimo = a.movimientos[a.movimientos.length - 1];
+
+              if (!ultimo || ultimo.lat != lat || ultimo.lng != lng) {
+                a.movimientos.push({
+                  lat: lat,
+                  lng: lng,
+                  fecha: new Date().toISOString()
+                });
+                // Los movimientos se sincronizarán con Supabase al siguiente cargar
+              }
+              // 🔥 registrar movimiento si cambió
+              //if(!a.movimientos) a.movimientos = [];
+
+              //let ultimo = a.movimientos[a.movimientos.length - 1];
+
+              //if(!ultimo || ultimo.lat != lat || ultimo.lng != lng){
+              // a.movimientos.push({
+              //   lat: lat,
+              //   lng: lng,
+              //  fecha: new Date().toISOString()
+              // });
+              //}
+
+              if (isNaN(lat) || isNaN(lng)) return;
+
+              let dentro = true;
+
+              try {
+                dentro = estaDentroZona(lat, lng);
+              } catch (e) {
+                console.log("Error zona:", e);
+              }
+              if (!dentro) {
+                hayFuera = true;
+              }
+              let horas = parseFloat(document.getElementById("tiempoInactivo")?.value) || 1;
+              let inactivo = estaInactivo(a, horas);
+              let color = "blue";
+
+              // 🔥 PRIORIDAD ORDENADA
+              if (inactivo) {
+                color = "black"; // ⚫ prioridad máxima
+              } else if (!dentro) {
+                color = "red";
+              } else if (a.estado === "Enfermo") {
+                color = "red";
+              } else if (a.estado === "Vacunar") {
+                color = "orange";
+              } else if (a.estado === "Preñado") {
+                color = "green";
+              }
+
+              let icono = L.divIcon({
+                html: `
     <div style="position:relative; width:30px; height:30px;">
       
       <img src="https://cdn-icons-png.flaticon.com/512/1998/1998610.png"
@@ -1099,1152 +1931,1323 @@ if(inactivo){
 
     </div>
   `,
-  className: ""
-});
-
-      let ultimoPeso = "-";
-
-      if(a.pesos && a.pesos.length > 0){
-        ultimoPeso = a.pesos[a.pesos.length - 1].valor;
-      } else if(a.peso){
-        ultimoPeso = a.peso;
-      }
-
-      let ganancia = calcularGanancia(a);
-
-// ✅ ESTIMADO DEFINIDO
-let estimado = "-";
-
-if(a.pesos && a.pesos.length >= 2){
-  try {
-    estimado = estimarPeso(a);
-  } catch(e){
-    console.log("Error estimado:", a);
-  }
-}
-
-let texto = "";
-
-if(!dentro){
-  texto += "⚠️ <b style='color:red'>FUERA DE ZONA</b><br>";
-}
-
-texto +=
-  "<b>Caravana: " + a.id + "</b><br>" +
-  "Estado: " + (a.estado || "-") + "<br>" +
-  "Peso: " + ultimoPeso + " kg<br>" +
-  "Edad: " + (a.edad || "-") + "<br>" +
-  "Raza: " + (a.raza || "-") + "<br>" +
-  "Lote: " + (a.lote || "-") + "<br>" +
-  "Ganancia: " + ganancia + " kg/día<br>" +
-  "Obs: " + (a.obs || "-");
-
-if(estimado !== "-"){
-  texto += "Estimado 30 días: " + estimado + " kg<br>";
-}
-
-let alertas = alertasPeso(a);
-if(alertas.length > 0){
-  texto += "<br><div style='background:#fff3cd;border:1px solid #ffc107;border-radius:5px;padding:5px;margin-top:5px;'>";
-  texto += "<b>🔔 Alertas:</b><br>";
-  alertas.forEach(function(al){ texto += al + "<br>"; });
-  texto += "</div>";
-  console.log("Alerta peso - Caravana " + a.id + ":", alertas);
-}
-let marker = L.marker([lat,lng],{
-  icon: icono,
-  datosAnimal: {
-    id: a.id,
-    lote: a.lote,
-    estado: a.estado,
-    peso: a.peso,
-    pesos: a.pesos
-  }
-})
-  .addTo(map)
-  .bindPopup(
-    texto +
-    `<br><button onclick="verHistorial('${a.id}')">📜 Historial</button>`
-  );
-
-marcadores.push(marker);
-        if(a.movimientos && a.movimientos.length > 1){
-
-  let recorrido = a.movimientos.map(p => [p.lat, p.lng]);
-
-  L.polyline(recorrido, {
-    color: 'blue',
-    weight: 2
-  }).addTo(map);
-}
+                className: ""
+              });
+
+              let ultimoPeso = pesoParaMostrar(a);
+
+              let ganancia = calcularGanancia(a);
+
+              // ✅ ESTIMADO DEFINIDO
+              let estimado = "-";
+
+              if (a.pesos && a.pesos.length >= 2) {
+                try {
+                  estimado = estimarPeso(a);
+                } catch (e) {
+                  console.log("Error estimado:", a);
+                }
+              }
+
+              let texto = "";
+
+              if (!dentro) {
+                texto += "⚠️ <b style='color:red'>FUERA DE ZONA</b><br>";
+              }
+
+              texto +=
+                "<b>Caravana: " + a.id + "</b><br>" +
+                "Estado: " + (a.estado || "-") + "<br>" +
+                "Peso: " + ultimoPeso + " kg<br>" +
+                "Edad: " + (a.edad || "-") + "<br>" +
+                "Raza: " + (a.raza || "-") + "<br>" +
+                "Lote: " + (a.lote || "-") + "<br>" +
+                "Ganancia: " + ganancia + " kg/día<br>" +
+                "Obs: " + (a.obs || "-");
+
+              if (estimado !== "-") {
+                texto += "Estimado 30 días: " + estimado + " kg<br>";
+              }
+
+              let alertas = alertasPeso(a);
+              if (alertas.length > 0) {
+                texto += "<br><div style='background:#fff3cd;border:1px solid #ffc107;border-radius:5px;padding:5px;margin-top:5px;'>";
+                texto += "<b>🔔 Alertas:</b><br>";
+                alertas.forEach(function (al) { texto += al + "<br>"; });
+                texto += "</div>";
+                console.log("Alerta peso - Caravana " + a.id + ":", alertas);
+              }
+              let marker = L.marker([lat, lng], {
+                icon: icono,
+                datosAnimal: {
+                  id: a.id,
+                  lote: a.lote,
+                  estado: a.estado,
+                  peso: a.peso,
+                  pesos: a.pesos
+                }
+              })
+                .addTo(map)
+                .bindPopup(
+                  texto +
+                  `<br><button onclick="verHistorial('${a.id}')">📜 Historial</button>`
+                );
+
+              marcadores.push(marker);
+              if (a.movimientos && a.movimientos.length > 1) {
+
+                let recorrido = a.movimientos.map(p => [p.lat, p.lng]);
+
+                L.polyline(recorrido, {
+                  color: 'blue',
+                  weight: 2
+                }).addTo(map);
+              }
+
+            } catch (e) {
+              console.log("Error animal:", a, e);
+
+            }
+
+          });
+
+          // alerta visual
+          let alertaDiv = document.getElementById("alertaZona");
+
+          if (alertaDiv) {
+            if (hayFuera) {
+              alertaDiv.innerHTML = "⚠️ Animales fuera de zona";
+            } else {
+              alertaDiv.innerHTML = "";
+            }
+            let panel = document.getElementById("panelInfo");
+
+            if (panel) {
+
+              let total = animales.length;
+              let fuera = 0;
+              let inactivos = 0;
+
+              animales.forEach(a => {
+                let lat = parseFloat(a.lat);
+                let lng = parseFloat(a.lng);
+
+                if (isNaN(lat) || isNaN(lng)) return;
 
-    } catch(e){
-      console.log("Error animal:", a, e);
-   
-    }
+                if (!estaDentroZona(lat, lng)) fuera++;
 
-  });
-
-  // alerta visual
-  let alertaDiv = document.getElementById("alertaZona");
+                let minutos = parseFloat(document.getElementById("tiempoInactivo")?.value) || 60;
+                if (estaInactivo(a, minutos)) inactivos++;
+              });
 
-  if(alertaDiv){
-    if(hayFuera){
-      alertaDiv.innerHTML = "⚠️ Animales fuera de zona";
-    } else {
-      alertaDiv.innerHTML = "";
-    }
-   let panel = document.getElementById("panelInfo");
-
-if(panel){
-
-  let total = animales.length;
-  let fuera = 0;
-  let inactivos = 0;
-
-  animales.forEach(a=>{
-    let lat = parseFloat(a.lat);
-    let lng = parseFloat(a.lng);
-
-    if(isNaN(lat) || isNaN(lng)) return;
-
-    if(!estaDentroZona(lat,lng)) fuera++;
-
-    let minutos = parseFloat(document.getElementById("tiempoInactivo")?.value) || 60;
-    if(estaInactivo(a, minutos)) inactivos++;
-  });
-
-  panel.innerHTML =
-    "🐄 Total: " + total +
-    " | ⚠️ Fuera: " + fuera +
-    " | ⚫ Inactivos: " + inactivos;
-}
-  }
-}
-
-// ZONA DETECCIÓN
-function estaDentroZona(lat, lng){
-
-  if(!zonas || zonas.length === 0) return true;
-
-  for(let z of zonas){
-
-    let coordsRaw = z.getLatLngs();
-
-    // 🔥 normalizar estructura
-    let coords = Array.isArray(coordsRaw[0]) ? coordsRaw[0] : coordsRaw;
-
-    let puntos = coords.map(c => [c.lng, c.lat]);
-
-    let dentro = puntoDentroPoligono([lng, lat], puntos);
-
-    if(dentro) return true;
-  }
-
-  return false;
-}
-
-function puntoEnPoligono(lat, lng, coords){
-
-  let dentro = false;
-
-  for(let i = 0, j = coords.length - 1; i < coords.length; j = i++){
-
-    let xi = coords[i].lat;
-    let yi = coords[i].lng;
-    let xj = coords[j].lat;
-    let yj = coords[j].lng;
-
-    let intersect = ((yi > lng) != (yj > lng)) &&
-      (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi);
-
-    if(intersect) dentro = !dentro;
-  }
-
-  return dentro;
-}
-function guardarZona(){
-
-  if(puntosZona.length < 3){
-    alert("Marcá al menos 3 puntos");
-    return;
-  }
-
-  let nombre = prompt("Nombre de la zona:");
-  if(!nombre) nombre = "Zona sin nombre";
-
-  let nuevaZona = L.polygon(puntosZona, {color:'blue'}).addTo(map);
-
-  nuevaZona.nombre = nombre;
-
-  const cantidad = contarAnimalesEnZona(nuevaZona);
-  nuevaZona.bindPopup("Zona: " + nombre + "<br>Animales en zona: " + cantidad);
-
-  nuevaZona.on('click', function(){
-    zonas.forEach(z => z.setStyle({color:'blue'}));
-    this.setStyle({color:'red'});
-    zonaSeleccionada = this;
-
-    alert("Zona: " + this.nombre);
-  });
-
-  zonas.push(nuevaZona);
-
-  // 🔥 guardar BIEN
-  let zonasGuardar = zonas.map(z => ({
-    nombre: z.nombre,
-    coords: z.getLatLngs()[0]
-  }));
-
-  localStorage.setItem("zonas", JSON.stringify(zonasGuardar));
-
-  if(window.poligonoTemp){
-    map.removeLayer(window.poligonoTemp);
-    window.poligonoTemp = null;
-  }
-
-  puntosZona = [];
-}
-
-
-
-function borrarZona(){
-
-  if(!zonaSeleccionada){
-    alert("Seleccioná una zona");
-    return;
-  }
-
-  map.removeLayer(zonaSeleccionada);
-
-  zonas = zonas.filter(z => z !== zonaSeleccionada);
-
-  localStorage.setItem("zonas", JSON.stringify(
-  zonas.map(z => ({
-    nombre: z.nombre,
-    coords: z.getLatLngs()[0]
-  }))
-));
-
-  zonaSeleccionada = null;
-}
-
-// EDITAR
-function editarEstado(i){
-  let nuevo = prompt("Nuevo estado:");
-  if(nuevo){
-    animales[i].estado = nuevo;
-    localStorage.setItem("animales", JSON.stringify(animales));
-    mostrar();
-  }
-}
-
-// ELIMINAR
-
-
-mostrar();
-function eliminar(i){
-  animales.splice(i,1);
-  localStorage.setItem("animales", JSON.stringify(animales));
-  
-  mostrar();
-}
-
-
-function cargarLotes(){
-
-  let select = document.getElementById("filtroLote");
-
-  // limpiar (dejar "todos")
-  select.innerHTML = '<option value="todos">Todos</option>';
-
-  let lotes = [...new Set(animales.map(a => a.lote))];
-
-  lotes.forEach(l => {
-    if(l){
-      select.innerHTML += `<option value="${l}">${l}</option>`;
-    }
-  });
-}
-function exportarCSV(){
-
-  // Tomar todos los marcadores del mapa
-  let capas = Object.values(map._layers);
-
-  // Filtrar solo los marcadores (los animales)
-  let marcadores = capas.filter(l => l.getLatLng);
-
-  if(marcadores.length === 0){
-    alert("No hay animales para exportar");
-    return;
-  }
-
-  let csv = "ID;Lote;Estado;Lat;Lng;Peso;Fecha\r\n";
-
-  marcadores.forEach(m => {
-
-    // Recuperar datos que ya usaste para el popup
-    let a = m.options.datosAnimal || {};
-
-    csv += (a.id || "") + ";" +
-           (a.lote || "") + ";" +
-           (a.estado || "") + ";" +
-           (m.getLatLng().lat || "") + ";" +
-           (m.getLatLng().lng || "") + ";" +
-           (
-  a.pesos && a.pesos.length > 0
-    ? a.pesos[a.pesos.length - 1].valor
-    : ""
-) + ";" +
-           (
-  a.pesos && a.pesos.length > 0 && a.pesos[a.pesos.length - 1].fecha
-    ? (function(f){ let d = new Date(f); return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear(); })(a.pesos[a.pesos.length - 1].fecha)
-    : ""
-) +
-           "\r\n";
-  });
-
-  let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-
-  let link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "animales.csv";
-  link.click();
-}
-function alertasPeso(a){
-
-  let alertas = [];
-
-  if(!a.pesos || a.pesos.length < 2) return alertas;
-
-  // Comparar los dos últimos registros de peso
-  let penultimo = a.pesos[a.pesos.length - 2];
-  let ultimo = a.pesos[a.pesos.length - 1];
-
-  let pesoPenultimo = parseFloat(penultimo.valor);
-  let pesoUltimo = parseFloat(ultimo.valor);
-
-  if(isNaN(pesoPenultimo) || isNaN(pesoUltimo)) return alertas;
-
-  // Alerta: peso disminuyó
-  if(pesoUltimo < pesoPenultimo){
-    alertas.push("⚠️ Bajando peso (" + pesoPenultimo + " → " + pesoUltimo + " kg)");
-  }
-
-  // Alerta: crecimiento lento (ganancia diaria < 0.3 kg/día)
-  let fechaPenultimo = new Date(penultimo.fecha);
-  let fechaUltimo = new Date(ultimo.fecha);
-  let dias = (fechaUltimo - fechaPenultimo) / (1000 * 60 * 60 * 24);
-
-  if(dias >= 1 && dias <= 365){
-    let gananciaDiaria = (pesoUltimo - pesoPenultimo) / dias;
-    // Solo mostrar alerta si el crecimiento es realista (no detectar valores glitchy)
-    if(gananciaDiaria >= 0 && gananciaDiaria < 0.3 && gananciaDiaria <= 2){
-      alertas.push("🐢 Crecimiento lento (" + gananciaDiaria.toFixed(2) + " kg/día)");
-    }
-  }
-
-  return alertas;
-}
-function obtenerRanking(lista){
-
-  let ranking = [];
-
-  lista.forEach(function(a){
-    let g = calcularGanancia(a);
-    if(g === "-") return;
-    ranking.push({ id: a.id, ganancia: parseFloat(g) });
-  });
-
-  if(ranking.length === 0){
-    console.log("📊 RANKING: No hay animales con datos suficientes");
-    return;
-  }
-
-  // Ordenar de mayor a menor ganancia
-  ranking.sort(function(a, b){ return b.ganancia - a.ganancia; });
-
-  let top = ranking.slice(0, 3);
-  let peor = ranking.slice(-3).reverse();
-
-  console.log("📊 TOP GANANCIA:");
-  top.forEach(function(r){
-    console.log("  ID: " + r.id + " - " + r.ganancia.toFixed(2) + " kg/día");
-  });
-
-  console.log("📊 PEOR GANANCIA:");
-  peor.forEach(function(r){
-    console.log("  ID: " + r.id + " - " + r.ganancia.toFixed(2) + " kg/día");
-  });
-}
-function calcularGanancia(a){
-
-  if(!a.pesos || a.pesos.length < 2) return "-";
-
-  let primero = a.pesos[0];
-  let ultimo = a.pesos[a.pesos.length - 1];
-
-  let pesoInicial = parseFloat(primero.valor);
-  let pesoFinal = parseFloat(ultimo.valor);
-
-  // Validar que los pesos sean números válidos y positivos
-  if(isNaN(pesoInicial) || isNaN(pesoFinal) || pesoInicial <= 0 || pesoFinal <= 0) return "-";
-
-  let fechaInicial = new Date(primero.fecha);
-  let fechaFinal = new Date(ultimo.fecha);
-
-  let dias = (fechaFinal - fechaInicial) / (1000 * 60 * 60 * 24);
-
-  // Validar que haya al menos 1 día y máximo 1000 días (validez de datos)
-  if(dias < 1 || dias > 1000) return "-";
-
-  let ganancia = (pesoFinal - pesoInicial) / dias;
-
-  // Limitar a valores realistas: ganado puede crecer max ~2 kg/día
-  // Y puede perder max ~1 kg/día (enfermedad, estrés)
-  if(ganancia > 2 || ganancia < -1) return "-";
-
-  return ganancia.toFixed(2);
-}
-function estimarPeso(a){
-
-  if(!a.pesos || a.pesos.length < 2) return "-";
-
-  let primero = a.pesos[0];
-  let ultimo = a.pesos[a.pesos.length - 1];
-
-  let pesoInicial = parseFloat(primero.valor);
-  let pesoFinal = parseFloat(ultimo.valor);
-
-  if(isNaN(pesoInicial) || isNaN(pesoFinal) || pesoInicial <= 0 || pesoFinal <= 0) return "-";
-
-  let fechaInicial = new Date(primero.fecha);
-  let fechaFinal = new Date(ultimo.fecha);
-
-  let dias = (fechaFinal - fechaInicial) / (1000*60*60*24);
-  
-  // Validar período de datos realista
-  if(dias < 1 || dias > 1000) return "-";
-
-  let aumento = pesoFinal - pesoInicial;
-  let crecimiento = aumento / dias;
-
-  // Validar que el crecimiento proyectado sea realista
-  if(crecimiento > 2 || crecimiento < -1) return "-";
-
-  return Math.round(pesoFinal + crecimiento * 30);
-}
-function importarPesos(){
-
-  let input = document.getElementById("filePesos");
-
-  if(!input.files.length){
-    alert("Seleccioná archivo");
-    return;
-  }
-
-  let file = input.files[0];
-  let reader = new FileReader();
-
-  reader.onload = function(e){
-
-    let lineas = e.target.result.split(/\r?\n/);
-
-    let sep = lineas[0].includes(";") ? ";" : ",";
-
-    let actualizados = 0;
-    let noEncontrados = 0;
-
-    for(let i=1;i<lineas.length;i++){
-
-      let fila = lineas[i].trim();
-      if(!fila) continue;
-
-      let c = fila.split(sep);
-
-      let caravana = c[0];
-      let peso = c[1];
-
-      let animal = animales.find(a => String(a.id) === String(caravana));
-
-      if(animal){
-
-        // 🔥 asegurar historial
-        if(!animal.pesos){
-          animal.pesos = [];
+              panel.innerHTML =
+                "🐄 Total: " + total +
+                " | ⚠️ Fuera: " + fuera +
+                " | ⚫ Inactivos: " + inactivos;
+            }
+          }
         }
 
-       let fecha = new Date().toISOString().split("T")[0]; // solo fecha
+        // ZONA DETECCIÓN
+        function estaDentroZona(lat, lng) {
 
-// evitar duplicados del mismo día
-let yaExiste = animal.pesos.some(p => p.fecha === fecha);
+          if (!zonas || zonas.length === 0) return true;
 
-if(!yaExiste){
-  animal.pesos.push({
-    valor: parseFloat(peso),
-    fecha: fecha
-  });
-}
+          for (let z of zonas) {
 
-        actualizados++;
+            let coordsRaw = z.getLatLngs();
 
-      } else {
-        noEncontrados++;
-      }
-    }
+            // 🔥 normalizar estructura
+            let coords = Array.isArray(coordsRaw[0]) ? coordsRaw[0] : coordsRaw;
 
-    localStorage.setItem("animales", JSON.stringify(animales));
-    mostrar();
+            let puntos = coords.map(c => [c.lng, c.lat]);
 
-    alert(
-      "Actualizados: " + actualizados +
-      "\nNo encontrados: " + noEncontrados
-    );
-  };
+            let dentro = puntoDentroPoligono([lng, lat], puntos);
 
-  reader.readAsText(file);
-  
-}
-function puntoDentroPoligono(point, vs) {
+            if (dentro) return true;
+          }
 
-  let x = point[0], y = point[1];
-  let inside = false;
+          return false;
+        }
 
-  for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        function puntoEnPoligono(lat, lng, coords) {
 
-    let xi = vs[i][0], yi = vs[i][1];
-    let xj = vs[j][0], yj = vs[j][1];
+          let dentro = false;
 
-    let intersect = ((yi > y) != (yj > y)) &&
-      (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+          for (let i = 0, j = coords.length - 1; i < coords.length; j = i++) {
 
-    if (intersect) inside = !inside;
-  }
+            let xi = coords[i].lat;
+            let yi = coords[i].lng;
+            let xj = coords[j].lat;
+            let yj = coords[j].lng;
 
-  return inside;
-}
-function reproducirAlerta(){
-  let audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
-  audio.play();
-}
-function editarCaravana(i){
+            let intersect = ((yi > lng) != (yj > lng)) &&
+              (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi);
 
-  let nuevo = prompt("Nueva caravana:");
+            if (intersect) dentro = !dentro;
+          }
 
-  if(!nuevo) return;
+          return dentro;
+        }
+        function guardarZona() {
 
-  // evitar duplicados
-  if(animales.some((a, index) => a.id === nuevo && index !== i)){
-    alert("⚠️ Ya existe esa caravana");
-    return;
-  }
+          if (puntosZona.length < 3) {
+            alert("Marcá al menos 3 puntos");
+            return;
+          }
 
-  animales[i].id = nuevo;
+          let nombre = prompt("Nombre de la zona:");
+          if (!nombre) nombre = "Zona sin nombre";
 
-  localStorage.setItem("animales", JSON.stringify(animales));
+          let nuevaZona = L.polygon(puntosZona, { color: 'blue' }).addTo(map);
 
-  mostrar();
-}
-function estaInactivo(a, horas){
+          nuevaZona.nombre = nombre;
 
-  let ultima = new Date(a.ultimaActualizacion);
-  let ahora = new Date();
+          const cantidad = contarAnimalesEnZona(nuevaZona);
+          nuevaZona.bindPopup("Zona: " + nombre + "<br>Animales en zona: " + cantidad);
 
-  let diffHoras = (ahora - ultima) / (1000 * 60 * 60);
+          nuevaZona.on('click', function () {
+            zonas.forEach(z => z.setStyle({ color: 'blue' }));
+            this.setStyle({ color: 'red' });
+            zonaSeleccionada = this;
 
-  return diffHoras >= horas;
-}
-function verHistorial(id){
-  let animal = animales.find(a => String(a.id) === String(id));
-  if(!animal) return;
+            alert("Zona: " + this.nombre);
+          });
 
-  let panel = document.getElementById("panelLateral");
-  if(!panel) return;
+          zonas.push(nuevaZona);
 
-  let html = `<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">`;
-  html += `<button onclick="mostrarVista('animales')" style="padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">⬅️ Volver a Animales</button><br><br>`;
-  html += `<h3>Historial de Pesos - Animal ${animal.id}</h3>`;
+          // 🔥 guardar BIEN
+          let zonasGuardar = zonas.map(z => ({
+            nombre: z.nombre,
+            coords: z.getLatLngs()[0]
+          }));
 
-  if(!animal.pesos || animal.pesos.length === 0){
-    html += "<p>Sin registros de peso</p>";
-  } else {
-    let pesosOrdenados = animal.pesos.slice().sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
-    pesosOrdenados.forEach(p => {
-      html += `
+          localStorage.setItem("zonas", JSON.stringify(zonasGuardar));
+
+          if (window.poligonoTemp) {
+            map.removeLayer(window.poligonoTemp);
+            window.poligonoTemp = null;
+          }
+
+          puntosZona = [];
+        }
+
+
+
+        function borrarZona() {
+
+          if (!zonaSeleccionada) {
+            alert("Seleccioná una zona");
+            return;
+          }
+
+          map.removeLayer(zonaSeleccionada);
+
+          zonas = zonas.filter(z => z !== zonaSeleccionada);
+
+          localStorage.setItem("zonas", JSON.stringify(
+            zonas.map(z => ({
+              nombre: z.nombre,
+              coords: z.getLatLngs()[0]
+            }))
+          ));
+
+          zonaSeleccionada = null;
+        }
+
+        // EDITAR
+        async function editarEstado(i) {
+          let nuevo = prompt("Nuevo estado:");
+          if (nuevo) {
+            let animal = animales[i];
+
+            // Actualizar en Supabase
+            const actualizado = await actualizarAnimalEnSupabase(animal.id, {
+              estado: nuevo
+            });
+
+            if (actualizado) {
+              // Actualizar en memoria
+              animales[i].estado = nuevo;
+              console.log("Estado actualizado:", animal.id);
+              mostrar();
+            } else {
+              alert("Error al actualizar el estado");
+            }
+          }
+        }
+
+        // ELIMINAR
+
+        async function eliminar(i) {
+          let animal = animales[i];
+          let confirmar = confirm("¿Eliminar animal " + animal.id + "?");
+
+          if (!confirmar) return;
+
+          // Eliminar de Supabase
+          const eliminado = await eliminarAnimalEnSupabase(animal.id);
+
+          if (eliminado) {
+            // Eliminar de la lista local
+            selectedAnimales = selectedAnimales.filter(function (x) { return String(x) !== String(animal.id); });
+            animales.splice(i, 1);
+            console.log("Animal eliminado:", animal.id);
+            mostrar();
+          } else {
+            alert("Error al eliminar el animal");
+          }
+        }
+
+        mostrar();
+
+        function cargarLotes() {
+
+          let select = document.getElementById("filtroLote");
+
+          // limpiar (dejar "todos")
+          select.innerHTML = '<option value="todos">Todos</option>';
+
+          let lotes = [...new Set(animales.map(a => a.lote))];
+
+          lotes.forEach(l => {
+            if (l) {
+              select.innerHTML += `<option value="${l}">${l}</option>`;
+            }
+          });
+        }
+        function exportarCSV() {
+
+          // Tomar todos los marcadores del mapa
+          let capas = Object.values(map._layers);
+
+          // Filtrar solo los marcadores (los animales)
+          let marcadores = capas.filter(l => l.getLatLng);
+
+          if (marcadores.length === 0) {
+            alert("No hay animales para exportar");
+            return;
+          }
+
+          let csv = "ID;Lote;Estado;Lat;Lng;Peso;Fecha\r\n";
+
+          marcadores.forEach(m => {
+
+            // Recuperar datos que ya usaste para el popup
+            let a = m.options.datosAnimal || {};
+
+            csv += (a.id || "") + ";" +
+              (a.lote || "") + ";" +
+              (a.estado || "") + ";" +
+              (m.getLatLng().lat || "") + ";" +
+              (m.getLatLng().lng || "") + ";" +
+              (
+                function () {
+                  var pm = pesoParaMostrar(a);
+                  return pm === "-" ? "" : String(pm);
+                }()
+              ) + ";" +
+              (
+                function () {
+                  var ord = pesosOrdenadosPorFecha(a);
+                  var last = ord.length ? ord[ord.length - 1] : null;
+                  if (!last || !last.fecha) return "";
+                  var f = last.fecha;
+                  var d = new Date(f);
+                  return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
+                }()
+              ) +
+              "\r\n";
+          });
+
+          let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+          let link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = "animales.csv";
+          link.click();
+        }
+        function alertasPeso(a) {
+
+          let alertas = [];
+
+          let ordenados = pesosOrdenadosPorFecha(a);
+          if (ordenados.length < 2) return alertas;
+
+          // Comparar los dos últimos registros de peso (por fecha)
+          let penultimo = ordenados[ordenados.length - 2];
+          let ultimo = ordenados[ordenados.length - 1];
+
+          let pesoPenultimo = parseFloat(penultimo.valor);
+          let pesoUltimo = parseFloat(ultimo.valor);
+
+          if (isNaN(pesoPenultimo) || isNaN(pesoUltimo)) return alertas;
+
+          // Alerta: peso disminuyó
+          if (pesoUltimo < pesoPenultimo) {
+            alertas.push("⚠️ Bajando peso (" + pesoPenultimo + " → " + pesoUltimo + " kg)");
+          }
+
+          // Alerta: crecimiento lento (ganancia diaria < 0.3 kg/día)
+          let fechaPenultimo = new Date(penultimo.fecha);
+          let fechaUltimo = new Date(ultimo.fecha);
+          let dias = (fechaUltimo - fechaPenultimo) / (1000 * 60 * 60 * 24);
+
+          if (dias >= 1 && dias <= 365) {
+            let gananciaDiaria = (pesoUltimo - pesoPenultimo) / dias;
+            // Solo mostrar alerta si el crecimiento es realista (no detectar valores glitchy)
+            if (gananciaDiaria >= 0 && gananciaDiaria < 0.3 && gananciaDiaria <= 2) {
+              alertas.push("🐢 Crecimiento lento (" + gananciaDiaria.toFixed(2) + " kg/día)");
+            }
+          }
+
+          return alertas;
+        }
+        function obtenerRanking(lista) {
+
+          let ranking = [];
+
+          lista.forEach(function (a) {
+            let g = calcularGanancia(a);
+            if (g === "-") return;
+            ranking.push({ id: a.id, ganancia: parseFloat(g) });
+          });
+
+          if (ranking.length === 0) {
+            console.log("📊 RANKING: No hay animales con datos suficientes");
+            return;
+          }
+
+          // Ordenar de mayor a menor ganancia
+          ranking.sort(function (a, b) { return b.ganancia - a.ganancia; });
+
+          let top = ranking.slice(0, 3);
+          let peor = ranking.slice(-3).reverse();
+
+          console.log("📊 TOP GANANCIA:");
+          top.forEach(function (r) {
+            console.log("  ID: " + r.id + " - " + r.ganancia.toFixed(2) + " kg/día");
+          });
+
+          console.log("📊 PEOR GANANCIA:");
+          peor.forEach(function (r) {
+            console.log("  ID: " + r.id + " - " + r.ganancia.toFixed(2) + " kg/día");
+          });
+        }
+        function calcularGanancia(a) {
+
+          let ord = pesosOrdenadosPorFecha(a);
+          if (ord.length < 2) return "-";
+
+          let primero = ord[0];
+          let ultimo = ord[ord.length - 1];
+
+          let pesoInicial = parseFloat(primero.valor);
+          let pesoFinal = parseFloat(ultimo.valor);
+
+          // Validar que los pesos sean números válidos y positivos
+          if (isNaN(pesoInicial) || isNaN(pesoFinal) || pesoInicial <= 0 || pesoFinal <= 0) return "-";
+
+          let fechaInicial = new Date(primero.fecha);
+          let fechaFinal = new Date(ultimo.fecha);
+
+          let dias = (fechaFinal - fechaInicial) / (1000 * 60 * 60 * 24);
+
+          // Validar que haya al menos 1 día y máximo 1000 días (validez de datos)
+          if (dias < 1 || dias > 1000) return "-";
+
+          let ganancia = (pesoFinal - pesoInicial) / dias;
+
+          // Limitar a valores realistas: ganado puede crecer max ~2 kg/día
+          // Y puede perder max ~1 kg/día (enfermedad, estrés)
+          if (ganancia > 2 || ganancia < -1) return "-";
+
+          return ganancia.toFixed(2);
+        }
+        function estimarPeso(a) {
+
+          let ord = pesosOrdenadosPorFecha(a);
+          if (ord.length < 2) return "-";
+
+          let primero = ord[0];
+          let ultimo = ord[ord.length - 1];
+
+          let pesoInicial = parseFloat(primero.valor);
+          let pesoFinal = parseFloat(ultimo.valor);
+
+          if (isNaN(pesoInicial) || isNaN(pesoFinal) || pesoInicial <= 0 || pesoFinal <= 0) return "-";
+
+          let fechaInicial = new Date(primero.fecha);
+          let fechaFinal = new Date(ultimo.fecha);
+
+          let dias = (fechaFinal - fechaInicial) / (1000 * 60 * 60 * 24);
+
+          // Validar período de datos realista
+          if (dias < 1 || dias > 1000) return "-";
+
+          let aumento = pesoFinal - pesoInicial;
+          let crecimiento = aumento / dias;
+
+          // Validar que el crecimiento proyectado sea realista
+          if (crecimiento > 2 || crecimiento < -1) return "-";
+
+          return Math.round(pesoFinal + crecimiento * 30);
+        }
+        function importarPesos() {
+
+          let input = document.getElementById("filePesos");
+
+          if (!input.files.length) {
+            alert("Seleccioná archivo");
+            return;
+          }
+
+          let file = input.files[0];
+          let reader = new FileReader();
+
+          reader.onload = async function (e) {
+
+            let lineas = e.target.result.split(/\r?\n/);
+
+            let sep = lineas[0].includes(";") ? ";" : ",";
+
+            let actualizados = 0;
+            let noEncontrados = 0;
+
+            for (let i = 1; i < lineas.length; i++) {
+
+              let fila = lineas[i].trim();
+              if (!fila) continue;
+
+              let c = fila.split(sep);
+
+              let caravana = c[0];
+              let peso = c[1];
+
+              let animal = animales.find(a => String(a.id) === String(caravana));
+
+              if (animal) {
+
+                // Asegurar historial
+                if (!animal.pesos) {
+                  animal.pesos = [];
+                }
+
+                let nuevoPesoNum = normalizeNumPeso(peso);
+                if (nuevoPesoNum == null) continue;
+
+                let fechaDia = new Date().toISOString().split("T")[0];
+
+                let idx = animal.pesos.findIndex(function (p) {
+                  return String(p.fecha).split("T")[0] === fechaDia;
+                });
+
+                if (idx === -1) {
+                  animal.pesos.push({
+                    valor: nuevoPesoNum,
+                    fecha: fechaDia
+                  });
+                } else {
+                  animal.pesos[idx] = {
+                    valor: nuevoPesoNum,
+                    fecha: animal.pesos[idx].fecha || fechaDia
+                  };
+                }
+
+                animal.peso = nuevoPesoNum;
+
+                const actualizado = await actualizarAnimalEnSupabase(animal.id, {
+                  peso: nuevoPesoNum,
+                  pesos: animal.pesos
+                });
+
+                if (actualizado) {
+                  actualizados++;
+                }
+
+              } else {
+                noEncontrados++;
+              }
+            }
+
+            mostrar();
+
+            alert(
+              "Actualizados: " + actualizados +
+              "\nNo encontrados: " + noEncontrados
+            );
+          };
+
+          reader.readAsText(file);
+
+        }
+        function puntoDentroPoligono(point, vs) {
+
+          let x = point[0], y = point[1];
+          let inside = false;
+
+          for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+
+            let xi = vs[i][0], yi = vs[i][1];
+            let xj = vs[j][0], yj = vs[j][1];
+
+            let intersect = ((yi > y) != (yj > y)) &&
+              (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+            if (intersect) inside = !inside;
+          }
+
+          return inside;
+        }
+        function reproducirAlerta() {
+          let audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+          audio.play();
+        }
+        async function editarCaravana(i) {
+
+            let nuevo = prompt("Nueva caravana:");
+
+            if (!nuevo) return;
+
+            // evitar duplicados
+            if (animales.some((a, index) => a.id === nuevo && index !== i)) {
+              alert("⚠️ Ya existe esa caravana");
+              return;
+            }
+
+            let animalAnterior = animales[i].id;
+            animales[i].id = nuevo;
+
+            // Actualizar en Supabase
+            const actualizado = await actualizarAnimalEnSupabase(animalAnterior, {
+              caravana: nuevo
+            });
+
+            if (actualizado) {
+              mostrar();
+            } else {
+              // Revertir cambio si falla
+              animales[i].id = animalAnterior;
+              alert("Error al actualizar caravana");
+            }
+          }
+          function estaInactivo(a, horas) {
+
+            let ultima = new Date(a.ultimaActualizacion);
+            let ahora = new Date();
+
+            let diffHoras = (ahora - ultima) / (1000 * 60 * 60);
+
+            return diffHoras >= horas;
+          }
+          function verHistorial(id) {
+            let animal = animales.find(a => String(a.id) === String(id));
+            if (!animal) return;
+
+            let panel = document.getElementById("panelLateral");
+            if (!panel) return;
+
+            let html = `<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">`;
+            html += `<button onclick="mostrarVista('animales')" style="padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">⬅️ Volver a Animales</button><br><br>`;
+            html += `<h3>Historial de Pesos - Animal ${animal.id}</h3>`;
+
+            if (!animal.pesos || animal.pesos.length === 0) {
+              html += "<p>Sin registros de peso</p>";
+            } else {
+              let pesosOrdenados = pesosOrdenadosPorFecha(animal);
+              pesosOrdenados.forEach(p => {
+                html += `
         <div style="border-bottom:1px solid #ccc; margin-bottom:10px; padding-bottom:10px;">
           <b>Fecha:</b> ${p.fecha}<br>
           <b>Peso:</b> ${p.valor} kg
         </div>
       `;
-    });
-  }
-  html += `</div>`;
+              });
+            }
+            html += `</div>`;
 
-  panel.innerHTML = html;
-}
-function mostrarGrafico(id){
-  let animal = animales.find(a => String(a.id) === String(id));
-  if(!animal) return;
+            panel.innerHTML = html;
+          }
+          function mostrarGrafico(id) {
+            let animal = animales.find(a => String(a.id) === String(id));
+            if (!animal) return;
 
-  let panel = document.getElementById("panelLateral");
-  if(!panel) return;
+            let panel = document.getElementById("panelLateral");
+            if (!panel) return;
 
-  let html = `<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">`;
-  html += `<button onclick="mostrarVista('animales')" style="padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">⬅️ Volver a Animales</button><br><br>`;
-  html += `<h3>📊 Evolución de Peso - Animal ${animal.id}</h3>`;
+            let html = `<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">`;
+            html += `<button onclick="mostrarVista('animales')" style="padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">⬅️ Volver a Animales</button><br><br>`;
+            html += `<h3>📊 Evolución de Peso - Animal ${animal.id}</h3>`;
 
-  if(!animal.pesos || animal.pesos.length < 2){
-    html += "<p>Necesitas al menos 2 registros de peso para ver el gráfico</p>";
-  } else {
-    html += `<canvas id="graficoPeso" width="300" height="200" style="border:1px solid #ccc;"></canvas>`;
-  }
-  html += `</div>`;
+            if (!animal.pesos || animal.pesos.length < 2) {
+              html += "<p>Necesitas al menos 2 registros de peso para ver el gráfico</p>";
+            } else {
+              html += `<canvas id="graficoPeso" width="300" height="200" style="border:1px solid #ccc;"></canvas>`;
+            }
+            html += `</div>`;
 
-  panel.innerHTML = html;
+            panel.innerHTML = html;
 
-  // Dibujar gráfico si hay datos suficientes
-  if(animal.pesos && animal.pesos.length >= 2){
-    dibujarGrafico(animal.pesos);
-  }
-}
-function dibujarGrafico(pesos){
-  let canvas = document.getElementById("graficoPeso");
-  if(!canvas) return;
+            // Dibujar gráfico si hay datos suficientes
+            if (animal.pesos && animal.pesos.length >= 2) {
+              dibujarGrafico(animal.pesos);
+            }
+          }
+          function dibujarGrafico(pesos) {
+            let canvas = document.getElementById("graficoPeso");
+            if (!canvas) return;
 
-  let ctx = canvas.getContext("2d");
-  let width = canvas.width;
-  let height = canvas.height;
+            let ctx = canvas.getContext("2d");
+            let width = canvas.width;
+            let height = canvas.height;
 
-  // Ordenar pesos por fecha
-  let datos = pesos.slice().sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
+            // Ordenar pesos por fecha
+            let datos = pesos.slice().sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
-  // Encontrar min/max
-  let pesosVal = datos.map(p => parseFloat(p.valor));
-  let minPeso = Math.min(...pesosVal);
-  let maxPeso = Math.max(...pesosVal);
-  let rangoPeso = maxPeso - minPeso || 1;
+            // Encontrar min/max
+            let pesosVal = datos.map(p => parseFloat(p.valor));
+            let minPeso = Math.min(...pesosVal);
+            let maxPeso = Math.max(...pesosVal);
+            let rangoPeso = maxPeso - minPeso || 1;
 
-  // Fechas
-  let fechas = datos.map(p => new Date(p.fecha));
-  let minFecha = Math.min(...fechas);
-  let maxFecha = Math.max(...fechas);
-  let rangoFecha = maxFecha - minFecha || 1;
+            // Fechas
+            let fechas = datos.map(p => new Date(p.fecha));
+            let minFecha = Math.min(...fechas);
+            let maxFecha = Math.max(...fechas);
+            let rangoFecha = maxFecha - minFecha || 1;
 
-  // Limpiar canvas
-  ctx.clearRect(0, 0, width, height);
+            // Limpiar canvas
+            ctx.clearRect(0, 0, width, height);
 
-  // Dibujar ejes
-  ctx.strokeStyle = "#000";
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(40, 20);
-  ctx.lineTo(40, height - 20);
-  ctx.lineTo(width - 20, height - 20);
-  ctx.stroke();
+            // Dibujar ejes
+            ctx.strokeStyle = "#000";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(40, 20);
+            ctx.lineTo(40, height - 20);
+            ctx.lineTo(width - 20, height - 20);
+            ctx.stroke();
 
-  // Etiquetas eje Y
-  ctx.fillStyle = "#000";
-  ctx.font = "10px Arial";
-  ctx.fillText(maxPeso + "kg", 5, 25);
-  ctx.fillText(minPeso + "kg", 5, height - 15);
+            // Etiquetas eje Y
+            ctx.fillStyle = "#000";
+            ctx.font = "10px Arial";
+            ctx.fillText(maxPeso + "kg", 5, 25);
+            ctx.fillText(minPeso + "kg", 5, height - 15);
 
-  // Etiquetas eje X
-  let fechaInicio = new Date(datos[0].fecha).toLocaleDateString();
-  let fechaFin = new Date(datos[datos.length-1].fecha).toLocaleDateString();
-  ctx.fillText(fechaInicio, 45, height - 5);
-  ctx.fillText(fechaFin, width - 80, height - 5);
+            // Etiquetas eje X
+            let fechaInicio = new Date(datos[0].fecha).toLocaleDateString();
+            let fechaFin = new Date(datos[datos.length - 1].fecha).toLocaleDateString();
+            ctx.fillText(fechaInicio, 45, height - 5);
+            ctx.fillText(fechaFin, width - 80, height - 5);
 
-  // Dibujar línea
-  ctx.strokeStyle = "#007bff";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
+            // Dibujar línea
+            ctx.strokeStyle = "#007bff";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
 
-  datos.forEach((p, i) => {
-    let x = 40 + ((new Date(p.fecha) - minFecha) / rangoFecha) * (width - 60);
-    let y = height - 20 - ((parseFloat(p.valor) - minPeso) / rangoPeso) * (height - 40);
-    if(i === 0){
-      ctx.moveTo(x, y);
-    } else {
-      ctx.lineTo(x, y);
-    }
-  });
-  ctx.stroke();
+            datos.forEach((p, i) => {
+              let x = 40 + ((new Date(p.fecha) - minFecha) / rangoFecha) * (width - 60);
+              let y = height - 20 - ((parseFloat(p.valor) - minPeso) / rangoPeso) * (height - 40);
+              if (i === 0) {
+                ctx.moveTo(x, y);
+              } else {
+                ctx.lineTo(x, y);
+              }
+            });
+            ctx.stroke();
 
-  // Puntos
-  ctx.fillStyle = "#007bff";
-  datos.forEach(p => {
-    let x = 40 + ((new Date(p.fecha) - minFecha) / rangoFecha) * (width - 60);
-    let y = height - 20 - ((parseFloat(p.valor) - minPeso) / rangoPeso) * (height - 40);
-    ctx.beginPath();
-    ctx.arc(x, y, 3, 0, 2 * Math.PI);
-    ctx.fill();
-  });
-}
-function mostrarChat(){
-  document.getElementById("listaPanel").style.display = "none";
-  document.getElementById("historialPanel").style.display = "none";
-  document.getElementById("chatPanel").style.display = "block";
-  mostrarSeccion('animales'); // Asegurar que esté en la sección animales
-}
-function borrarEvento(id, index){
+            // Puntos
+            ctx.fillStyle = "#007bff";
+            datos.forEach(p => {
+              let x = 40 + ((new Date(p.fecha) - minFecha) / rangoFecha) * (width - 60);
+              let y = height - 20 - ((parseFloat(p.valor) - minPeso) / rangoPeso) * (height - 40);
+              ctx.beginPath();
+              ctx.arc(x, y, 3, 0, 2 * Math.PI);
+              ctx.fill();
+            });
+          }
+          function mostrarChat() {
+            document.getElementById("listaPanel").style.display = "none";
+            document.getElementById("historialPanel").style.display = "none";
+            document.getElementById("chatPanel").style.display = "block";
+            mostrarSeccion('animales'); // Asegurar que esté en la sección animales
+          }
+          async function borrarEvento(id, index) {
 
-  let animal = animales.find(a => String(a.id) === String(id));
-  if(!animal) return;
+            let animal = animales.find(a => String(a.id) === String(id));
+            if (!animal) return;
 
-  animal.historial.splice(index,1);
+            animal.historial.splice(index, 1);
 
-  localStorage.setItem("animales", JSON.stringify(animales));
+            // Actualizar en Supabase
+            const actualizado = await actualizarAnimalEnSupabase(id, {
+              historial: animal.historial
+            });
 
-  verHistorial(id);
-}
-function agregarEvento(id, tipo, detalle){
+            if (actualizado) {
+              verHistorial(id);
+            } else {
+              alert("Error al eliminar evento");
+            }
+          }
 
-  let animal = animales.find(a => String(a.id) === String(id));
-  if(!animal) return;
+          async function agregarEvento(id, tipo, detalle) {
 
-  animal.historial.push({
-    tipo: tipo,
-    detalle: detalle,
-    fecha: new Date().toISOString()
-  });
+            let animal = animales.find(a => String(a.id) === String(id));
+            if (!animal) return;
 
-  localStorage.setItem("animales", JSON.stringify(animales));
-}
-//setInterval(() => {
-//  mostrar();
-//}, 5000);
-function guardarTiempo(){
-  let valor = document.getElementById("tiempoInactivo").value;
-  localStorage.setItem("tiempoInactivo", valor);
-}
-function resetTiempo(){
+            animal.historial.push({
+              tipo: tipo,
+              detalle: detalle,
+              fecha: new Date().toISOString()
+            });
 
-  let ahora = new Date().toISOString();
+            // Actualizar en Supabase
+            await actualizarAnimalEnSupabase(id, {
+              historial: animal.historial
+            });
+          }
+          async function resetTiempo() {
 
-  animales.forEach(a => {
-    a.ultimaActualizacion = ahora;
-  });
+            let ahora = new Date().toISOString();
 
-  localStorage.setItem("animales", JSON.stringify(animales));
+            animales.forEach(a => {
+              a.ultimaActualizacion = ahora;
+            });
 
-  alert("Actividad reiniciada");
-mostrar();
-}
-function editarZona(){
+            // Actualizar todos los animales en Supabase
+            for (let animal of animales) {
+              await actualizarAnimalEnSupabase(animal.id, {
+                ultimaActualizacion: ahora
+              });
+            }
 
-  if(!zonaSeleccionada){
-    alert("Seleccioná una zona");
-    return;
-  }
+            alert("Actividad reiniciada");
+            mostrar();
+          }
+          function editarZona() {
 
-  let nuevoNombre = prompt("Nuevo nombre:", zonaSeleccionada.nombre);
+            if (!zonaSeleccionada) {
+              alert("Seleccioná una zona");
+              return;
+            }
 
-  if(!nuevoNombre) return;
+            let nuevoNombre = prompt("Nuevo nombre:", zonaSeleccionada.nombre);
 
-  zonaSeleccionada.nombre = nuevoNombre;
+            if (!nuevoNombre) return;
 
-  // actualizar localStorage
-  let zonasGuardadas = JSON.parse(localStorage.getItem("zonas")) || [];
+            zonaSeleccionada.nombre = nuevoNombre;
 
-  zonasGuardadas = zonasGuardadas.map(z => {
-    if(JSON.stringify(z.coords) === JSON.stringify(zonaSeleccionada.getLatLngs()[0])){
-      z.nombre = nuevoNombre;
-    }
-    return z;
-  });
+            // actualizar localStorage
+            let zonasGuardadas = JSON.parse(localStorage.getItem("zonas")) || [];
 
-  localStorage.setItem("zonas", JSON.stringify(zonasGuardadas));
+            zonasGuardadas = zonasGuardadas.map(z => {
+              if (JSON.stringify(z.coords) ===
+                JSON.stringify(zonaSeleccionada.getLatLngs()[0])) {
+                z.nombre = nuevoNombre;
+              }
+              return z;
+            });
 
-  alert("Nombre actualizado");
-}
-// 🔥 PARCHE FINAL PARA RECUPERAR APP
-function mostrarRanking(animales){
+            localStorage.setItem("zonas", JSON.stringify(zonasGuardadas));
 
-  let lista = animales
-    .map(a => ({
-      id: a.id,
-      ganancia: parseFloat(calcularGanancia(a))
-    }))
-   .filter(a => a.ganancia !== "-" && !isNaN(a.ganancia))
+            alert("Nombre actualizado");
+          }
+        // 🔥 PARCHE FINAL PARA RECUPERAR APP
+        function mostrarRanking(animales) {
 
-  lista.sort((a,b) => b.ganancia - a.ganancia);
+          let lista = animales
+            .map(a => ({
+              id: a.id,
+              ganancia: parseFloat(calcularGanancia(a))
+            }))
+            .filter(a => a.ganancia !== "-" && !isNaN(a.ganancia))
 
-  let top = lista.slice(0,3);
-  let peor = lista.slice(-3).reverse();
+          lista.sort((a, b) => b.ganancia - a.ganancia);
 
-  let topHTML = "<h4>🔥 Mejores</h4>";
-  top.forEach(a => {
-    topHTML += `ID: ${a.id} - ${a.ganancia} kg/día<br>`;
-  });
+          let top = lista.slice(0, 3);
+          let peor = lista.slice(-3).reverse();
 
-  let peorHTML = "<h4>⚠️ Peores</h4>";
-  peor.forEach(a => {
-    peorHTML += `ID: ${a.id} - ${a.ganancia} kg/día<br>`;
-  });
+          let topHTML = "<h4>🔥 Mejores</h4>";
+          top.forEach(a => {
+            topHTML += `ID: ${a.id} - ${a.ganancia} kg/día<br>`;
+          });
 
-  document.getElementById("top").innerHTML = topHTML;
-  document.getElementById("peor").innerHTML = peorHTML;
-}
+          let peorHTML = "<h4>⚠️ Peores</h4>";
+          peor.forEach(a => {
+            peorHTML += `ID: ${a.id} - ${a.ganancia} kg/día<br>`;
+          });
 
-function enviarPregunta() {
-  const input = document.getElementById("chatInput");
-  const pregunta = input.value.trim();
-  if (!pregunta) return;
+          document.getElementById("top").innerHTML = topHTML;
+          document.getElementById("peor").innerHTML = peorHTML;
+        }
 
-  const conversacion = document.getElementById("chatConversacion");
-  conversacion.innerHTML += `<p><strong>Tú:</strong> ${pregunta}</p>`;
-  input.value = "";
+        function enviarPregunta() {
+          const input = document.getElementById("chatInput");
+          const pregunta = input.value.trim();
+          if (!pregunta) return;
 
-  const respuesta = responderIA(pregunta);
-  conversacion.innerHTML += `<p><strong>Asistente:</strong> ${respuesta}</p>`;
-  conversacion.scrollTop = conversacion.scrollHeight;
-}
+          const conversacion = document.getElementById("chatConversacion");
+          conversacion.innerHTML += `<p><strong>Tú:</strong> ${pregunta}</p>`;
+          input.value = "";
 
-function responderIA(pregunta) {
-  const q = pregunta.toLowerCase();
-  if (q.includes("cargar") || q.includes("subir") || q.includes("actualizar") || q.includes("csv") || q.includes("peso") || q.includes("pesos") || q.includes("importar")) {
-    return "Para cargar pesos, haz clic en '📥 Actualizar Pesos' en el panel de controles. Selecciona un archivo CSV con columnas ID y peso. El sistema actualizará los pesos de los animales correspondientes.";
-  } else if (q.includes("historial") || q.includes("eventos") || q.includes("registro") || q.includes("ver historial") || q.includes("pesos anteriores")) {
-    return "El historial muestra todos los pesos registrados de cada animal ordenados por fecha. Haz clic en '📜 Historial' en la lista de animales para verlo.";
-  } else if (q.includes("ganancia") || q.includes("aumento") || q.includes("peso diario") || q.includes("crecimiento") || q.includes("ganancia diaria")) {
-    return "La ganancia se calcula como el aumento de peso diario basado en los registros de peso. Se muestra en el ranking de mejores y peores animales.";
-  } else if (q.includes("ranking") || q.includes("top") || q.includes("mejores") || q.includes("peores") || q.includes("clasificación") || q.includes("mejor animal")) {
-    return "El ranking muestra los animales con mejor y peor ganancia de peso diaria. Los mejores están en la parte superior del panel lateral.";
-  } else if (q.includes("rebaño") || q.includes("rebanos") || q.includes("grupo") || q.includes("lote")) {
-    return "Los rebaños permiten agrupar animales. Haz clic en '🐑 Rebaños' para crear grupos, calcular promedios y exportar datos en CSV.";
-  } else if (q.includes("exportar") || q.includes("descargar") || q.includes("archivo")) {
-    return "Puedes exportar datos en CSV desde:\\n- Rebaño: botón '📥 Exportar CSV' en la vista del rebaño (con ID, Peso y Ganancia).\\n- Todos los animales: botón '📥 Excel' en el panel de controles.";
-  } else if (q.includes("eliminar") || q.includes("borrar") || q.includes("quitar")) {
-    return "Puedes eliminar: animales del rebaño con ❌, o eliminar el rebaño completo con el botón 'Eliminar rebaño'.";
-  } else {
-    return "Preguntas que puedo ayudarte:\\n- 'Cargar pesos' - cómo actualizar datos\\n- 'Historial' - ver pesos anteriores\\n- 'Ganancia' - qué es la ganancia diaria\\n- 'Ranking' - mejores y peores animales\\n- 'Rebaños' - cómo crear grupos\\n- 'Exportar' - descargar en CSV";
-  }
-}
+          const respuesta = responderIA(pregunta);
+          conversacion.innerHTML += `<p><strong>Asistente:</strong> ${respuesta}</p>`;
+          conversacion.scrollTop = conversacion.scrollHeight;
+        }
 
-// REBAÑOS
-let rebanos = JSON.parse(localStorage.getItem("rebanos")) || [];
+        function responderIA(pregunta) {
+          const q = pregunta.toLowerCase();
+          if (q.includes("cargar") || q.includes("subir") || q.includes("actualizar") || q.includes("csv") || q.includes("peso") || q.includes("pesos") || q.includes("importar")) {
+            return "Para cargar pesos, haz clic en '📥 Actualizar Pesos' en el panel de controles. Selecciona un archivo CSV con columnas ID y peso. El sistema actualizará los pesos de los animales correspondientes.";
+          } else if (q.includes("historial") || q.includes("eventos") || q.includes("registro") || q.includes("ver historial") || q.includes("pesos anteriores")) {
+            return "El historial muestra todos los pesos registrados de cada animal ordenados por fecha. Haz clic en '📜 Historial' en la lista de animales para verlo.";
+          } else if (q.includes("ganancia") || q.includes("aumento") || q.includes("peso diario") || q.includes("crecimiento") || q.includes("ganancia diaria")) {
+            return "La ganancia se calcula como el aumento de peso diario basado en los registros de peso. Se muestra en el ranking de mejores y peores animales.";
+          } else if (q.includes("ranking") || q.includes("top") || q.includes("mejores") || q.includes("peores") || q.includes("clasificación") || q.includes("mejor animal")) {
+            return "El ranking muestra los animales con mejor y peor ganancia de peso diaria. Los mejores están en la parte superior del panel lateral.";
+          } else if (q.includes("rebaño") || q.includes("rebanos") || q.includes("grupo") || q.includes("lote")) {
+            return "Los rebaños permiten agrupar animales. Haz clic en '🐑 Rebaños' para crear grupos, calcular promedios y exportar datos en CSV.";
+          } else if (q.includes("exportar") || q.includes("descargar") || q.includes("archivo")) {
+            return "Puedes exportar datos en CSV desde:\\n- Rebaño: botón '📥 Exportar CSV' en la vista del rebaño (con ID, Peso y Ganancia).\\n- Todos los animales: botón '📥 Excel' en el panel de controles.";
+          } else if (q.includes("eliminar") || q.includes("borrar") || q.includes("quitar")) {
+            return "Puedes eliminar: animales del rebaño con ❌, o eliminar el rebaño completo con el botón 'Eliminar rebaño'.";
+          } else {
+            return "Preguntas que puedo ayudarte:\\n- 'Cargar pesos' - cómo actualizar datos\\n- 'Historial' - ver pesos anteriores\\n- 'Ganancia' - qué es la ganancia diaria\\n- 'Ranking' - mejores y peores animales\\n- 'Rebaños' - cómo crear grupos\\n- 'Exportar' - descargar en CSV";
+          }
+        }
 
-function mostrarRebanos(){
-  document.getElementById("listaPanel").style.display = "none";
-  document.getElementById("historialPanel").style.display = "none";
-  document.getElementById("chatPanel").style.display = "none";
-  document.getElementById("rebanosPanel").style.display = "block";
-  mostrarSeccion('animales'); // Asegurar que esté en la sección animales
-  renderizarRebanos();
-}
+        // REBAÑOS
+        let rebanos = JSON.parse(localStorage.getItem("rebanos")) || [];
 
-function renderizarRebanos(){
-  let panel = document.getElementById("panelLateral");
-  if(!panel) return;
-  
-  let html = `<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">`;
-  html += `<h3>🐑 Rebaños</h3>`;
-  html += `<input id="nuevoRebanoNombre" placeholder="Nombre del rebaño" style="width: calc(100% - 80px); padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px;">`;
-  html += `<button onclick="crearRebano()" style="padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 5px;">Crear</button><br><br>`;
-  html += `<h4>Rebaños Existentes:</h4>`;
-  
-  if(rebanos.length === 0){
-    html += `<p>No hay rebaños</p>`;
-  } else {
-    rebanos.forEach((r, i) => {
-      html += `<div style="border:1px solid #ccc; padding:10px; margin:10px 0; border-radius: 5px; background: #f9f9f9;">
+        function mostrarRebanos() {
+          document.getElementById("listaPanel").style.display = "none";
+          document.getElementById("historialPanel").style.display = "none";
+          document.getElementById("chatPanel").style.display = "none";
+          document.getElementById("rebanosPanel").style.display = "block";
+          mostrarSeccion('animales'); // Asegurar que esté en la sección animales
+          renderizarRebanos();
+        }
+
+        function renderizarRebanos() {
+          let panel = document.getElementById("panelLateral");
+          if (!panel) return;
+
+          let html = `<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">`;
+          html += `<h3>🐑 Rebaños</h3>`;
+          html += `<input id="nuevoRebanoNombre" placeholder="Nombre del rebaño" style="width: calc(100% - 80px); padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px;">`;
+          html += `<button onclick="crearRebano()" style="padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 5px;">Crear</button><br><br>`;
+          html += `<h4>Rebaños Existentes:</h4>`;
+
+          if (rebanos.length === 0) {
+            html += `<p>No hay rebaños</p>`;
+          } else {
+            rebanos.forEach((r, i) => {
+              html += `<div style="border:1px solid #ccc; padding:10px; margin:10px 0; border-radius: 5px; background: #f9f9f9;">
         <b>${r.nombre}</b> (${r.animales.length} animales)
         <button onclick="verRebano(${i})" style="padding: 5px 10px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 5px;">Ver</button>
       </div>`;
-    });
-  }
-  html += `</div>`;
-  
-  panel.innerHTML = html;
-}
+            });
+          }
+          html += `</div>`;
 
-function crearRebano(){
-  let nombre = document.getElementById("nuevoRebanoNombre").value.trim();
-  if(!nombre) return;
-  rebanos.push({nombre: nombre, animales: []});
-  localStorage.setItem("rebanos", JSON.stringify(rebanos));
-  renderizarRebanos();
-}
+          panel.innerHTML = html;
+        }
 
-function obtenerUltimoPeso(animal){
-  if(!animal) return null;
-  if(animal.pesos && animal.pesos.length > 0){
-    return animal.pesos[animal.pesos.length - 1].valor;
-  } else if(animal.peso && animal.peso !== "Sin datos"){
-    return animal.peso;
-  }
-  return null;
-}
+        function crearRebano() {
+          let nombre = document.getElementById("nuevoRebanoNombre").value.trim();
+          if (!nombre) return;
+          rebanos.push({ nombre: nombre, animales: [] });
+          localStorage.setItem("rebanos", JSON.stringify(rebanos));
+          renderizarRebanos();
+        }
 
-function verRebano(index){
-  if(!rebanos[index]) return;
-  let rebano = rebanos[index];
-  let panel = document.getElementById("panelLateral");
-  if(!panel) return;
-  
-  let html = `<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">`;
-  html += `<button onclick="mostrarVista('rebanos')" style="padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 5px;">⬅️ Volver a Rebaños</button>`;
-  html += `<button onclick="exportarRebano(${index})" style="margin-left: 5px; padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">📥 Exportar</button>`;
-  html += `<button onclick="eliminarRebano(${index})" style="margin-left: 5px; padding: 8px 15px; background: #d32f2f; color: white; border: none; border-radius: 5px; cursor: pointer;">🗑️ Eliminar</button><br><br>`;
-  html += `<h3>Rebaño: ${rebano.nombre}</h3>`;
-  html += `<p><b>Cantidad de animales:</b> ${rebano.animales.length}</p>`;
-  
-  let pesos = [];
-  let ganancias = [];
-  rebano.animales.forEach(id => {
-    let animal = animales.find(a => String(a.id) == String(id));
-    if(animal){
-      let peso = obtenerUltimoPeso(animal);
-      if(peso !== null && peso !== undefined) pesos.push(parseFloat(peso));
-      let gan = calcularGanancia(animal);
-      if(gan !== "-" && !isNaN(parseFloat(gan))) ganancias.push(parseFloat(gan));
-    }
-  });
-  
-  let promedioPeso = pesos.length > 0 ? (pesos.reduce((a,b)=>a+b,0)/pesos.length).toFixed(2) + ' kg' : "Sin datos";
-  let promedioGanancia = ganancias.length > 0 ? (ganancias.reduce((a,b)=>a+b,0)/ganancias.length).toFixed(2) + ' kg/día' : "Sin datos";
-  
-  html += `<p><b>Peso promedio:</b> ${promedioPeso}</p>`;
-  html += `<p><b>Ganancia promedio:</b> ${promedioGanancia}</p><br>`;
-  
-  html += `<h4>📋 Animales en el rebaño:</h4>`;
-  if(rebano.animales.length === 0){
-    html += `<p>Ninguno</p>`;
-  } else {
-    html += `<div style="background: #f9f9f9; padding: 10px; border-radius: 5px; margin-bottom: 10px;">`;
-    rebano.animales.forEach(id => {
-      let animal = animales.find(a => String(a.id) == String(id));
-      if(!animal) return;
-      let peso = obtenerUltimoPeso(animal);
-      let pesoStr = peso !== null ? peso + ' kg' : 'Sin datos';
-      html += `<div style="padding: 5px; margin: 5px 0; background: white; border-radius: 3px; display: flex; justify-content: space-between; align-items: center;">
+        function obtenerUltimoPeso(animal) {
+          if (!animal) return null;
+          var n = normalizeNumPeso(animal.peso);
+          if (n != null) return n;
+          var ord = pesosOrdenadosPorFecha(animal);
+          if (ord.length > 0) {
+            var nl = normalizeNumPeso(ord[ord.length - 1].valor);
+            if (nl != null) return nl;
+          }
+          return null;
+        }
+
+        function verRebano(index) {
+          if (!rebanos[index]) return;
+          let rebano = rebanos[index];
+          let panel = document.getElementById("panelLateral");
+          if (!panel) return;
+
+          let html = `<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">`;
+          html += `<button onclick="mostrarVista('rebanos')" style="padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 5px;">⬅️ Volver a Rebaños</button>`;
+          html += `<button onclick="exportarRebano(${index})" style="margin-left: 5px; padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">📥 Exportar</button>`;
+          html += `<button onclick="eliminarRebano(${index})" style="margin-left: 5px; padding: 8px 15px; background: #d32f2f; color: white; border: none; border-radius: 5px; cursor: pointer;">🗑️ Eliminar</button><br><br>`;
+          html += `<h3>Rebaño: ${rebano.nombre}</h3>`;
+          html += `<p><b>Cantidad de animales:</b> ${rebano.animales.length}</p>`;
+
+          let pesos = [];
+          let ganancias = [];
+          rebano.animales.forEach(id => {
+            let animal = animales.find(a => String(a.id) == String(id));
+            if (animal) {
+              let peso = obtenerUltimoPeso(animal);
+              if (peso !== null && peso !== undefined) pesos.push(parseFloat(peso));
+              let gan = calcularGanancia(animal);
+              if (gan !== "-" && !isNaN(parseFloat(gan))) ganancias.push(parseFloat(gan));
+            }
+          });
+
+          let promedioPeso = pesos.length > 0 ? (pesos.reduce((a, b) => a + b, 0) / pesos.length).toFixed(2) + ' kg' : "Sin datos";
+          let promedioGanancia = ganancias.length > 0 ? (ganancias.reduce((a, b) => a + b, 0) / ganancias.length).toFixed(2) + ' kg/día' : "Sin datos";
+
+          html += `<p><b>Peso promedio:</b> ${promedioPeso}</p>`;
+          html += `<p><b>Ganancia promedio:</b> ${promedioGanancia}</p><br>`;
+
+          html += `<h4>📋 Animales en el rebaño:</h4>`;
+          if (rebano.animales.length === 0) {
+            html += `<p>Ninguno</p>`;
+          } else {
+            html += `<div style="background: #f9f9f9; padding: 10px; border-radius: 5px; margin-bottom: 10px;">`;
+            rebano.animales.forEach(id => {
+              let animal = animales.find(a => String(a.id) == String(id));
+              if (!animal) return;
+              let peso = obtenerUltimoPeso(animal);
+              let pesoStr = peso !== null ? peso + ' kg' : 'Sin datos';
+              html += `<div style="padding: 5px; margin: 5px 0; background: white; border-radius: 3px; display: flex; justify-content: space-between; align-items: center;">
         <span>${id} - ${pesoStr}</span>
         <button onclick="quitarAnimalDelRebano(${index}, '${id}')" style="background: #ff5722; color: white; padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">❌ Quitar</button>
       </div>`;
-    });
-    html += `</div>`;
-  }
-  
-  html += `<h4>➕ Agregar animales:</h4>`;
-  html += `<input id="buscadorAnimales" placeholder="Buscar por ID..." oninput="actualizarListaAnimales(${index})" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;"><br><br>`;
-  html += `<div id="listaAnimalesRebano"></div>`;
-  html += `</div>`;
-  
-  panel.innerHTML = html;
-  actualizarListaAnimales(index);
-}
+            });
+            html += `</div>`;
+          }
 
-function actualizarListaAnimales(rebanoIndex){
-  if(!rebanos[rebanoIndex]) return;
-  let rebano = rebanos[rebanoIndex];
-  let inputBuscador = document.getElementById("buscadorAnimales");
-  let busqueda = inputBuscador ? inputBuscador.value.toLowerCase() : "";
-  let html = "";
-  
-  animales.forEach(a => {
-    let idStr = String(a.id || "").toLowerCase();
-    if(!rebano.animales.includes(a.id) && idStr.includes(busqueda)){
-      html += `<label><input type="checkbox" value="${a.id}" onchange="toggleAnimalRebano(${rebanoIndex}, '${a.id}', this.checked)"> ${a.id}</label><br>`;
-    }
-  });
-  
-  if(html === "") html = "<p>No hay animales disponibles</p>";
-  let listaDiv = document.getElementById("listaAnimalesRebano");
-  if(listaDiv) listaDiv.innerHTML = html;
-}
+          html += `<h4>➕ Agregar animales:</h4>`;
+          html += `<input id="buscadorAnimales" placeholder="Buscar por ID..." oninput="actualizarListaAnimales(${index})" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;"><br><br>`;
+          html += `<div id="listaAnimalesRebano"></div>`;
+          html += `</div>`;
 
-function toggleAnimalRebano(rebanoIndex, animalId, checked){
-  if(!rebanos[rebanoIndex]) return;
-  
-  if(checked){
-    if(!rebanos[rebanoIndex].animales.includes(animalId)){
-      rebanos[rebanoIndex].animales.push(animalId);
-    }
-  } else {
-    rebanos[rebanoIndex].animales = rebanos[rebanoIndex].animales.filter(id => String(id) !== String(animalId));
-  }
-  localStorage.setItem("rebanos", JSON.stringify(rebanos));
-}
+          panel.innerHTML = html;
+          actualizarListaAnimales(index);
+        }
 
-function exportarRebano(index){
-  if(index === undefined || !rebanos[index]) {
-    alert("Error: Rebaño no encontrado");
-    return;
-  }
-  
-  let rebano = rebanos[index];
-  console.log("Exportando rebaño:", rebano.nombre, "IDs:", rebano.animales);
-  
-  if(!rebano.animales || rebano.animales.length === 0){
-    alert("El rebaño no tiene animales para exportar");
-    return;
-  }
-  
-  let lineas = ["ID;Peso;Ganancia"];
-  let animalesExportados = 0;
-  
-  rebano.animales.forEach(function(idAnimal) {
-    console.log("Buscando animal con ID:", idAnimal);
-    let animal = null;
-    
-    for(let i = 0; i < animales.length; i++){
-      if(String(animales[i].id) === String(idAnimal)){
-        animal = animales[i];
-        break;
-      }
-    }
-    
-    if(animal){
-      console.log("Animal encontrado:", animal);
-      animalesExportados++;
-      let peso = obtenerUltimoPeso(animal);
-      let pesoStr = (peso !== null && peso !== undefined) ? String(peso) : "Sin datos";
-      let ganancia = calcularGanancia(animal);
-      let gananciaStr = (ganancia && ganancia !== "-") ? String(ganancia) : "Sin datos";
-      let linea = String(idAnimal) + ";" + pesoStr + ";" + gananciaStr;
-      console.log("Línea CSV:", linea);
-      lineas.push(linea);
+        function actualizarListaAnimales(rebanoIndex) {
+          if (!rebanos[rebanoIndex]) return;
+          let rebano = rebanos[rebanoIndex];
+          let inputBuscador = document.getElementById("buscadorAnimales");
+          let busqueda = inputBuscador ? inputBuscador.value.toLowerCase() : "";
+          let html = "";
+
+          animales.forEach(a => {
+            let idStr = String(a.id || "").toLowerCase();
+            if (!rebano.animales.includes(a.id) && idStr.includes(busqueda)) {
+              html += `<label><input type="checkbox" value="${a.id}" onchange="toggleAnimalRebano(${rebanoIndex}, '${a.id}', this.checked)"> ${a.id}</label><br>`;
+            }
+          });
+
+          if (html === "") html = "<p>No hay animales disponibles</p>";
+          let listaDiv = document.getElementById("listaAnimalesRebano");
+          if (listaDiv) listaDiv.innerHTML = html;
+        }
+
+        function toggleAnimalRebano(rebanoIndex, animalId, checked) {
+          if (!rebanos[rebanoIndex]) return;
+
+          if (checked) {
+            if (!rebanos[rebanoIndex].animales.includes(animalId)) {
+              rebanos[rebanoIndex].animales.push(animalId);
+            }
+          } else {
+            rebanos[rebanoIndex].animales = rebanos[rebanoIndex].animales.filter(id => String(id) !== String(animalId));
+          }
+          localStorage.setItem("rebanos", JSON.stringify(rebanos));
+        }
+
+        function exportarRebano(index) {
+          if (index === undefined || !rebanos[index]) {
+            alert("Error: Rebaño no encontrado");
+            return;
+          }
+
+          let rebano = rebanos[index];
+          console.log("Exportando rebaño:", rebano.nombre, "IDs:", rebano.animales);
+
+          if (!rebano.animales || rebano.animales.length === 0) {
+            alert("El rebaño no tiene animales para exportar");
+            return;
+          }
+
+          let lineas = ["ID;Peso;Ganancia"];
+          let animalesExportados = 0;
+
+          rebano.animales.forEach(function (idAnimal) {
+            console.log("Buscando animal con ID:", idAnimal);
+            let animal = null;
+
+            for (let i = 0; i < animales.length; i++) {
+              if (String(animales[i].id) === String(idAnimal)) {
+                animal = animales[i];
+                break;
+              }
+            }
+
+            if (animal) {
+              console.log("Animal encontrado:", animal);
+              animalesExportados++;
+              let peso = obtenerUltimoPeso(animal);
+              let pesoStr = (peso !== null && peso !== undefined) ? String(peso) : "Sin datos";
+              let ganancia = calcularGanancia(animal);
+              let gananciaStr = (ganancia && ganancia !== "-") ? String(ganancia) : "Sin datos";
+              let linea = String(idAnimal) + ";" + pesoStr + ";" + gananciaStr;
+              console.log("Línea CSV:", linea);
+              lineas.push(linea);
+            } else {
+              console.log("Animal NO encontrado con ID:", idAnimal);
+            }
+          });
+
+          console.log("Animales exportados:", animalesExportados, "Total:", lineas.length - 1);
+
+
+          if (animalesExportados === 0) {
+            alert("No se encontraron animales válidos en el rebaño para exportar");
+            return;
+          }
+
+          // Construir CSV con BOM UTF-8 para Excel
+          let csv = '\uFEFF';  // BOM UTF-8 - necesario para Excel
+          csv += lineas.join("\r\n") + "\r\n";
+
+          console.log("CSV con BOM generado, tamaño:", csv.length, "bytes");
+          console.log("Primeros caracteres:", csv.substring(0, 50));
+
+          // Crear Blob correctamente con charset utf-8
+          let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+          console.log("Blob creado, tamaño:", blob.size, "bytes");
+
+          // Crear link
+          let link = document.createElement("a");
+
+          // Asignar URL del blob
+          let url = URL.createObjectURL(blob);
+          link.href = url;
+
+          // Asignar nombre con timestamp opcional para evitar caché
+          let nombreArchivo = rebano.nombre.replace(/[^a-z0-9]/gi, "_").toLowerCase() + ".csv";
+          link.download = nombreArchivo;
+
+          console.log("Descargando:", nombreArchivo, "| Tamaño Blob:", blob.size, "bytes");
+
+          // Agregar al DOM
+          document.body.appendChild(link);
+
+          // Ejecutar click
+          link.click();
+
+          console.log("Click ejecutado en link de descarga");
+
+          // Limpiar recursos
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          console.log("Recurso liberado");
+          alert("✓ Rebaño exportado a Excel: " + nombreArchivo);
+        }
+
+        function quitarAnimalDelRebano(rebanoIndex, animalId) {
+          if (!rebanos[rebanoIndex]) return;
+          rebanos[rebanoIndex].animales = rebanos[rebanoIndex].animales.filter(id => String(id) !== String(animalId));
+          localStorage.setItem("rebanos", JSON.stringify(rebanos));
+          verRebano(rebanoIndex);
+        }
+
+        function eliminarRebano(index) {
+          if (!rebanos[index]) return;
+          if (confirm("¿Estás seguro de que deseas eliminar el rebaño '" + rebanos[index].nombre + "'?")) {
+            rebanos.splice(index, 1);
+            localStorage.setItem("rebanos", JSON.stringify(rebanos));
+            renderizarRebanos();
+          }
+        }
+
+        // SISTEMA DE VISTAS
+        function mostrarVista(tipo) {
+          let panel = document.getElementById("panelLateral");
+          if (!panel) return;
+
+          mostrarSeccion('animales');
+
+          if (tipo === 'animales') {
+            panel.innerHTML = vistaAnimales();
+            mostrar();
+            mostrarRanking(animales);
+          } else if (tipo === 'ingreso') {
+            panel.innerHTML = vistaIngreso();
+          } else if (tipo === 'rebanos') {
+            renderizarRebanos();
+          } else if (tipo === 'tanque') {
+            mostrarSeccion('tanque');
+            cargarTanqueDesdeSupabase();
+          } else if (tipo === 'ayuda') {
+            panel.innerHTML = vistaAyuda();
+          }
+        }
+
+        function vistaAnimales() {
+          let html = '<div id="listaPanel" style="padding: 10px;"><div id="listaAnimales">';
+          html += '<h3>🐄 Animales</h3>';
+          html += '<input id="buscador" placeholder="Buscar caravana..." oninput="mostrar()" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px;">';
+          html += '<button type="button" onclick="eliminarSeleccionados()" style="width: 100%; padding: 8px; margin: 0 0 8px 0; background: #c62828; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Eliminar seleccionados</button>';
+          html += '<h4>Filtrar por lote</h4>';
+          html += '<select id="filtroLote" onchange="mostrar()" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px;">';
+          html += '<option value="todos">Todos</option></select>';
+          html += '<div id="lista"></div>';
+          html += '<div id="ranking" style="padding: 10px; background: #111; color: white; margin: 10px 0; border-radius: 5px;">';
+          html += '<h3>📊 Ranking</h3>';
+          html += '<div id="top"></div><div id="peor"></div></div>';
+          html += '</div></div>';
+          return html;
+        }
+
+        function vistaIngreso() {
+          let html = '<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">';
+          html += '<h3>➕ Ingresar Animal</h3>';
+          html += '<input id="id" placeholder="Caravana" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+          html += '<input id="edad" placeholder="Edad" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+          html += '<input id="raza" placeholder="Raza" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+          html += '<input id="lote" placeholder="Lote" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+          html += '<input id="obs" placeholder="Observaciones" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+          html += '<input id="lat" placeholder="Latitud" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+          html += '<input id="lng" placeholder="Longitud" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+          html += '<input id="peso" placeholder="Peso (kg)" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
+          html += '<select id="estado" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;"><option value="">-- Sin estado --</option><option>Vacunar</option><option>Preñado</option><option>Enfermo</option></select>';
+          html += '<button onclick="agregarAnimal()" style="width: 100%; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px 0; font-weight: bold;">Guardar</button>';
+          html += '<button onclick="document.getElementById(\'fileInput\').click()" style="width: 100%; padding: 10px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px 0;">📂 Importar CSV</button>';
+          html += '<input type="file" id="fileInput" style="display:none;" onchange="importarCSV()">';
+          html += '</div>';
+          return html;
+        }
+
+        function vistaRebaños() {
+          return '<div id="rebanosPanel" style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;"><h3>🐑 Rebaños</h3><div id="rebanosContenido"></div></div>';
+        }
+
+        function vistaAyuda() {
+          let html = '<div id="chatPanel" style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto; display: flex; flex-direction: column;">';
+          html += '<h3>🤖 Asistente</h3>';
+          html += '<div id="chatConversacion" style="height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #f9f9f9; flex: 1; border-radius: 5px;"></div>';
+          html += '<div style="display: flex; gap: 5px;">';
+          html += '<input type="text" id="chatInput" placeholder="Escribe tu pregunta..." style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">';
+          html += '<button id="chatEnviar" onclick="enviarPregunta()" style="padding: 8px 15px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Enviar</button>';
+          html += '</div></div>';
+          return html;
+        }
+
+        // Handlers inline (onclick / oninput) resuelven en window — exponer funciones del callback
+        window.mostrarVista = mostrarVista;
+        window.mostrar = mostrar;
+        window.mostrarSeccion = mostrarSeccion;
+        window.agregarAnimal = agregarAnimal;
+        window.importarCSV = importarCSV;
+        window.activarDibujo = activarDibujo;
+        window.desactivarDibujo = desactivarDibujo;
+        window.borrarZona = borrarZona;
+        window.guardarZona = guardarZona;
+        window.exportarCSV = exportarCSV;
+        window.editarZona = editarZona;
+        window.importarPesos = importarPesos;
+        window.enviarPregunta = enviarPregunta;
+        window.verHistorial = verHistorial;
+        window.mostrarGrafico = mostrarGrafico;
+        window.editarEstado = editarEstado;
+        window.editarCaravana = editarCaravana;
+        window.eliminar = eliminar;
+        window.toggleSeleccionAnimal = toggleSeleccionAnimal;
+        window.onAnimalCardClick = onAnimalCardClick;
+        window.eliminarSeleccionados = eliminarSeleccionados;
+        window.crearRebano = crearRebano;
+        window.verRebano = verRebano;
+        window.exportarRebano = exportarRebano;
+        window.eliminarRebano = eliminarRebano;
+        window.quitarAnimalDelRebano = quitarAnimalDelRebano;
+        window.actualizarListaAnimales = actualizarListaAnimales;
+        window.toggleAnimalRebano = toggleAnimalRebano;
+        window.mostrarRebanos = mostrarRebanos;
+        window.renderizarRebanos = renderizarRebanos;
+        window.reproducirAlerta = reproducirAlerta;
+        window.limpiarZona = limpiarZona;
+        window.guardarTanque = guardarTanque;
+        window.guardarConfigTanque = guardarConfigTanque;
+        window.actualizarNivelTanque = actualizarNivelTanque;
+        window.simularLecturaTanque = simularLecturaTanque;
+        window.cargarTanqueDesdeSupabase = cargarTanqueDesdeSupabase;
+
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log("SESSION INICIAL:", session);
+        if (session) {
+          console.log("Sesión detectada al iniciar, cargando animales...");
+          await cargarAnimales();
+          await cargarPerfilUsuario();
+        }
+
+        supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log("Supabase auth event:", event, session);
+          if (event === "SIGNED_OUT") {
+            document.getElementById("loginScreen").style.display = "flex";
+            showLogin();
+            animales = [];
+            selectedAnimales = [];
+            perfilUsuario = null;
+            updatePerfilUI();
+            mostrar();
+            return;
+          }
+          if (event === "SIGNED_IN") {
+            const { data: sessWrap } = await supabase.auth.getSession();
+            const active = sessWrap?.session;
+            console.log("SESSION ACTIVA:", active);
+            document.getElementById("loginScreen").style.display = "none";
+            console.log("Usuario listo, cargando datos...");
+            await cargarAnimales();
+            await cargarPerfilUsuario();
+          }
+        });
+
+        checkLogin(); // UI según sesión; datos: bootstrap getSession + SIGNED_IN
+
+        console.log("JS OK");
+      });
+      async function testInsertDirecto() {
+  console.log("🧪 TEST INSERT DIRECTO");
+
+  const payload = {
+    caravana: "TEST999",
+    edad: "5"
+  };
+
+  try {
+    const { data, error } = await supabase
+      .from("animales")
+      .insert([payload])
+      .select();
+
+    console.log("RESULTADO TEST:", data, error);
+
+    if (error) {
+      alert("ERROR: " + error.message);
     } else {
-      console.log("Animal NO encontrado con ID:", idAnimal);
+      alert("INSERT OK");
     }
-  });
-  
-  console.log("Animales exportados:", animalesExportados, "Total:", lineas.length - 1);
-  
-  
-  if(animalesExportados === 0){
-    alert("No se encontraron animales válidos en el rebaño para exportar");
-    return;
-  }
-  
-  // Construir CSV con BOM UTF-8 para Excel
-  let csv = '\uFEFF';  // BOM UTF-8 - necesario para Excel
-  csv += lineas.join("\r\n") + "\r\n";
-  
-  console.log("CSV con BOM generado, tamaño:", csv.length, "bytes");
-  console.log("Primeros caracteres:", csv.substring(0, 50));
-  
-  // Crear Blob correctamente con charset utf-8
-  let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  
-  console.log("Blob creado, tamaño:", blob.size, "bytes");
-  
-  // Crear link
-  let link = document.createElement("a");
-  
-  // Asignar URL del blob
-  let url = URL.createObjectURL(blob);
-  link.href = url;
-  
-  // Asignar nombre con timestamp opcional para evitar caché
-  let nombreArchivo = rebano.nombre.replace(/[^a-z0-9]/gi, "_").toLowerCase() + ".csv";
-  link.download = nombreArchivo;
-  
-  console.log("Descargando:", nombreArchivo, "| Tamaño Blob:", blob.size, "bytes");
-  
-  // Agregar al DOM
-  document.body.appendChild(link);
-  
-  // Ejecutar click
-  link.click();
-  
-  console.log("Click ejecutado en link de descarga");
-  
-  // Limpiar recursos
-  setTimeout(function() {
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    console.log("Recurso liberado");
-    alert("✓ Rebaño exportado a Excel: " + nombreArchivo);
-  }, 250);
-}
 
-function quitarAnimalDelRebano(rebanoIndex, animalId){
-  if(!rebanos[rebanoIndex]) return;
-  rebanos[rebanoIndex].animales = rebanos[rebanoIndex].animales.filter(id => String(id) !== String(animalId));
-  localStorage.setItem("rebanos", JSON.stringify(rebanos));
-  verRebano(rebanoIndex);
-}
-
-function eliminarRebano(index){
-  if(!rebanos[index]) return;
-  if(confirm("¿Estás seguro de que deseas eliminar el rebaño '" + rebanos[index].nombre + "'?")){
-    rebanos.splice(index, 1);
-    localStorage.setItem("rebanos", JSON.stringify(rebanos));
-    renderizarRebanos();
+  } catch (e) {
+    console.error("ERROR CRÍTICO:", e);
   }
 }
+      })();
+    </script>
 
-// SISTEMA DE VISTAS
-function mostrarVista(tipo){
-  let panel = document.getElementById("panelLateral");
-  if(!panel) return;
-  
-  mostrarSeccion('animales');
-  
-  if(tipo === 'animales'){
-    panel.innerHTML = vistaAnimales();
-    mostrar();
-    mostrarRanking(animales);
-  } else if(tipo === 'ingreso'){
-    panel.innerHTML = vistaIngreso();
-  } else if(tipo === 'rebanos'){
-    renderizarRebanos();
-  } else if(tipo === 'ayuda'){
-    panel.innerHTML = vistaAyuda();
-  }
-}
-
-function vistaAnimales(){
-  let html = '<div id="listaPanel" style="padding: 10px;"><div id="listaAnimales">';
-  html += '<h3>🐄 Animales</h3>';
-  html += '<input id="buscador" placeholder="Buscar caravana..." oninput="mostrar()" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px;">';
-  html += '<h4>Filtrar por lote</h4>';
-  html += '<select id="filtroLote" onchange="mostrar()" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px;">';
-  html += '<option value="todos">Todos</option></select>';
-  html += '<div id="lista"></div>';
-  html += '<div id="ranking" style="padding: 10px; background: #111; color: white; margin: 10px 0; border-radius: 5px;">';
-  html += '<h3>📊 Ranking</h3>';
-  html += '<div id="top"></div><div id="peor"></div></div>';
-  html += '</div></div>';
-  return html;
-}
-
-function vistaIngreso(){
-  let html = '<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">';
-  html += '<h3>➕ Ingresar Animal</h3>';
-  html += '<input id="id" placeholder="Caravana" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
-  html += '<input id="edad" placeholder="Edad" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
-  html += '<input id="raza" placeholder="Raza" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
-  html += '<input id="lote" placeholder="Lote" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
-  html += '<input id="obs" placeholder="Observaciones" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
-  html += '<input id="lat" placeholder="Latitud" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
-  html += '<input id="lng" placeholder="Longitud" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
-  html += '<input id="peso" placeholder="Peso (kg)" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
-  html += '<select id="estado" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;"><option value="">-- Sin estado --</option><option>Vacunar</option><option>Preñado</option><option>Enfermo</option></select>';
-  html += '<button onclick="agregarAnimal()" style="width: 100%; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px 0; font-weight: bold;">Guardar</button>';
-  html += '<button onclick="document.getElementById(\'fileInput\').click()" style="width: 100%; padding: 10px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px 0;">📂 Importar CSV</button>';
-  html += '<input type="file" id="fileInput" style="display:none;" onchange="importarCSV()">';
-  html += '</div>';
-  return html;
-}
-
-function vistaRebaños(){
-  return '<div id="rebanosPanel" style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;"><h3>🐑 Rebaños</h3><div id="rebanosContenido"></div></div>';
-}
-
-function vistaAyuda(){
-  let html = '<div id="chatPanel" style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto; display: flex; flex-direction: column;">';
-  html += '<h3>🤖 Asistente</h3>';
-  html += '<div id="chatConversacion" style="height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #f9f9f9; flex: 1; border-radius: 5px;"></div>';
-  html += '<div style="display: flex; gap: 5px;">';
-  html += '<input type="text" id="chatInput" placeholder="Escribe tu pregunta..." style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">';
-  html += '<button id="chatEnviar" onclick="enviarPregunta()" style="padding: 8px 15px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Enviar</button>';
-  html += '</div></div>';
-  return html;
-}
-</script>
-
-</div>
+  </div>
 </body>
+
 </html>
