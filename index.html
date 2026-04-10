@@ -143,30 +143,123 @@
       overflow-y: auto;
     }
 
-    #chatConversacion {
-      height: 300px;
+    #chatContainer {
+      min-height: 220px;
+      max-height: 360px;
+      height: 40vh;
       overflow-y: auto;
-      border: 1px solid #ccc;
-      padding: 10px;
+      border: 1px solid #e2e8f0;
+      padding: 12px;
       margin-bottom: 10px;
-      background: #f9f9f9;
+      background: #f1f5f9;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scroll-behavior: smooth;
     }
 
-    #chatInput {
-      width: calc(100% - 60px);
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+    .chat-bubble {
+      max-width: 94%;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.45;
     }
 
-    #chatEnviar {
-      width: 50px;
-      padding: 8px;
-      background: #adafae;
-      color: white;
-      border: none;
-      border-radius: 5px;
+    .chat-bubble-user {
+      align-self: flex-end;
+      background: #1e3a5f;
+      color: #f8fafc;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-bubble-bot {
+      align-self: flex-start;
+      background: #fff;
+      color: #1e293b;
+      border: 1px solid #e2e8f0;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    .chat-bubble-body {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .chat-bubble-meta {
+      font-size: 10px;
+      opacity: 0.65;
+      margin-bottom: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .chat-intro {
+      font-size: 13px;
+      color: #64748b;
+      margin: 0 0 10px 0;
+      line-height: 1.4;
+    }
+
+    .chat-ayuda-rapida {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .quick-btn {
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #334155;
       cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .quick-btn:hover {
+      background: #e0f2fe;
+      border-color: #38bdf8;
+      color: #0c4a6e;
+    }
+
+    .chat-input-container {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      align-items: center;
+      box-sizing: border-box;
+    }
+
+    .chat-input {
+      flex: 1;
+      height: 40px;
+      border-radius: 8px;
+      padding: 8px 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .chat-send {
+      width: 90px;
+      height: 40px;
+      border-radius: 8px;
+      border: none;
+      background: #0d9488;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .chat-send:hover {
+      background: #0f766e;
     }
 
     /* ================== REBAÑOS ================== */
@@ -308,11 +401,11 @@
     .animal-card {
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
+      gap: 0 12px;
       background: #1e1e2f;
       color: white;
-      padding: 12px;
+      padding: 14px 14px 12px;
       margin-bottom: 8px;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -326,38 +419,99 @@
       border: 2px solid #00ff9d;
     }
 
-    .animal-card .left {
-      margin-right: 10px;
+    .animal-card-check {
       flex-shrink: 0;
+      padding-top: 3px;
     }
 
-    .animal-card .center {
+    .animal-card-main {
       flex: 1;
       min-width: 0;
       text-align: left;
     }
 
-    .animal-card .title {
-      font-weight: bold;
+    .animal-card-title {
+      font-weight: 700;
       font-size: 16px;
+      letter-spacing: 0.02em;
+      line-height: 1.25;
+      color: #f8fafc;
     }
 
-    .animal-card .info {
-      font-size: 13px;
-      opacity: 0.8;
+    .animal-card-meta {
+      font-size: 12.5px;
+      line-height: 1.35;
+      color: rgba(248, 250, 252, 0.72);
+      margin-top: 4px;
+    }
+
+    .animal-card-meta-sep {
+      opacity: 0.45;
+      padding: 0 0.35em;
+    }
+
+    .animal-card-peso-wrap {
+      margin-top: 10px;
+    }
+
+    .animal-card-peso-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: rgba(248, 250, 252, 0.5);
+    }
+
+    .animal-card-peso-valor {
+      display: block;
       margin-top: 2px;
+      font-size: 20px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: #5eead4;
+      text-shadow: 0 0 20px rgba(94, 234, 212, 0.15);
+      line-height: 1.2;
     }
 
-    .animal-card .right {
-      font-weight: bold;
-      color: #00ff9d;
-      flex-shrink: 0;
-      text-align: right;
+    .animal-card-bateria {
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }
 
-    .animal-card .peso {
-      font-size: 14px;
-      white-space: nowrap;
+    .animal-card-metrics {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 11.5px;
+      line-height: 1.45;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .animal-card-metrics--gain {
+      color: #4ade80;
+    }
+
+    .animal-card-metrics--loss {
+      color: #f87171;
+    }
+
+    .animal-card-metrics--nodata {
+      color: #94a3b8;
+    }
+
+    .animal-card-metric {
+      margin-top: 3px;
+    }
+
+    .animal-card-metric:first-of-type {
+      margin-top: 0;
+    }
+
+    .animal-card-metric-label {
+      font-weight: 600;
+      opacity: 0.92;
     }
 
     .animal-card .select-animal {
@@ -487,11 +641,14 @@
 
             <div id="historialPanel"></div>
 
-            <div id="chatPanel">
-              <h3>🤖 Asistente AgroTrack</h3>
-              <div id="chatConversacion"></div>
-              <input type="text" id="chatInput" placeholder="Escribe tu pregunta...">
-              <button id="chatEnviar" onclick="enviarPregunta()">Enviar</button>
+            <div id="chatPanel" style="display:none;">
+              <h3 style="margin-top:0;">🤖 Asistente AgroTrack</h3>
+              <p class="chat-intro">Abrí <strong>❓ Ayuda</strong> en el menú para el asistente completo con sugerencias.</p>
+              <div id="chatContainer"></div>
+              <div class="chat-input-container">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Escribí tu pregunta…" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();enviarPregunta();}">
+                <button type="button" id="chatEnviar" class="chat-send" onclick="enviarPregunta()">Enviar</button>
+              </div>
             </div>
 
             <div id="rebanosPanel" style="display:none;">
@@ -894,6 +1051,7 @@
       let animalesConPeso = [];
       let animales = []; // Mismo ámbito que checkLogin / contarAnimalesEnZona (carga desde Supabase tras login)
       let selectedAnimales = []; // caravanas seleccionadas para borrado múltiple
+      let simulacionBateriaIntervalId = null;
       let zonas = [];
       document.addEventListener("DOMContentLoaded", async function () {
 
@@ -941,6 +1099,7 @@
             animales = (data || []).map(function (a) {
               var pesosArr = normalizePesosFromDb(a.pesos);
               var numPeso = normalizeNumPeso(a.peso);
+              var bat = a.bateria != null && a.bateria !== "" ? normalizarBateria(a.bateria) : 100;
               return {
                 id: a.caravana,
                 edad: a.edad,
@@ -951,7 +1110,8 @@
                 lat: a.lat,
                 lng: a.lng,
                 peso: numPeso != null ? numPeso : null,
-                pesos: pesosArr
+                pesos: pesosArr,
+                bateria: bat
               };
             });
             mostrar();
@@ -985,6 +1145,7 @@
         //   ultimaActualizacion TEXT,
         //   movimientos JSONB DEFAULT '[]',
         //   pesos JSONB DEFAULT '[]',
+        //   bateria REAL DEFAULT 100,  -- 0–100 collar
         //   created_at TIMESTAMP DEFAULT NOW(),
         //   UNIQUE(caravana)
         // );
@@ -1011,6 +1172,20 @@
           return isNaN(n) ? null : n;
         }
 
+        function colorBateria(bateria) {
+          var b = Number(bateria);
+          if (isNaN(b)) return "red";
+          if (b > 60) return "green";
+          if (b > 30) return "orange";
+          return "red";
+        }
+
+        function normalizarBateria(val) {
+          var n = val == null || val === "" ? 100 : parseFloat(String(val).replace(",", "."));
+          if (isNaN(n)) n = 100;
+          return Math.max(0, Math.min(100, n));
+        }
+
         function normalizePesosFromDb(raw) {
           if (raw == null) return [];
           let arr = raw;
@@ -1025,18 +1200,81 @@
           return arr.map(function (p) {
             if (!p || typeof p !== "object") return { valor: 0, fecha: "" };
             const nv = normalizeNumPeso(p.valor);
+            var fs = p.fecha != null ? String(p.fecha) : "";
+            if (fs) {
+              var d = new Date(fs);
+              if (!isNaN(d.getTime())) fs = d.toISOString();
+            }
             return {
               valor: nv != null ? nv : 0,
-              fecha: p.fecha != null ? String(p.fecha) : ""
+              fecha: fs
             };
           });
         }
 
+        /**
+         * Copia el array y ordena por fecha ascendente. No muta el original.
+         * Comparador con getTime() para evitar NaN en sort (orden impredecible).
+         */
+        function pesosOrdenadosCopia(pesos) {
+          if (!pesos || !pesos.length) return [];
+          var pesosOrdenados = [...pesos].sort(function (a, b) {
+            var ta = new Date(a.fecha).getTime();
+            var tb = new Date(b.fecha).getTime();
+            if (isNaN(ta) && isNaN(tb)) return 0;
+            if (isNaN(ta)) return 1;
+            if (isNaN(tb)) return -1;
+            return ta - tb;
+          });
+          return pesosOrdenados;
+        }
+
         function pesosOrdenadosPorFecha(a) {
           if (!a || !a.pesos || !a.pesos.length) return [];
-          return a.pesos.slice().sort(function (x, y) {
-            return new Date(x.fecha) - new Date(y.fecha);
-          });
+          return pesosOrdenadosCopia(a.pesos);
+        }
+
+        function calcularGanancia(pesos) {
+          if (!pesos || pesos.length < 2) return 0;
+
+          const ordenados = [...pesos].sort(
+            (a, b) => new Date(a.fecha) - new Date(b.fecha)
+          );
+
+          const primero = Number(ordenados[0].valor);
+          const ultimo = Number(ordenados[ordenados.length - 1].valor);
+
+          const ganancia = ultimo - primero;
+
+          console.log("DEBUG PESOS:", ordenados);
+          console.log("PRIMERO:", primero, "ULTIMO:", ultimo, "GANANCIA:", ganancia);
+
+          return Math.abs(ganancia);
+        }
+
+        function proyeccion30dias(pesos) {
+          if (!pesos || pesos.length < 2) return 0;
+
+          const ordenados = [...pesos].sort(
+            (a, b) => new Date(a.fecha) - new Date(b.fecha)
+          );
+
+          const inicio = new Date(ordenados[0].fecha);
+          const fin = new Date(ordenados[ordenados.length - 1].fecha);
+
+          const dias = (fin - inicio) / (1000 * 60 * 60 * 24);
+          if (dias <= 0) return 0;
+
+          const v0 = normalizeNumPeso(ordenados[0].valor);
+          const v1 = normalizeNumPeso(ordenados[ordenados.length - 1].valor);
+          if (v0 == null || v1 == null) return 0;
+
+          const ganancia = v1 - v0;
+          const diaria = ganancia / dias;
+
+          const ultimo = v1;
+
+          return ultimo + (diaria * 30);
         }
 
         /** Peso actual (columna DB) para UI; si falta, último del historial ordenado por fecha. */
@@ -1071,6 +1309,8 @@
             }
             if (pesoNum == null) pesoNum = 0;
 
+            var bateriaNum = animal.bateria != null && animal.bateria !== "" ? normalizarBateria(animal.bateria) : 100;
+
             const payload = {
               caravana: animal.id,
               edad: animal.edad,
@@ -1081,7 +1321,8 @@
               lat: parseFloat(animal.lat) || null,
               lng: parseFloat(animal.lng) || null,
               peso: pesoNum,
-              pesos: pesosArr
+              pesos: pesosArr,
+              bateria: bateriaNum
             };
 
             console.log("📦 PAYLOAD:", payload);
@@ -1135,6 +1376,7 @@
         }
 
         async function eliminarAnimalEnSupabase(animalId) {
+          console.log("ELIMINANDO:", animalId);
           try {
             const { error } = await supabase
               .from("animales")
@@ -1142,15 +1384,13 @@
               .eq("caravana", animalId);
 
             if (error) {
-              console.error("Error eliminando animal:", error);
-              alert("Error al eliminar animal: " + (error.message || String(error)));
+              console.error("Error eliminando:", error);
               return false;
             }
 
-            console.log("Animal eliminado:", animalId);
             return true;
           } catch (err) {
-            console.error("Error en eliminarAnimalEnSupabase:", err);
+            console.error("Error eliminando:", err);
             return false;
           }
         }
@@ -1421,7 +1661,8 @@
                 pesos: [{
                   valor: 0,
                   fecha: new Date().toISOString()
-                }]
+                }],
+                bateria: 100
               };
 
               // Guardar en Supabase
@@ -1664,7 +1905,8 @@
                 fecha: new Date().toISOString()
               }],
               peso: pv != null ? pv : 0,
-              pesos: pv != null ? [{ valor: pv, fecha: fechaPeso }] : []
+              pesos: pv != null ? [{ valor: pv, fecha: fechaPeso }] : [],
+              bateria: 100
             };
 
             console.log("[agregarAnimal] objeto animal listo, llamando guardarAnimalDB…", a);
@@ -1753,19 +1995,24 @@
 
           if (!confirm("¿Eliminar " + selectedAnimales.length + " animal(es) seleccionado(s)?")) return;
 
-          const { error } = await supabase
-            .from("animales")
-            .delete()
-            .in("caravana", selectedAnimales);
+          for (var i = 0; i < selectedAnimales.length; i++) {
+            var id = selectedAnimales[i];
+            console.log("ELIMINANDO:", id);
+            const { error } = await supabase
+              .from("animales")
+              .delete()
+              .eq("caravana", id);
 
-          console.log("DELETE:", error);
-
-          if (!error) {
-            await cargarAnimales();
-            selectedAnimales = [];
-          } else {
-            alert("Error al eliminar: " + (error.message || String(error)));
+            if (error) {
+              console.error("Error eliminando:", error);
+              alert("Error al eliminar: " + (error.message || String(error)));
+              await cargarAnimales();
+              return;
+            }
           }
+
+          selectedAnimales = [];
+          await cargarAnimales();
         }
 
         // MOSTRAR
@@ -1793,6 +2040,23 @@
           animales.forEach(function (a, i) {
 
             let ultimoPeso = pesoParaMostrar(a);
+            var metricsBlockClass = "animal-card-metrics animal-card-metrics--nodata";
+            var lineasMetricas = "";
+            if (!a.pesos || a.pesos.length < 2) {
+              lineasMetricas =
+                "<div class='animal-card-metric'><span class='animal-card-metric-label'>Ganancia:</span> —</div>" +
+                "<div class='animal-card-metric' style='margin-top:6px;font-size:10.5px;opacity:0.85'>Mín. 2 pesajes para calcular.</div>";
+            } else {
+              const ganancia = calcularGanancia(a.pesos);
+              metricsBlockClass = ganancia > 0
+                ? "animal-card-metrics animal-card-metrics--gain"
+                : "animal-card-metrics animal-card-metrics--nodata";
+              var proj = proyeccion30dias(a.pesos);
+              var projTxt = isNaN(proj) ? "—" : proj.toFixed(1) + " kg";
+              lineasMetricas =
+                "<div class='animal-card-metric'><span class='animal-card-metric-label'>Ganancia:</span> " + ganancia.toFixed(1) + " kg</div>" +
+                "<div class='animal-card-metric'><span class='animal-card-metric-label'>Proyección 30 días:</span> " + projTxt + "</div>";
+            }
 
             let idStr = String(a.id || "").toLowerCase();
 
@@ -1807,20 +2071,31 @@
             var sel = selectedAnimales.some(function (s) { return String(s) === String(a.id); });
             var attrId = escapeAttr(a.id);
             var cardClasses = "animal-card " + clase + (sel ? " selected" : "");
+            var batNivel = normalizarBateria(a.bateria);
+            var batColor = colorBateria(batNivel);
+            var batPct = Math.round(batNivel);
 
             lista.innerHTML +=
               "<div class=\"" + cardClasses + "\" onclick='onAnimalCardClick(event)'>" +
-              "<div class='left'>" +
+              "<div class='animal-card-check'>" +
               "<input type='checkbox' class='select-animal' value=\"" + attrId + "\"" + (sel ? " checked" : "") +
               " data-caravana=\"" + attrId + "\" onchange='toggleSeleccionAnimal(this)' onclick='event.stopPropagation()'>" +
               "</div>" +
-              "<div class='center'>" +
-              "<div class='title'>Caravana: " + escapeHtml(a.id) + "</div>" +
-              "<div class='info'>Raza: " + escapeHtml(a.raza || "-") + "</div>" +
-              "<div class='info'>Lote: " + escapeHtml(a.lote || "-") + "</div>" +
+              "<div class='animal-card-main'>" +
+              "<div class='animal-card-title'>Caravana: " + escapeHtml(a.id) + "</div>" +
+              "<div class='animal-card-meta'>" +
+              "<span>Raza: " + escapeHtml(a.raza || "—") + "</span>" +
+              "<span class='animal-card-meta-sep'>·</span>" +
+              "<span>Lote: " + escapeHtml(a.lote || "—") + "</span>" +
               "</div>" +
-              "<div class='right'>" +
-              "<div class='peso'>Peso: " + escapeHtml(String(ultimoPeso)) + " kg</div>" +
+              "<div class='animal-card-peso-wrap'>" +
+              "<span class='animal-card-peso-label'>Peso actual</span>" +
+              "<span class='animal-card-peso-valor'>" + escapeHtml(String(ultimoPeso)) + " kg</span>" +
+              "</div>" +
+              "<div class='animal-card-bateria' style=\"color:" + batColor + '">🔋 Batería: ' + batPct + "%</div>" +
+              "<div class=\"" + metricsBlockClass + "\">" +
+              lineasMetricas +
+              "</div>" +
               "</div>" +
               "<div class='animal-card-actions' onclick='event.stopPropagation()'>" +
               "<button type='button' onclick=\"verHistorial('" + a.id + "')\">📜 Historial</button>" +
@@ -1841,6 +2116,30 @@
           }
 
           mostrarRanking(animales);
+        }
+
+        function iniciarSimulacionDrenajeBateria() {
+          if (simulacionBateriaIntervalId != null) {
+            clearInterval(simulacionBateriaIntervalId);
+            simulacionBateriaIntervalId = null;
+          }
+          simulacionBateriaIntervalId = setInterval(function () {
+            animales.forEach(function (a) {
+              if (a.bateria == null || isNaN(a.bateria)) a.bateria = 100;
+              a.bateria = Math.max(0, a.bateria - 0.1);
+              if (a.bateria < 20) {
+                console.warn("Batería baja en animal:", a.id);
+              }
+            });
+            mostrar();
+          }, 60000);
+        }
+
+        function detenerSimulacionDrenajeBateria() {
+          if (simulacionBateriaIntervalId != null) {
+            clearInterval(simulacionBateriaIntervalId);
+            simulacionBateriaIntervalId = null;
+          }
         }
 
         // MAPA
@@ -1943,18 +2242,11 @@
 
               let ultimoPeso = pesoParaMostrar(a);
 
-              let ganancia = calcularGanancia(a);
-
-              // ✅ ESTIMADO DEFINIDO
-              let estimado = "-";
-
-              if (a.pesos && a.pesos.length >= 2) {
-                try {
-                  estimado = estimarPeso(a);
-                } catch (e) {
-                  console.log("Error estimado:", a);
-                }
-              }
+              var tienePesajes = a.pesos && a.pesos.length >= 2;
+              var gananciaMapa = tienePesajes ? calcularGanancia(a.pesos) : null;
+              var popGananciaStr = gananciaMapa != null ? (gananciaMapa.toFixed(1) + " kg") : "—";
+              var batMapa = normalizarBateria(a.bateria);
+              var batMapaColor = colorBateria(batMapa);
 
               let texto = "";
 
@@ -1966,15 +2258,12 @@
                 "<b>Caravana: " + a.id + "</b><br>" +
                 "Estado: " + (a.estado || "-") + "<br>" +
                 "Peso: " + ultimoPeso + " kg<br>" +
+                "🔋 Batería: <span style=\"color:" + batMapaColor + "\">" + Math.round(batMapa) + "%</span><br>" +
                 "Edad: " + (a.edad || "-") + "<br>" +
                 "Raza: " + (a.raza || "-") + "<br>" +
                 "Lote: " + (a.lote || "-") + "<br>" +
-                "Ganancia: " + ganancia + " kg/día<br>" +
+                "Ganancia: " + popGananciaStr + "<br>" +
                 "Obs: " + (a.obs || "-");
-
-              if (estimado !== "-") {
-                texto += "Estimado 30 días: " + estimado + " kg<br>";
-              }
 
               let alertas = alertasPeso(a);
               if (alertas.length > 0) {
@@ -1991,7 +2280,8 @@
                   lote: a.lote,
                   estado: a.estado,
                   peso: a.peso,
-                  pesos: a.pesos
+                  pesos: a.pesos,
+                  bateria: a.bateria
                 }
               })
                 .addTo(map)
@@ -2188,22 +2478,20 @@
 
         async function eliminar(i) {
           let animal = animales[i];
-          let confirmar = confirm("¿Eliminar animal " + animal.id + "?");
+          if (!animal) return;
 
+          let confirmar = confirm("¿Eliminar animal " + animal.id + "?");
           if (!confirmar) return;
 
-          // Eliminar de Supabase
           const eliminado = await eliminarAnimalEnSupabase(animal.id);
 
-          if (eliminado) {
-            // Eliminar de la lista local
-            selectedAnimales = selectedAnimales.filter(function (x) { return String(x) !== String(animal.id); });
-            animales.splice(i, 1);
-            console.log("Animal eliminado:", animal.id);
-            mostrar();
-          } else {
+          if (!eliminado) {
             alert("Error al eliminar el animal");
+            return;
           }
+
+          selectedAnimales = selectedAnimales.filter(function (x) { return String(x) !== String(animal.id); });
+          await cargarAnimales();
         }
 
         mostrar();
@@ -2295,19 +2583,6 @@
             alertas.push("⚠️ Bajando peso (" + pesoPenultimo + " → " + pesoUltimo + " kg)");
           }
 
-          // Alerta: crecimiento lento (ganancia diaria < 0.3 kg/día)
-          let fechaPenultimo = new Date(penultimo.fecha);
-          let fechaUltimo = new Date(ultimo.fecha);
-          let dias = (fechaUltimo - fechaPenultimo) / (1000 * 60 * 60 * 24);
-
-          if (dias >= 1 && dias <= 365) {
-            let gananciaDiaria = (pesoUltimo - pesoPenultimo) / dias;
-            // Solo mostrar alerta si el crecimiento es realista (no detectar valores glitchy)
-            if (gananciaDiaria >= 0 && gananciaDiaria < 0.3 && gananciaDiaria <= 2) {
-              alertas.push("🐢 Crecimiento lento (" + gananciaDiaria.toFixed(2) + " kg/día)");
-            }
-          }
-
           return alertas;
         }
         function obtenerRanking(lista) {
@@ -2315,9 +2590,10 @@
           let ranking = [];
 
           lista.forEach(function (a) {
-            let g = calcularGanancia(a);
-            if (g === "-") return;
-            ranking.push({ id: a.id, ganancia: parseFloat(g) });
+            if (!a.pesos || a.pesos.length < 2) return;
+            let g = calcularGanancia(a.pesos);
+            if (isNaN(g)) return;
+            ranking.push({ id: a.id, ganancia: g });
           });
 
           if (ranking.length === 0) {
@@ -2331,74 +2607,15 @@
           let top = ranking.slice(0, 3);
           let peor = ranking.slice(-3).reverse();
 
-          console.log("📊 TOP GANANCIA:");
+          console.log("📊 TOP GANANCIA (kg):");
           top.forEach(function (r) {
-            console.log("  ID: " + r.id + " - " + r.ganancia.toFixed(2) + " kg/día");
+            console.log("  ID: " + r.id + " - " + r.ganancia.toFixed(2) + " kg");
           });
 
-          console.log("📊 PEOR GANANCIA:");
+          console.log("📊 MENOR GANANCIA (kg):");
           peor.forEach(function (r) {
-            console.log("  ID: " + r.id + " - " + r.ganancia.toFixed(2) + " kg/día");
+            console.log("  ID: " + r.id + " - " + r.ganancia.toFixed(2) + " kg");
           });
-        }
-        function calcularGanancia(a) {
-
-          let ord = pesosOrdenadosPorFecha(a);
-          if (ord.length < 2) return "-";
-
-          let primero = ord[0];
-          let ultimo = ord[ord.length - 1];
-
-          let pesoInicial = parseFloat(primero.valor);
-          let pesoFinal = parseFloat(ultimo.valor);
-
-          // Validar que los pesos sean números válidos y positivos
-          if (isNaN(pesoInicial) || isNaN(pesoFinal) || pesoInicial <= 0 || pesoFinal <= 0) return "-";
-
-          let fechaInicial = new Date(primero.fecha);
-          let fechaFinal = new Date(ultimo.fecha);
-
-          let dias = (fechaFinal - fechaInicial) / (1000 * 60 * 60 * 24);
-
-          // Validar que haya al menos 1 día y máximo 1000 días (validez de datos)
-          if (dias < 1 || dias > 1000) return "-";
-
-          let ganancia = (pesoFinal - pesoInicial) / dias;
-
-          // Limitar a valores realistas: ganado puede crecer max ~2 kg/día
-          // Y puede perder max ~1 kg/día (enfermedad, estrés)
-          if (ganancia > 2 || ganancia < -1) return "-";
-
-          return ganancia.toFixed(2);
-        }
-        function estimarPeso(a) {
-
-          let ord = pesosOrdenadosPorFecha(a);
-          if (ord.length < 2) return "-";
-
-          let primero = ord[0];
-          let ultimo = ord[ord.length - 1];
-
-          let pesoInicial = parseFloat(primero.valor);
-          let pesoFinal = parseFloat(ultimo.valor);
-
-          if (isNaN(pesoInicial) || isNaN(pesoFinal) || pesoInicial <= 0 || pesoFinal <= 0) return "-";
-
-          let fechaInicial = new Date(primero.fecha);
-          let fechaFinal = new Date(ultimo.fecha);
-
-          let dias = (fechaFinal - fechaInicial) / (1000 * 60 * 60 * 24);
-
-          // Validar período de datos realista
-          if (dias < 1 || dias > 1000) return "-";
-
-          let aumento = pesoFinal - pesoInicial;
-          let crecimiento = aumento / dias;
-
-          // Validar que el crecimiento proyectado sea realista
-          if (crecimiento > 2 || crecimiento < -1) return "-";
-
-          return Math.round(pesoFinal + crecimiento * 30);
         }
         function importarPesos() {
 
@@ -2443,21 +2660,22 @@
                 let nuevoPesoNum = normalizeNumPeso(peso);
                 if (nuevoPesoNum == null) continue;
 
-                let fechaDia = new Date().toISOString().split("T")[0];
+                var fechaIso = new Date().toISOString();
+                var diaHoy = fechaIso.split("T")[0];
 
                 let idx = animal.pesos.findIndex(function (p) {
-                  return String(p.fecha).split("T")[0] === fechaDia;
+                  return String(p.fecha).split("T")[0] === diaHoy;
                 });
 
                 if (idx === -1) {
                   animal.pesos.push({
                     valor: nuevoPesoNum,
-                    fecha: fechaDia
+                    fecha: fechaIso
                   });
                 } else {
                   animal.pesos[idx] = {
                     valor: nuevoPesoNum,
-                    fecha: animal.pesos[idx].fecha || fechaDia
+                    fecha: fechaIso
                   };
                 }
 
@@ -2608,20 +2826,23 @@
             let width = canvas.width;
             let height = canvas.height;
 
-            // Ordenar pesos por fecha
-            let datos = pesos.slice().sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+            let datos = pesosOrdenadosCopia(pesos);
 
             // Encontrar min/max
-            let pesosVal = datos.map(p => parseFloat(p.valor));
-            let minPeso = Math.min(...pesosVal);
-            let maxPeso = Math.max(...pesosVal);
+            let pesosVal = datos.map(p => {
+              var nv = normalizeNumPeso(p.valor);
+              return nv != null ? nv : 0;
+            });
+            let minPeso = Math.min.apply(null, pesosVal);
+            let maxPeso = Math.max.apply(null, pesosVal);
             let rangoPeso = maxPeso - minPeso || 1;
 
-            // Fechas
+            // Fechas (evitar división por 0 si todas coinciden o hay NaN)
             let fechas = datos.map(p => new Date(p.fecha));
-            let minFecha = Math.min(...fechas);
-            let maxFecha = Math.max(...fechas);
-            let rangoFecha = maxFecha - minFecha || 1;
+            let minFecha = Math.min.apply(null, fechas);
+            let maxFecha = Math.max.apply(null, fechas);
+            let rangoFecha = maxFecha - minFecha;
+            let usarEjeTiempo = rangoFecha > 0 && !isNaN(rangoFecha) && !isNaN(minFecha) && !isNaN(maxFecha);
 
             // Limpiar canvas
             ctx.clearRect(0, 0, width, height);
@@ -2653,8 +2874,15 @@
             ctx.beginPath();
 
             datos.forEach((p, i) => {
-              let x = 40 + ((new Date(p.fecha) - minFecha) / rangoFecha) * (width - 60);
-              let y = height - 20 - ((parseFloat(p.valor) - minPeso) / rangoPeso) * (height - 40);
+              let x;
+              if (usarEjeTiempo) {
+                x = 40 + ((new Date(p.fecha) - minFecha) / rangoFecha) * (width - 60);
+              } else {
+                var n = datos.length;
+                x = n <= 1 ? 40 + (width - 60) / 2 : 40 + (i / (n - 1)) * (width - 60);
+              }
+              let v = normalizeNumPeso(p.valor);
+              let y = height - 20 - (((v != null ? v : 0) - minPeso) / rangoPeso) * (height - 40);
               if (i === 0) {
                 ctx.moveTo(x, y);
               } else {
@@ -2665,9 +2893,16 @@
 
             // Puntos
             ctx.fillStyle = "#007bff";
-            datos.forEach(p => {
-              let x = 40 + ((new Date(p.fecha) - minFecha) / rangoFecha) * (width - 60);
-              let y = height - 20 - ((parseFloat(p.valor) - minPeso) / rangoPeso) * (height - 40);
+            datos.forEach((p, i) => {
+              let x;
+              if (usarEjeTiempo) {
+                x = 40 + ((new Date(p.fecha) - minFecha) / rangoFecha) * (width - 60);
+              } else {
+                var n2 = datos.length;
+                x = n2 <= 1 ? 40 + (width - 60) / 2 : 40 + (i / (n2 - 1)) * (width - 60);
+              }
+              let v2 = normalizeNumPeso(p.valor);
+              let y = height - 20 - (((v2 != null ? v2 : 0) - minPeso) / rangoPeso) * (height - 40);
               ctx.beginPath();
               ctx.arc(x, y, 3, 0, 2 * Math.PI);
               ctx.fill();
@@ -2764,11 +2999,11 @@
         function mostrarRanking(animales) {
 
           let lista = animales
-            .map(a => ({
-              id: a.id,
-              ganancia: parseFloat(calcularGanancia(a))
-            }))
-            .filter(a => a.ganancia !== "-" && !isNaN(a.ganancia))
+            .map(function (a) {
+              var g = (!a.pesos || a.pesos.length < 2) ? NaN : calcularGanancia(a.pesos);
+              return { id: a.id, ganancia: g };
+            })
+            .filter(function (a) { return !isNaN(a.ganancia); });
 
           lista.sort((a, b) => b.ganancia - a.ganancia);
 
@@ -2777,51 +3012,139 @@
 
           let topHTML = "<h4>🔥 Mejores</h4>";
           top.forEach(a => {
-            topHTML += `ID: ${a.id} - ${a.ganancia} kg/día<br>`;
+            topHTML += `ID: ${a.id} - ${a.ganancia.toFixed(2)} kg<br>`;
           });
 
           let peorHTML = "<h4>⚠️ Peores</h4>";
           peor.forEach(a => {
-            peorHTML += `ID: ${a.id} - ${a.ganancia} kg/día<br>`;
+            peorHTML += `ID: ${a.id} - ${a.ganancia.toFixed(2)} kg<br>`;
           });
 
           document.getElementById("top").innerHTML = topHTML;
           document.getElementById("peor").innerHTML = peorHTML;
         }
 
-        function enviarPregunta() {
-          const input = document.getElementById("chatInput");
-          const pregunta = input.value.trim();
-          if (!pregunta) return;
-
-          const conversacion = document.getElementById("chatConversacion");
-          conversacion.innerHTML += `<p><strong>Tú:</strong> ${pregunta}</p>`;
-          input.value = "";
-
-          const respuesta = responderIA(pregunta);
-          conversacion.innerHTML += `<p><strong>Asistente:</strong> ${respuesta}</p>`;
-          conversacion.scrollTop = conversacion.scrollHeight;
+        function formatoRespuestaAyudaHtml(texto) {
+          return escapeHtml(texto || "").replace(/\n/g, "<br>");
         }
 
-        function responderIA(pregunta) {
-          const q = pregunta.toLowerCase();
-          if (q.includes("cargar") || q.includes("subir") || q.includes("actualizar") || q.includes("csv") || q.includes("peso") || q.includes("pesos") || q.includes("importar")) {
-            return "Para cargar pesos, haz clic en '📥 Actualizar Pesos' en el panel de controles. Selecciona un archivo CSV con columnas ID y peso. El sistema actualizará los pesos de los animales correspondientes.";
-          } else if (q.includes("historial") || q.includes("eventos") || q.includes("registro") || q.includes("ver historial") || q.includes("pesos anteriores")) {
-            return "El historial muestra todos los pesos registrados de cada animal ordenados por fecha. Haz clic en '📜 Historial' en la lista de animales para verlo.";
-          } else if (q.includes("ganancia") || q.includes("aumento") || q.includes("peso diario") || q.includes("crecimiento") || q.includes("ganancia diaria")) {
-            return "La ganancia se calcula como el aumento de peso diario basado en los registros de peso. Se muestra en el ranking de mejores y peores animales.";
-          } else if (q.includes("ranking") || q.includes("top") || q.includes("mejores") || q.includes("peores") || q.includes("clasificación") || q.includes("mejor animal")) {
-            return "El ranking muestra los animales con mejor y peor ganancia de peso diaria. Los mejores están en la parte superior del panel lateral.";
-          } else if (q.includes("rebaño") || q.includes("rebanos") || q.includes("grupo") || q.includes("lote")) {
-            return "Los rebaños permiten agrupar animales. Haz clic en '🐑 Rebaños' para crear grupos, calcular promedios y exportar datos en CSV.";
-          } else if (q.includes("exportar") || q.includes("descargar") || q.includes("archivo")) {
-            return "Puedes exportar datos en CSV desde:\\n- Rebaño: botón '📥 Exportar CSV' en la vista del rebaño (con ID, Peso y Ganancia).\\n- Todos los animales: botón '📥 Excel' en el panel de controles.";
-          } else if (q.includes("eliminar") || q.includes("borrar") || q.includes("quitar")) {
-            return "Puedes eliminar: animales del rebaño con ❌, o eliminar el rebaño completo con el botón 'Eliminar rebaño'.";
-          } else {
-            return "Preguntas que puedo ayudarte:\\n- 'Cargar pesos' - cómo actualizar datos\\n- 'Historial' - ver pesos anteriores\\n- 'Ganancia' - qué es la ganancia diaria\\n- 'Ranking' - mejores y peores animales\\n- 'Rebaños' - cómo crear grupos\\n- 'Exportar' - descargar en CSV";
+        function scrollChatAlFinal() {
+          var chatContainer = document.getElementById("chatContainer");
+          if (chatContainer) {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
           }
+        }
+
+        function mostrarMensajeUsuario(texto) {
+          var chatContainer = document.getElementById("chatContainer");
+          if (!chatContainer) return;
+          var wrap = document.createElement("div");
+          wrap.className = "chat-bubble chat-bubble-user";
+          var meta = document.createElement("div");
+          meta.className = "chat-bubble-meta";
+          meta.textContent = "Vos";
+          var body = document.createElement("div");
+          body.className = "chat-bubble-body";
+          body.textContent = texto || "";
+          wrap.appendChild(meta);
+          wrap.appendChild(body);
+          chatContainer.appendChild(wrap);
+          scrollChatAlFinal();
+        }
+
+        function mostrarMensajeBot(texto) {
+          var chatContainer = document.getElementById("chatContainer");
+          if (!chatContainer) return;
+          var wrap = document.createElement("div");
+          wrap.className = "chat-bubble chat-bubble-bot";
+          var meta = document.createElement("div");
+          meta.className = "chat-bubble-meta";
+          meta.textContent = "Asistente";
+          var body = document.createElement("div");
+          body.className = "chat-bubble-body";
+          body.innerHTML = formatoRespuestaAyudaHtml(texto || "");
+          wrap.appendChild(meta);
+          wrap.appendChild(body);
+          chatContainer.appendChild(wrap);
+          scrollChatAlFinal();
+        }
+
+        function responder(pregunta) {
+          pregunta = (pregunta || "").toLowerCase();
+
+          if (pregunta.includes("animal")) {
+            return "Para agregar un animal, completá los datos y presioná Guardar.";
+          }
+
+          if (pregunta.includes("peso")) {
+            return "Podés registrar el peso desde cada animal. El sistema calcula automáticamente la ganancia.";
+          }
+
+          if (pregunta.includes("ganancia")) {
+            return "La ganancia se calcula automáticamente en base a los pesos registrados.";
+          }
+
+          if (pregunta.includes("tanque")) {
+            return "El tanque permite controlar el nivel de agua ingresando capacidad y nivel actual.";
+          }
+
+          if (pregunta.includes("mapa")) {
+            return "El mapa muestra la ubicación de los animales en tiempo real.";
+          }
+
+          return "Probá preguntar sobre animales, peso, ganancias, tanque o mapa.";
+        }
+
+        function enlazarBotonesAyudaRapida() {
+          document.querySelectorAll(".quick-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              enviarPregunta(btn.innerText);
+            });
+          });
+        }
+
+        function enviarPregunta(texto) {
+          var mensaje = "";
+          if (typeof texto === "string" && texto.trim()) {
+            mensaje = texto.trim();
+          } else {
+            var input = document.getElementById("chatInput");
+            if (!input) return;
+            mensaje = (input.value || "").trim();
+            if (!mensaje) return;
+            input.value = "";
+          }
+          if (!mensaje) return;
+
+          mostrarMensajeUsuario(mensaje);
+          var respuesta = responder(mensaje);
+          mostrarMensajeBot(respuesta);
+        }
+
+        function construirHTMLPanelAsistente() {
+          var labels = [
+            "Cómo agregar animal",
+            "Registrar peso",
+            "Ver ganancia",
+            "Tanque",
+            "Mapa"
+          ];
+          var btnHtml = labels.map(function (label) {
+            return '<button type="button" class="quick-btn">' + escapeHtml(label) + "</button>";
+          }).join("");
+          return (
+            '<div id="chatPanel" style="padding: 15px; background: white; border-radius: 10px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; width: 100%; box-sizing: border-box;">' +
+            '<h3 style="margin-top:0;">🤖 Asistente AgroTrack</h3>' +
+            '<p class="chat-intro">Escribí una pregunta o tocá <strong>Ayuda rápida</strong>. Palabras clave: animal, peso, ganancia, tanque, mapa.</p>' +
+            '<div class="chat-ayuda-rapida" role="navigation" aria-label="Ayuda rápida">' +
+            btnHtml +
+            "</div>" +
+            '<div id="chatContainer"></div>' +
+            '<div class="chat-input-container">' +
+            '<input type="text" id="chatInput" class="chat-input" placeholder="Escribí tu pregunta…" autocomplete="off" onkeydown="if(event.key===\'Enter\'){event.preventDefault();enviarPregunta();}">' +
+            '<button type="button" id="chatEnviar" class="chat-send" onclick="enviarPregunta()">Enviar</button>' +
+            "</div></div>"
+          );
         }
 
         // REBAÑOS
@@ -2901,13 +3224,15 @@
             if (animal) {
               let peso = obtenerUltimoPeso(animal);
               if (peso !== null && peso !== undefined) pesos.push(parseFloat(peso));
-              let gan = calcularGanancia(animal);
-              if (gan !== "-" && !isNaN(parseFloat(gan))) ganancias.push(parseFloat(gan));
+              if (animal.pesos && animal.pesos.length >= 2) {
+                let gan = calcularGanancia(animal.pesos);
+                if (!isNaN(gan)) ganancias.push(gan);
+              }
             }
           });
 
           let promedioPeso = pesos.length > 0 ? (pesos.reduce((a, b) => a + b, 0) / pesos.length).toFixed(2) + ' kg' : "Sin datos";
-          let promedioGanancia = ganancias.length > 0 ? (ganancias.reduce((a, b) => a + b, 0) / ganancias.length).toFixed(2) + ' kg/día' : "Sin datos";
+          let promedioGanancia = ganancias.length > 0 ? (ganancias.reduce((a, b) => a + b, 0) / ganancias.length).toFixed(2) + ' kg' : "Sin datos";
 
           html += `<p><b>Peso promedio:</b> ${promedioPeso}</p>`;
           html += `<p><b>Ganancia promedio:</b> ${promedioGanancia}</p><br>`;
@@ -3004,8 +3329,9 @@
               animalesExportados++;
               let peso = obtenerUltimoPeso(animal);
               let pesoStr = (peso !== null && peso !== undefined) ? String(peso) : "Sin datos";
-              let ganancia = calcularGanancia(animal);
-              let gananciaStr = (ganancia && ganancia !== "-") ? String(ganancia) : "Sin datos";
+              let gananciaStr = (animal.pesos && animal.pesos.length >= 2)
+                ? String(calcularGanancia(animal.pesos).toFixed(2))
+                : "Sin datos";
               let linea = String(idAnimal) + ";" + pesoStr + ";" + gananciaStr;
               console.log("Línea CSV:", linea);
               lineas.push(linea);
@@ -3141,13 +3467,15 @@
         }
 
         function vistaAyuda() {
-          let html = '<div id="chatPanel" style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto; display: flex; flex-direction: column;">';
-          html += '<h3>🤖 Asistente</h3>';
-          html += '<div id="chatConversacion" style="height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #f9f9f9; flex: 1; border-radius: 5px;"></div>';
-          html += '<div style="display: flex; gap: 5px;">';
-          html += '<input type="text" id="chatInput" placeholder="Escribe tu pregunta..." style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">';
-          html += '<button id="chatEnviar" onclick="enviarPregunta()" style="padding: 8px 15px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Enviar</button>';
-          html += '</div></div>';
+          var html = construirHTMLPanelAsistente();
+          queueMicrotask(function () {
+            enlazarBotonesAyudaRapida();
+            var c = document.getElementById("chatContainer");
+            if (c && !c.dataset.bienvenida) {
+              c.dataset.bienvenida = "1";
+              mostrarMensajeBot("Hola. Escribí una pregunta o tocá un botón de ayuda rápida (animal, peso, ganancia, tanque, mapa).");
+            }
+          });
           return html;
         }
 
@@ -3165,6 +3493,7 @@
         window.editarZona = editarZona;
         window.importarPesos = importarPesos;
         window.enviarPregunta = enviarPregunta;
+        window.calcularGanancia = calcularGanancia;
         window.verHistorial = verHistorial;
         window.mostrarGrafico = mostrarGrafico;
         window.editarEstado = editarEstado;
@@ -3196,11 +3525,13 @@
           console.log("Sesión detectada al iniciar, cargando animales...");
           await cargarAnimales();
           await cargarPerfilUsuario();
+          iniciarSimulacionDrenajeBateria();
         }
 
         supabase.auth.onAuthStateChange(async (event, session) => {
           console.log("Supabase auth event:", event, session);
           if (event === "SIGNED_OUT") {
+            detenerSimulacionDrenajeBateria();
             document.getElementById("loginScreen").style.display = "flex";
             showLogin();
             animales = [];
@@ -3218,6 +3549,7 @@
             console.log("Usuario listo, cargando datos...");
             await cargarAnimales();
             await cargarPerfilUsuario();
+            iniciarSimulacionDrenajeBateria();
           }
         });
 
