@@ -2,11 +2,14 @@
 <html>
 
 <head>
-  <title>AgroTrack</title>
+  <title>GanadoControl</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#000000">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GanadoControl">
 
 
   <style>
@@ -15,12 +18,21 @@
     body {
       height: 100%;
       margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
       font-family: Arial;
       background-image: url("https://images.unsplash.com/photo-1500382017468-9049fed747ef");
       background-size: cover;
+      background-position: center;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     /* ================== MENU ================== */
@@ -36,8 +48,9 @@
     /* ================== CONTENIDO ================== */
     #contenido {
       margin-left: 220px;
-      padding: 10px;
+      padding: 12px;
       background: rgba(255, 255, 255, 0.9);
+      min-height: 100vh;
     }
 
     /* ================== LAYOUT ================== */
@@ -77,6 +90,97 @@
       gap: 5px;
     }
 
+    .lora-panel {
+      margin-top: 8px;
+      padding: 10px;
+      border: 1px solid #dbeafe;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
+    }
+
+    .lora-panel h4 {
+      margin: 0 0 8px 0;
+      color: #1d4ed8;
+      font-size: 13px;
+    }
+
+    .gateway-card {
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      border-radius: 8px;
+      padding: 8px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 2px rgba(30, 58, 138, 0.08);
+    }
+
+    .gateway-card label {
+      display: block;
+      font-size: 11px;
+      color: #1e293b;
+      margin: 4px 0 2px 0;
+      font-weight: 600;
+    }
+
+    .gateway-card input,
+    .gateway-card select {
+      font-size: 12px;
+      padding: 6px 8px;
+      margin: 0;
+    }
+
+    .gateway-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .gateway-btn-primary {
+      background: #2563eb;
+    }
+
+    .gateway-btn-danger {
+      background: #dc2626;
+    }
+
+    .gateway-marker {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
+      background: #2563eb;
+    }
+
+    .gateway-marker.gateway-marker--inactiva {
+      background: #64748b;
+      box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    .signal-legend {
+      margin-top: 8px;
+      padding: 8px;
+      border: 1px dashed #bfdbfe;
+      border-radius: 8px;
+      font-size: 11px;
+      color: #334155;
+      background: #fff;
+    }
+
+    .signal-legend-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 4px 0;
+    }
+
+    .signal-chip {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(15, 23, 42, 0.2);
+      display: inline-block;
+    }
+
     /* MAPA */
     #map {
       flex: 1;
@@ -100,8 +204,10 @@
     select,
     button {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin: 5px 0;
+      min-height: 44px;
+      font-size: 15px;
     }
 
     /* BOTONES */
@@ -110,6 +216,55 @@
       color: white;
       border: none;
       border-radius: 8px;
+      font-weight: 600;
+      touch-action: manipulation;
+    }
+
+    #appSplash {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+      color: #f8fafc;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+      padding: 24px;
+      text-align: center;
+    }
+
+    #appSplash.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .splash-logo {
+      font-size: 34px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .splash-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.25);
+      border-top-color: #22c55e;
+      border-radius: 50%;
+      animation: splashSpin 1s linear infinite;
+      margin: 10px 0 8px 0;
+    }
+
+    @keyframes splashSpin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     /* ================== HISTORIAL LATERAL ================== */
@@ -349,13 +504,33 @@
     /* 📱 MOBILE */
     @media (max-width: 768px) {
       #menu {
-        position: relative;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: auto;
         width: 100%;
         height: auto;
+        padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+        z-index: 5000;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        border-top-left-radius: 14px;
+        border-top-right-radius: 14px;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.22);
+      }
+
+      #menu h2,
+      #userProfileLabel {
+        grid-column: 1 / -1;
+        margin: 0;
       }
 
       #contenido {
         margin-left: 0;
+        padding: 10px;
+        padding-bottom: calc(130px + env(safe-area-inset-bottom));
       }
 
       #layoutAnimales {
@@ -374,8 +549,16 @@
       }
 
       #map {
-        height: 60vh;
+        height: 52vh;
         min-height: 300px;
+      }
+
+      #menu button {
+        margin: 0;
+        padding: 10px 6px;
+        min-height: 46px;
+        font-size: 12px;
+        border-radius: 10px;
       }
     }
 
@@ -554,12 +737,17 @@
 </head>
 
 <body>
+  <div id="appSplash">
+    <div class="splash-logo">🐄 GanadoControl</div>
+    <div class="splash-spinner" aria-hidden="true"></div>
+    <div>Cargando datos y entorno offline...</div>
+  </div>
   <!-- LOGIN SCREEN -->
   <div id="loginScreen"
     style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
     <div
       style="background: white; padding: 30px; border-radius: 10px; text-align: center; max-width: 420px; width: 90%; max-height: 92vh; overflow-y: auto;">
-      <h2>🐄 AgroTrack</h2>
+      <h2>🐄 GanadoControl</h2>
       <div id="authTabs" style="display: flex; margin-bottom: 20px;">
         <button id="tabLogin" onclick="showLogin()"
           style="flex: 1; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px 0 0 5px; cursor: pointer;">Iniciar
@@ -598,12 +786,13 @@
 
   <div id="appContent">
     <div id="menu">
-      <h2>🐄 AgroTrack</h2>
+      <h2>🐄 GanadoControl</h2>
       <div id="userProfileLabel" style="display: none; padding: 6px 10px; margin: 4px 0 8px 0; font-size: 13px; color: #1b4332; background: #e8f5e9; border-radius: 6px; text-align: left;"></div>
       <button onclick="mostrarVista('animales')">🐄 Animales</button>
       <button onclick="mostrarVista('ingreso')">➕ Ingresar</button>
       <button onclick="mostrarVista('rebanos')">🐑 Rebaños</button>
       <button onclick="mostrarVista('tanque')">💧 Tanque</button>
+      <button onclick="mostrarVista('porteras')">🚧 Porteras</button>
       <button onclick="mostrarVista('ayuda')">❓ Ayuda</button>
     </div>
 
@@ -642,7 +831,7 @@
             <div id="historialPanel"></div>
 
             <div id="chatPanel" style="display:none;">
-              <h3 style="margin-top:0;">🤖 Asistente AgroTrack</h3>
+              <h3 style="margin-top:0;">🤖 Asistente GanadoControl</h3>
               <p class="chat-intro">Abrí <strong>❓ Ayuda</strong> en el menú para el asistente completo con sugerencias.</p>
               <div id="chatContainer"></div>
               <div class="chat-input-container">
@@ -668,6 +857,8 @@
               <button onclick="guardarZona()">Finalizar zona</button>
               <button onclick="exportarCSV()">📥 Excel</button>
               <button onclick="editarZona()">✏️ Editar zona</button>
+              <button id="toggleCoberturaBtn" onclick="toggleCoberturaLoRa()">Mostrar/Ocultar Cobertura LoRa</button>
+              <button id="toggleHeatmapBtn" onclick="toggleHeatmapLoRa()">Heatmap LoRa: ON</button>
 
               <div id="alertaZona"></div>
               <div id="panelInfo"></div>
@@ -676,6 +867,7 @@
 
               <input type="file" id="filePesos" style="display:none;" onchange="importarPesos()">
               <button onclick="document.getElementById('filePesos').click()">📥 Actualizar Pesos</button>
+              <div id="gatewaySettingsPanel" class="lora-panel"></div>
             </div>
 
             <!-- MAPA -->
@@ -701,10 +893,14 @@
 
         <select id="estado">
           <option value="">-- Sin estado --</option>
-          <option>Vacunar</option>
-          <option>Preñado</option>
+          <option>Sano</option>
           <option>Enfermo</option>
+          <option>Preñada</option>
+          <option>En Tratamiento</option>
+          <option>Vacunar</option>
+          <option>Vendido</option>
         </select>
+        <button type="button" onclick="nuevoEstadoAnimal()">+ Nuevo Estado</button>
 
         <button>Guardar</button>
         <input type="file" id="fileInput" style="display:none;" onchange="importarCSV()">
@@ -742,16 +938,18 @@
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-pip/leaflet-pip.min.js"></script>
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
       (function () {
-        if (window.__AGROTRACK_APP_INIT__) {
-          console.warn("AgroTrack script ya inicializado. Se evita doble ejecución.");
+        if (window.__GANADOCONTROL_APP_INIT__) {
+          console.warn("GanadoControl script ya inicializado. Se evita doble ejecución.");
           return;
         }
-        window.__AGROTRACK_APP_INIT__ = true;
+        window.__GANADOCONTROL_APP_INIT__ = true;
+        document.title = "GanadoControl";
 
       const SUPABASE_URL = "https://dpsrcvfaunvamluvyysy.supabase.co";
       const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwc3JjdmZhdW52YW1sdXZ5eXN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NjY3NTYsImV4cCI6MjA5MTI0Mjc1Nn0.VFaFR97BDFe6G-rD1wvnOq4tsMIHbXwI5_fBKSdBjeA";
@@ -789,6 +987,109 @@
           el.title = "";
           el.style.display = "none";
         }
+      }
+
+      function normalizarEstadoAnimal(valor) {
+        if (valor == null) return "";
+        return String(valor).trim();
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function cargarEstadosCustomLocal() {
+        const raw = JSON.parse(localStorage.getItem(CUSTOM_ANIMAL_STATUSES_KEY) || "[]");
+        if (!Array.isArray(raw)) return [];
+        return raw.map(normalizarEstadoAnimal).filter(Boolean);
+      }
+
+      function guardarEstadosCustomLocal() {
+        localStorage.setItem(CUSTOM_ANIMAL_STATUSES_KEY, JSON.stringify(customAnimalStatuses));
+      }
+
+      function listaEstadosAnimales() {
+        const merged = [];
+        DEFAULT_ANIMAL_STATUSES.concat(customAnimalStatuses).forEach(function (s) {
+          const clean = normalizarEstadoAnimal(s);
+          if (!clean) return;
+          if (!merged.some(function (x) { return x.toLowerCase() === clean.toLowerCase(); })) {
+            merged.push(clean);
+          }
+        });
+        return merged;
+      }
+
+      function opcionesEstadoHtml(selected) {
+        const selectedNorm = normalizarEstadoAnimal(selected);
+        let html = '<option value="">-- Sin estado --</option>';
+        listaEstadosAnimales().forEach(function (estado) {
+          const sel = selectedNorm.toLowerCase() === estado.toLowerCase() ? " selected" : "";
+          html += "<option" + sel + ">" + escapeHtml(estado) + "</option>";
+        });
+        return html;
+      }
+
+      function renderizarSelectEstadoAnimal(selected) {
+        const select = document.getElementById("estado");
+        if (!select) return;
+        select.innerHTML = opcionesEstadoHtml(selected);
+      }
+
+      async function guardarEstadosCustomSupabase() {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          const metadataActual = user.user_metadata || {};
+          const customPrevios = Array.isArray(metadataActual.customAnimalStatuses) ? metadataActual.customAnimalStatuses : [];
+          const prevNorm = customPrevios.map(normalizarEstadoAnimal).filter(Boolean);
+          const nowNorm = customAnimalStatuses.map(normalizarEstadoAnimal).filter(Boolean);
+          if (JSON.stringify(prevNorm) === JSON.stringify(nowNorm)) return;
+          await supabase.auth.updateUser({
+            data: Object.assign({}, metadataActual, { customAnimalStatuses: nowNorm })
+          });
+        } catch (e) {
+          console.warn("No se pudo persistir estados personalizados en Supabase:", e);
+        }
+      }
+
+      async function sincronizarEstadosCustomConSupabase() {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          const remotos = Array.isArray(user.user_metadata && user.user_metadata.customAnimalStatuses)
+            ? user.user_metadata.customAnimalStatuses
+            : [];
+          const combinados = [];
+          customAnimalStatuses.concat(remotos).forEach(function (s) {
+            const clean = normalizarEstadoAnimal(s);
+            if (!clean) return;
+            if (DEFAULT_ANIMAL_STATUSES.some(function (d) { return d.toLowerCase() === clean.toLowerCase(); })) return;
+            if (!combinados.some(function (x) { return x.toLowerCase() === clean.toLowerCase(); })) combinados.push(clean);
+          });
+          customAnimalStatuses = combinados;
+          guardarEstadosCustomLocal();
+          await guardarEstadosCustomSupabase();
+          renderizarSelectEstadoAnimal("");
+        } catch (e) {
+          console.warn("No se pudo sincronizar estados personalizados:", e);
+        }
+      }
+
+      async function nuevoEstadoAnimal() {
+        const estadoNuevo = normalizarEstadoAnimal(prompt("Nuevo estado animal:"));
+        if (!estadoNuevo) return;
+        const existe = listaEstadosAnimales().some(function (s) { return s.toLowerCase() === estadoNuevo.toLowerCase(); });
+        if (existe) {
+          alert("Ese estado ya existe.");
+          return;
+        }
+        customAnimalStatuses.push(estadoNuevo);
+        guardarEstadosCustomLocal();
+        await guardarEstadosCustomSupabase();
+        renderizarSelectEstadoAnimal(estadoNuevo);
       }
 
       async function cargarPerfilUsuario() {
@@ -1048,23 +1349,42 @@
         }
       }
 
+      function ocultarSplashApp() {
+        const splash = document.getElementById("appSplash");
+        if (!splash || splash.classList.contains("hidden")) return;
+        splash.classList.add("hidden");
+      }
+
       let animalesConPeso = [];
       let animales = []; // Mismo ámbito que checkLogin / contarAnimalesEnZona (carga desde Supabase tras login)
       let selectedAnimales = []; // caravanas seleccionadas para borrado múltiple
       let simulacionBateriaIntervalId = null;
       let zonas = [];
+      let porteraMonitorIntervalId = null;
+      let alarmIntervals = {};
+      let porteras = [];
+      const DEFAULT_ANIMAL_STATUSES = ["Sano", "Enfermo", "Preñada", "En Tratamiento", "Vacunar", "Vendido"];
+      const CUSTOM_ANIMAL_STATUSES_KEY = "ganadocontrol_custom_animal_statuses_v1";
+      let customAnimalStatuses = [];
+      const GATEWAYS_STORAGE_KEY = "agrotrack_gateways_v1";
+      const SIGNAL_READINGS_STORAGE_KEY = "agrotrack_signal_readings_v1";
+      const PORTERAS_STORAGE_KEY = "agrotrack_porteras_v1";
+      const PORTERA_ALERT_COOLDOWN_MS = 5 * 60 * 1000;
       document.addEventListener("DOMContentLoaded", async function () {
+        customAnimalStatuses = cargarEstadosCustomLocal();
+        renderizarSelectEstadoAnimal("");
+        setTimeout(ocultarSplashApp, 1200);
 
-        // Registrar Service Worker para PWA
-       // if ('serviceWorker' in navigator) {
-         // navigator.serviceWorker.register('sw.js')
-         //   .then(registration => {
-          //    console.log('Service Worker registrado:', registration);
-           // })
-           // .catch(error => {
-            //  console.log('Error registrando Service Worker:', error);
-           // });
-        //}
+        // Registrar Service Worker para alertas web
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("sw.js")
+            .then(function (registration) {
+              console.log("Service Worker registrado:", registration.scope);
+            })
+            .catch(function (error) {
+              console.warn("Error registrando Service Worker:", error);
+            });
+        }
 
         let map;
         async function cargarAnimales() {
@@ -1109,6 +1429,8 @@
                 estado: a.estado,
                 lat: a.lat,
                 lng: a.lng,
+                rssi: a.rssi != null && a.rssi !== "" ? Number(a.rssi) : null,
+                snr: a.snr != null && a.snr !== "" ? Number(a.snr) : null,
                 peso: numPeso != null ? numPeso : null,
                 pesos: pesosArr,
                 bateria: bat
@@ -1170,6 +1492,279 @@
           if (v === null || v === undefined || v === "") return null;
           const n = parseFloat(String(v).replace(",", "."));
           return isNaN(n) ? null : n;
+        }
+
+        function defaultPorteras() {
+          return [
+            {
+              id: "entrada_norte",
+              nombre: "Entrada Norte",
+              estado: "cerrada", // abierta | cerrada
+              ultimaActualizacion: null,
+              horarioPermitido: {
+                desde: "08:00",
+                hasta: "18:00"
+              },
+              tiempoMaxAbierta: 10, // minutos
+              abiertaDesde: null
+            }
+          ];
+        }
+
+        function normalizarHoraHHMM(valor, fallback) {
+          const base = String(valor || "").trim();
+          if (!/^\d{2}:\d{2}$/.test(base)) return fallback;
+          const hh = Number(base.slice(0, 2));
+          const mm = Number(base.slice(3, 5));
+          if (isNaN(hh) || isNaN(mm) || hh < 0 || hh > 23 || mm < 0 || mm > 59) return fallback;
+          return base;
+        }
+
+        function cargarPorteras() {
+          try {
+            const raw = localStorage.getItem(PORTERAS_STORAGE_KEY);
+            if (!raw) return defaultPorteras();
+            const parsed = JSON.parse(raw);
+            if (!Array.isArray(parsed) || parsed.length === 0) return defaultPorteras();
+            return parsed.map(function (p) {
+              const idNormalizado = String(p.id || "").trim().toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+              return {
+                id: idNormalizado,
+                nombre: String(p.nombre || "Portera").trim(),
+                estado: p.estado === "abierta" ? "abierta" : "cerrada",
+                ultimaActualizacion: p.ultimaActualizacion ? new Date(p.ultimaActualizacion) : null,
+                horarioPermitido: {
+                  desde: normalizarHoraHHMM(p?.horarioPermitido?.desde, "08:00"),
+                  hasta: normalizarHoraHHMM(p?.horarioPermitido?.hasta, "18:00")
+                },
+                tiempoMaxAbierta: Math.max(1, Number(p.tiempoMaxAbierta || 10)),
+                abiertaDesde: p.abiertaDesde ? new Date(p.abiertaDesde) : null,
+                _alertas: p._alertas || {}
+              };
+            }).filter(function (p) { return p.id; });
+          } catch (e) {
+            console.warn("cargarPorteras:", e);
+            return defaultPorteras();
+          }
+        }
+
+        function guardarPorteras() {
+          localStorage.setItem(PORTERAS_STORAGE_KEY, JSON.stringify(porteras));
+        }
+
+        function dentroHorario(p) {
+          const ahora = new Date();
+          const hora = ahora.toTimeString().slice(0, 5);
+          return hora >= p.horarioPermitido.desde && hora <= p.horarioPermitido.hasta;
+        }
+
+        function minutosAbierta(p) {
+          if (p.estado !== "abierta" || !p.abiertaDesde) return 0;
+          return (new Date() - new Date(p.abiertaDesde)) / 60000;
+        }
+
+        function mostrarNotificacionUI(msg) {
+          const zona = document.getElementById("alertaZona");
+          if (zona) {
+            zona.innerHTML = "🚨 " + msg;
+            setTimeout(function () {
+              if (zona.innerHTML === "🚨 " + msg) zona.innerHTML = "";
+            }, 9000);
+          }
+        }
+
+        function reproducirAlarma() {
+          const audio = new Audio("alert.mp3");
+          audio.play().catch(function () {
+            reproducirAlerta();
+          });
+        }
+
+        function enviarPush(msg) {
+          // placeholder - will be connected to backend
+          console.log("Push:", msg);
+        }
+
+        function lanzarAlerta(p, mensaje) {
+          console.warn("🚨 ALERTA:", mensaje, p.nombre);
+          mostrarNotificacionUI(mensaje + " (" + p.nombre + ")");
+          enviarPush(mensaje + " (" + p.nombre + ")");
+
+          if (!alarmIntervals[p.id]) {
+            reproducirAlarma();
+
+            alarmIntervals[p.id] = setInterval(function () {
+              if (p.estado === "abierta") {
+                reproducirAlarma();
+              } else {
+                clearInterval(alarmIntervals[p.id]);
+                delete alarmIntervals[p.id];
+              }
+            }, 60000);
+          }
+        }
+
+        function puedeLanzarAlerta(p, tipo) {
+          const now = Date.now();
+          if (!p._alertas) p._alertas = {};
+          const last = p._alertas[tipo] || 0;
+          if (now - last < PORTERA_ALERT_COOLDOWN_MS) return false;
+          p._alertas[tipo] = now;
+          return true;
+        }
+
+        function verificarAlertasPortera(p) {
+          // fuera de horario
+          if (p.estado === "abierta" && !dentroHorario(p) && puedeLanzarAlerta(p, "fuera_horario")) {
+            lanzarAlerta(p, "Portera abierta fuera de horario");
+          }
+
+          // abierta demasiado tiempo
+          if (p.estado === "abierta" && p.abiertaDesde) {
+            const minutos = (new Date() - new Date(p.abiertaDesde)) / 60000;
+            if (minutos > p.tiempoMaxAbierta && puedeLanzarAlerta(p, "demasiado_tiempo")) {
+              lanzarAlerta(p, "Portera abierta demasiado tiempo");
+            }
+          }
+        }
+
+        function actualizarPortera(id, estado) {
+          const p = porteras.find(function (x) { return x.id === id; });
+          if (!p) return;
+
+          p.estado = estado;
+          p.ultimaActualizacion = new Date();
+
+          if (estado === "abierta") {
+            if (!p.abiertaDesde) {
+              p.abiertaDesde = new Date();
+            }
+          } else {
+            p.abiertaDesde = null;
+            if (alarmIntervals[p.id]) {
+              clearInterval(alarmIntervals[p.id]);
+              delete alarmIntervals[p.id];
+            }
+          }
+
+          guardarPorteras();
+          verificarAlertasPortera(p);
+          renderPorterasPanel();
+        }
+
+        function guardarConfigPortera(id) {
+          const p = porteras.find(function (x) { return x.id === id; });
+          if (!p) return;
+          const desde = normalizarHoraHHMM(document.getElementById("portera_desde_" + id)?.value, p.horarioPermitido.desde);
+          const hasta = normalizarHoraHHMM(document.getElementById("portera_hasta_" + id)?.value, p.horarioPermitido.hasta);
+          const tiempo = Number(document.getElementById("portera_max_" + id)?.value || p.tiempoMaxAbierta);
+          p.horarioPermitido.desde = desde;
+          p.horarioPermitido.hasta = hasta;
+          p.tiempoMaxAbierta = Math.max(1, tiempo);
+          p.ultimaActualizacion = new Date();
+          guardarPorteras();
+          renderPorterasPanel();
+        }
+
+        function crearPorteraDesdePanel() {
+          const idRaw = String(document.getElementById("nuevaPorteraId")?.value || "").trim().toLowerCase();
+          const nombre = String(document.getElementById("nuevaPorteraNombre")?.value || "").trim();
+          const desde = normalizarHoraHHMM(document.getElementById("nuevaPorteraDesde")?.value, "08:00");
+          const hasta = normalizarHoraHHMM(document.getElementById("nuevaPorteraHasta")?.value, "18:00");
+          const tiempoMax = Math.max(1, Number(document.getElementById("nuevaPorteraMax")?.value || 10));
+          const id = idRaw.replace(/[^a-z0-9_\\-]/g, "_");
+
+          if (!id) {
+            alert("Ingresá un ID válido para la portera");
+            return;
+          }
+          if (!nombre) {
+            alert("Ingresá un nombre para la portera");
+            return;
+          }
+          if (porteras.some(function (p) { return p.id === id; })) {
+            alert("Ya existe una portera con ese ID");
+            return;
+          }
+
+          porteras.push({
+            id: id,
+            nombre: nombre,
+            estado: "cerrada",
+            ultimaActualizacion: new Date(),
+            horarioPermitido: { desde: desde, hasta: hasta },
+            tiempoMaxAbierta: tiempoMax,
+            abiertaDesde: null,
+            _alertas: {}
+          });
+          guardarPorteras();
+          renderPorterasPanel();
+        }
+
+        function obtenerEstadoVisualPortera(p) {
+          if (p.estado !== "abierta") return { texto: "🟢 Cerrada", color: "#1b5e20" };
+          if (!dentroHorario(p)) return { texto: "🟡 Abierta fuera de horario", color: "#f57f17" };
+          return { texto: "🔴 Abierta", color: "#b71c1c" };
+        }
+
+        function renderPorterasPanel() {
+          const panel = document.getElementById("panelLateral");
+          if (!panel) return;
+          let html = '<div style="padding:15px; background:white; border-radius:10px; max-height:80vh; overflow-y:auto;">';
+          html += "<h3>🚧 Monitoreo de porteras</h3>";
+
+          if (!porteras.length) {
+            html += "<p><em>No hay porteras configuradas.</em></p>";
+          }
+
+          porteras.forEach(function (p) {
+            const visual = obtenerEstadoVisualPortera(p);
+            const mins = minutosAbierta(p);
+            const tiempoTxt = p.estado === "abierta" ? mins.toFixed(1) + " min" : "0 min";
+            html += '<div style="border:1px solid #ddd; border-radius:8px; padding:10px; margin:10px 0;">';
+            html += "<h4 style='margin:0 0 6px 0;'>" + p.nombre + "</h4>";
+            html += "<p style='margin:4px 0;color:" + visual.color + ";'><strong>" + visual.texto + "</strong></p>";
+            html += "<p style='margin:4px 0;'>Horario permitido: <strong>" + p.horarioPermitido.desde + " - " + p.horarioPermitido.hasta + "</strong></p>";
+            html += "<p style='margin:4px 0;'>Tiempo abierta: <strong>" + tiempoTxt + "</strong></p>";
+            html += "<p style='margin:4px 0;'>Máximo permitido: <strong>" + p.tiempoMaxAbierta + " min</strong></p>";
+            html += "<div style='display:flex; gap:8px; margin-top:8px;'>";
+            html += "<button type='button' onclick=\"actualizarPortera('" + p.id + "','abierta')\" style='flex:1; padding:7px; border:none; border-radius:5px; background:#e53935; color:white;'>Abrir</button>";
+            html += "<button type='button' onclick=\"actualizarPortera('" + p.id + "','cerrada')\" style='flex:1; padding:7px; border:none; border-radius:5px; background:#2e7d32; color:white;'>Cerrar</button>";
+            html += "</div>";
+            html += "<div style='display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;'>";
+            html += "<input id='portera_desde_" + p.id + "' type='time' value='" + p.horarioPermitido.desde + "'>";
+            html += "<input id='portera_hasta_" + p.id + "' type='time' value='" + p.horarioPermitido.hasta + "'>";
+            html += "</div>";
+            html += "<input id='portera_max_" + p.id + "' type='number' min='1' value='" + p.tiempoMaxAbierta + "' style='width:100%; margin-top:8px;' placeholder='Tiempo máximo abierta (min)'>";
+            html += "<button type='button' onclick=\"guardarConfigPortera('" + p.id + "')\" style='width:100%; margin-top:8px; padding:8px; border:none; border-radius:5px; background:#1976d2; color:white;'>Guardar configuración</button>";
+            html += "</div>";
+          });
+
+          html += "<h4 style='margin-top:18px;'>⚙️ Crear portera</h4>";
+          html += "<input id='nuevaPorteraId' placeholder='ID (ej: entrada_sur)' style='width:100%; margin:6px 0;'>";
+          html += "<input id='nuevaPorteraNombre' placeholder='Nombre (ej: Entrada Sur)' style='width:100%; margin:6px 0;'>";
+          html += "<div style='display:grid; grid-template-columns:1fr 1fr; gap:8px;'>";
+          html += "<input id='nuevaPorteraDesde' type='time' value='08:00'>";
+          html += "<input id='nuevaPorteraHasta' type='time' value='18:00'>";
+          html += "</div>";
+          html += "<input id='nuevaPorteraMax' type='number' min='1' value='10' style='width:100%; margin:8px 0;' placeholder='Tiempo máximo abierta (min)'>";
+          html += "<button type='button' onclick='crearPorteraDesdePanel()' style='width:100%; padding:9px; background:#5e35b1; color:white; border:none; border-radius:5px;'>Crear portera</button>";
+          html += "</div>";
+          panel.innerHTML = html;
+        }
+
+        function verificarTodasPorteras() {
+          if (!Array.isArray(porteras)) return;
+          porteras.forEach(function (p) {
+            verificarAlertasPortera(p);
+          });
+          guardarPorteras();
+          if (window.__vistaActiva === "porteras") renderPorterasPanel();
+        }
+
+        function iniciarMonitorPorteras() {
+          if (porteraMonitorIntervalId) clearInterval(porteraMonitorIntervalId);
+          porteraMonitorIntervalId = setInterval(verificarTodasPorteras, 30000);
         }
 
         function colorBateria(bateria) {
@@ -1302,44 +1897,68 @@
               return false;
             }
 
-            var pesosArr = normalizePesosFromDb(animal.pesos);
-            var pesoNum = normalizeNumPeso(animal.peso);
-            if (pesoNum == null && pesosArr.length > 0) {
-              pesoNum = normalizeNumPeso(pesosArr[pesosArr.length - 1].valor);
+            if (!animal.id) {
+              alert("Falta caravana");
+              return false;
             }
-            if (pesoNum == null) pesoNum = 0;
 
-            var bateriaNum = animal.bateria != null && animal.bateria !== "" ? normalizarBateria(animal.bateria) : 100;
+            const { data: existing, error: existingError } = await supabase
+              .from("animales")
+              .select("caravana")
+              .eq("caravana", animal.id)
+              .single();
 
-            const payload = {
+            // PGRST116 = no rows found (no duplicate). Any other error should fail loudly.
+            if (existingError && existingError.code !== "PGRST116") {
+              alert("Error real: " + existingError.message);
+              console.error("ERROR DETALLADO:", existingError);
+              return false;
+            }
+
+            if (existing) {
+              alert("Ya existe un animal con esa caravana");
+              return false;
+            }
+
+            console.log("📦 INTENTO GUARDAR:", animal);
+
+            const payloadRaw = {
               caravana: animal.id,
               edad: animal.edad,
               raza: animal.raza,
               lote: animal.lote,
               obs: animal.obs,
               estado: animal.estado,
-              lat: parseFloat(animal.lat) || null,
-              lng: parseFloat(animal.lng) || null,
-              peso: pesoNum,
-              pesos: pesosArr,
-              bateria: bateriaNum
+              lat: parseFloat(animal.lat),
+              lng: parseFloat(animal.lng),
+              peso: Number(animal.peso || 0),
+              pesos: animal.pesos || [],
+              bateria: Number(animal.bateria || 100)
             };
+
+            const payload = Object.fromEntries(
+              Object.entries(payloadRaw).filter(function (kv) {
+                return kv[1] !== undefined;
+              })
+            );
 
             console.log("📦 PAYLOAD:", payload);
 
-            const res = await supabase
+            const { data, error } = await supabase
               .from("animales")
               .insert([payload])
               .select();
 
-            console.log("📡 RESPUESTA COMPLETA:", res);
-            console.log("❌ ERROR:", res.error || null);
+            console.log("✅ DATA:", data);
+            console.log("❌ ERROR:", error);
 
-            if (res.error) {
+            if (error) {
+              alert("Error real: " + error.message);
+              console.error("ERROR DETALLADO:", error);
               return false;
             }
 
-            console.log("✅ INSERT OK:", res.data);
+            console.log("✅ INSERT OK:", data);
             return true;
 
           } catch (err) {
@@ -1741,6 +2360,25 @@
           }
         });
         let puntosZona = [];
+        let coberturaLoRaVisible = true;
+        let heatmapLoRaVisible = true;
+        let gatewaysLayers = [];
+        let signalReadings = cargarLecturasSenal();
+        let signalPointLayers = [];
+        let weakZoneLayers = [];
+        let signalHeatLayer = null;
+        let statsSenal = null;
+        const defaultGateways = [
+          {
+            id: "gateway_1",
+            nombre: "Antena Principal",
+            lat: -34.7400,
+            lng: -56.1000,
+            rango: 3000,
+            estado: "activa"
+          }
+        ];
+        let gateways = cargarGateways();
 
         // MAPA
         // CAPAS
@@ -1797,6 +2435,11 @@
           "Mapa": normal,
           "Satélite": satelite
         }).addTo(map);
+        renderGateways();
+        renderSignalVisualization();
+        renderGatewaySettingsPanel();
+        actualizarTextoBotonCobertura();
+        actualizarTextoBotonHeatmap();
 
 
         // 💾 guardar vista
@@ -1809,6 +2452,450 @@
             zoom: map.getZoom()
           }));
         });
+
+        function cargarGateways() {
+          const guardados = JSON.parse(localStorage.getItem(GATEWAYS_STORAGE_KEY) || "null");
+          const base = Array.isArray(guardados) && guardados.length ? guardados : defaultGateways;
+          return base.map(function (g, idx) {
+            return {
+              id: g.id || ("gateway_" + (idx + 1)),
+              nombre: g.nombre || ("Gateway " + (idx + 1)),
+              lat: Number(g.lat),
+              lng: Number(g.lng),
+              rango: Number(g.rango) > 0 ? Number(g.rango) : 3000,
+              estado: g.estado === "inactiva" ? "inactiva" : "activa",
+              rssiPromedio: g.rssiPromedio != null && g.rssiPromedio !== "" ? Number(g.rssiPromedio) : null,
+              ultimaLectura: g.ultimaLectura || null
+            };
+          }).filter(function (g) {
+            return Number.isFinite(g.lat) && Number.isFinite(g.lng);
+          });
+        }
+
+        function guardarGateways() {
+          localStorage.setItem(GATEWAYS_STORAGE_KEY, JSON.stringify(gateways));
+        }
+
+        function normalizarLecturaSenal(raw) {
+          if (!raw) return null;
+          const lat = Number(raw.lat);
+          const lng = Number(raw.lng);
+          const rssi = Number(raw.rssi);
+          if (!Number.isFinite(lat) || !Number.isFinite(lng) || !Number.isFinite(rssi)) return null;
+          const snrNum = raw.snr != null && raw.snr !== "" ? Number(raw.snr) : null;
+          return {
+            animalId: raw.animalId ? String(raw.animalId) : "sin_id",
+            lat: lat,
+            lng: lng,
+            rssi: rssi,
+            snr: Number.isFinite(snrNum) ? snrNum : null,
+            fecha: raw.fecha || new Date().toISOString()
+          };
+        }
+
+        function cargarLecturasSenal() {
+          const arr = JSON.parse(localStorage.getItem(SIGNAL_READINGS_STORAGE_KEY) || "[]");
+          if (!Array.isArray(arr)) return [];
+          return arr.map(normalizarLecturaSenal).filter(Boolean);
+        }
+
+        function guardarLecturasSenal() {
+          localStorage.setItem(SIGNAL_READINGS_STORAGE_KEY, JSON.stringify(signalReadings));
+        }
+
+        function colorPorRssi(rssi) {
+          if (rssi > -80) return "#16a34a";
+          if (rssi >= -100) return "#eab308";
+          return "#dc2626";
+        }
+
+        function intensidadHeat(rssi) {
+          if (rssi > -80) return 1.0;
+          if (rssi >= -100) return 0.6;
+          return 0.25;
+        }
+
+        function distanciaMinimaGateway(lat, lng) {
+          if (!gateways.length) return null;
+          let min = Infinity;
+          gateways.forEach(function (g) {
+            const d = map.distance([lat, lng], [g.lat, g.lng]);
+            if (d < min) min = d;
+          });
+          return Number.isFinite(min) ? min : null;
+        }
+
+        function consolidarLecturasAnimales() {
+          const recientes = [];
+          const ahora = Date.now();
+          animales.forEach(function (a) {
+            const lat = Number(a.lat);
+            const lng = Number(a.lng);
+            const rssi = Number(a.rssi);
+            if (!Number.isFinite(lat) || !Number.isFinite(lng) || !Number.isFinite(rssi)) return;
+            const lectura = normalizarLecturaSenal({
+              animalId: a.id,
+              lat: lat,
+              lng: lng,
+              rssi: rssi,
+              snr: a.snr != null ? a.snr : null,
+              fecha: a.ultimaActualizacion || new Date().toISOString()
+            });
+            if (lectura) recientes.push(lectura);
+          });
+
+          if (!recientes.length) return;
+          const porAnimal = {};
+          signalReadings.forEach(function (s) {
+            porAnimal[s.animalId] = s;
+          });
+          recientes.forEach(function (s) {
+            porAnimal[s.animalId] = s;
+          });
+          signalReadings = Object.keys(porAnimal).map(function (k) { return porAnimal[k]; });
+          signalReadings = signalReadings.filter(function (s) {
+            const t = new Date(s.fecha).getTime();
+            if (!Number.isFinite(t)) return true;
+            return (ahora - t) <= 1000 * 60 * 60 * 24 * 7;
+          });
+          guardarLecturasSenal();
+        }
+
+        function actualizarTextoBotonCobertura() {
+          const btn = document.getElementById("toggleCoberturaBtn");
+          if (!btn) return;
+          btn.textContent = coberturaLoRaVisible
+            ? "Mostrar/Ocultar Cobertura LoRa (visible)"
+            : "Mostrar/Ocultar Cobertura LoRa (oculta)";
+        }
+
+        function actualizarTextoBotonHeatmap() {
+          const btn = document.getElementById("toggleHeatmapBtn");
+          if (!btn) return;
+          btn.textContent = heatmapLoRaVisible ? "Heatmap LoRa: ON" : "Heatmap LoRa: OFF";
+        }
+
+        function formatCoord(v) {
+          return Number(v).toFixed(5);
+        }
+
+        function formatearFechaLectura(valor) {
+          if (!valor) return "Sin datos";
+          const d = new Date(valor);
+          if (isNaN(d.getTime())) return String(valor);
+          return d.toLocaleString();
+        }
+
+        function crearPopupGateway(gateway) {
+          let extraRssi = "";
+          if (gateway.rssiPromedio != null) {
+            extraRssi += "<br><strong>RSSI promedio:</strong> " + gateway.rssiPromedio + " dBm";
+          }
+          if (gateway.ultimaLectura) {
+            extraRssi += "<br><strong>Última lectura:</strong> " + formatearFechaLectura(gateway.ultimaLectura);
+          }
+          return "<div style='font-size:13px;line-height:1.4'>" +
+            "<strong>" + escapeHtml(gateway.nombre) + "</strong>" +
+            "<br><strong>Estado:</strong> " + escapeHtml(gateway.estado) +
+            "<br><strong>Alcance estimado:</strong> " + Number(gateway.rango).toLocaleString() + " m" +
+            (statsSenal && statsSenal.coberturaMetros != null ? "<br><strong>Cobertura estimada actual:</strong> " + Math.round(statsSenal.coberturaMetros).toLocaleString() + " m" : "") +
+            "<br><strong>Coordenadas:</strong> " + formatCoord(gateway.lat) + ", " + formatCoord(gateway.lng) +
+            extraRssi +
+            "</div>";
+        }
+
+        function crearIconoGateway(gateway) {
+          const claseEstado = gateway.estado === "inactiva" ? "gateway-marker gateway-marker--inactiva" : "gateway-marker";
+          return L.divIcon({
+            className: "gateway-marker-wrapper",
+            html: "<div class='" + claseEstado + "'></div>",
+            iconSize: [18, 18],
+            iconAnchor: [9, 9],
+            popupAnchor: [0, -8]
+          });
+        }
+
+        function limpiarCapasGateways() {
+          gatewaysLayers.forEach(function (item) {
+            if (item.marker) map.removeLayer(item.marker);
+            if (item.circle) map.removeLayer(item.circle);
+          });
+          gatewaysLayers = [];
+        }
+
+        function renderGateways() {
+          limpiarCapasGateways();
+          gateways.forEach(function (gateway) {
+            const marker = L.marker([gateway.lat, gateway.lng], {
+              icon: crearIconoGateway(gateway),
+              title: gateway.nombre
+            }).addTo(map);
+
+            marker.bindPopup(crearPopupGateway(gateway));
+
+            const circle = L.circle([gateway.lat, gateway.lng], {
+              radius: gateway.rango,
+              color: "#2563eb",
+              weight: 2,
+              opacity: 0.5,
+              fillColor: "#3b82f6",
+              fillOpacity: 0.14
+            });
+
+            if (coberturaLoRaVisible) circle.addTo(map);
+            gatewaysLayers.push({ id: gateway.id, marker: marker, circle: circle });
+          });
+        }
+
+        function limpiarCapasSenal() {
+          signalPointLayers.forEach(function (p) { map.removeLayer(p); });
+          signalPointLayers = [];
+          weakZoneLayers.forEach(function (p) { map.removeLayer(p); });
+          weakZoneLayers = [];
+          if (signalHeatLayer) {
+            map.removeLayer(signalHeatLayer);
+            signalHeatLayer = null;
+          }
+        }
+
+        function calcularStatsSenal() {
+          if (!signalReadings.length) return null;
+          const valid = signalReadings.filter(function (s) { return Number.isFinite(Number(s.rssi)); });
+          if (!valid.length) return null;
+          let suma = 0;
+          let strongest = valid[0];
+          let weakest = valid[0];
+          let coberturaMetros = 0;
+          let coberturaPuntos = 0;
+          valid.forEach(function (s) {
+            suma += s.rssi;
+            if (s.rssi > strongest.rssi) strongest = s;
+            if (s.rssi < weakest.rssi) weakest = s;
+            if (s.rssi >= -100) {
+              const d = distanciaMinimaGateway(s.lat, s.lng);
+              if (d != null && d > coberturaMetros) coberturaMetros = d;
+              coberturaPuntos += 1;
+            }
+          });
+          return {
+            strongest: strongest,
+            weakest: weakest,
+            avgRssi: suma / valid.length,
+            coberturaMetros: coberturaPuntos ? coberturaMetros : 0
+          };
+        }
+
+        function renderSignalVisualization() {
+          limpiarCapasSenal();
+          consolidarLecturasAnimales();
+          statsSenal = calcularStatsSenal();
+          if (!signalReadings.length) return;
+
+          const heatPoints = [];
+          const weakBuckets = {};
+
+          signalReadings.forEach(function (s) {
+            const color = colorPorRssi(s.rssi);
+            const point = L.circleMarker([s.lat, s.lng], {
+              radius: 7,
+              color: color,
+              weight: 1.5,
+              opacity: 0.95,
+              fillColor: color,
+              fillOpacity: 0.45
+            }).addTo(map).bindPopup(
+              "<b>Señal LoRa</b><br>" +
+              "Animal: " + escapeHtml(s.animalId) + "<br>" +
+              "RSSI: " + s.rssi + " dBm<br>" +
+              "SNR: " + (s.snr != null ? s.snr : "—") + " dB<br>" +
+              "Fecha: " + formatearFechaLectura(s.fecha)
+            );
+            signalPointLayers.push(point);
+            heatPoints.push([s.lat, s.lng, intensidadHeat(s.rssi)]);
+
+            if (s.rssi < -100) {
+              const key = (Math.round(s.lat * 250) / 250).toFixed(3) + "|" + (Math.round(s.lng * 250) / 250).toFixed(3);
+              if (!weakBuckets[key]) weakBuckets[key] = { lat: 0, lng: 0, count: 0, sum: 0 };
+              weakBuckets[key].lat += s.lat;
+              weakBuckets[key].lng += s.lng;
+              weakBuckets[key].count += 1;
+              weakBuckets[key].sum += s.rssi;
+            }
+          });
+
+          if (heatmapLoRaVisible && window.L && typeof L.heatLayer === "function" && heatPoints.length) {
+            signalHeatLayer = L.heatLayer(heatPoints, {
+              radius: 22,
+              blur: 16,
+              maxZoom: 18,
+              gradient: {
+                0.2: "#dc2626",
+                0.5: "#eab308",
+                0.8: "#22c55e"
+              }
+            }).addTo(map);
+          }
+
+          Object.keys(weakBuckets).forEach(function (key) {
+            const b = weakBuckets[key];
+            if (b.count < 2) return;
+            const lat = b.lat / b.count;
+            const lng = b.lng / b.count;
+            const weakCircle = L.circle([lat, lng], {
+              radius: 120,
+              color: "#b91c1c",
+              weight: 1.2,
+              opacity: 0.85,
+              fillColor: "#ef4444",
+              fillOpacity: 0.18
+            }).addTo(map).bindPopup(
+              "<b>Zona débil detectada</b><br>" +
+              "Lecturas pobres: " + b.count + "<br>" +
+              "RSSI promedio: " + (b.sum / b.count).toFixed(1) + " dBm"
+            );
+            weakZoneLayers.push(weakCircle);
+          });
+        }
+
+        function renderGatewaySettingsPanel() {
+          const panel = document.getElementById("gatewaySettingsPanel");
+          if (!panel) return;
+
+          let html = "<h4>LoRa Gateways</h4>";
+          html += "<div class='signal-legend'>" +
+            "<div style='font-weight:700;margin-bottom:4px'>Señal RSSI</div>" +
+            "<div class='signal-legend-row'><span class='signal-chip' style='background:#16a34a'></span>Fuerte (&gt; -80 dBm)</div>" +
+            "<div class='signal-legend-row'><span class='signal-chip' style='background:#eab308'></span>Media (-80 a -100 dBm)</div>" +
+            "<div class='signal-legend-row'><span class='signal-chip' style='background:#dc2626'></span>Débil (&lt; -100 dBm)</div>" +
+            "</div>";
+          html += construirResumenSenalGateway();
+          if (!gateways.length) {
+            html += "<p style='margin:0 0 8px 0;font-size:12px;color:#475569'>No hay gateways configurados.</p>";
+          }
+
+          gateways.forEach(function (gateway, index) {
+            html += "<div class='gateway-card'>";
+            html += "<label>Nombre</label><input id='gw_nombre_" + index + "' value='" + escapeAttr(gateway.nombre || "") + "'>";
+            html += "<label>Latitud</label><input id='gw_lat_" + index + "' type='number' step='0.0001' value='" + escapeAttr(gateway.lat) + "'>";
+            html += "<label>Longitud</label><input id='gw_lng_" + index + "' type='number' step='0.0001' value='" + escapeAttr(gateway.lng) + "'>";
+            html += "<label>Rango estimado (m)</label><input id='gw_rango_" + index + "' type='number' step='1' min='1' value='" + escapeAttr(gateway.rango) + "'>";
+            html += "<label>Estado</label><select id='gw_estado_" + index + "'>" +
+              "<option value='activa'" + (gateway.estado === "activa" ? " selected" : "") + ">Activa</option>" +
+              "<option value='inactiva'" + (gateway.estado === "inactiva" ? " selected" : "") + ">Inactiva</option>" +
+              "</select>";
+            html += "<div class='gateway-actions'>";
+            html += "<button type='button' class='gateway-btn-primary' onclick='guardarGatewayDesdePanel(" + index + ")'>Guardar</button>";
+            html += "<button type='button' class='gateway-btn-danger' onclick='eliminarGateway(" + index + ")'>Eliminar</button>";
+            html += "</div></div>";
+          });
+
+          html += "<button type='button' class='gateway-btn-primary' onclick='agregarGateway()'>+ Agregar gateway</button>";
+          panel.innerHTML = html;
+        }
+
+        function construirResumenSenalGateway() {
+          if (!statsSenal) {
+            return "<div style='margin:8px 0;padding:8px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;color:#64748b'>Sin lecturas LoRa recientes.</div>";
+          }
+          return "<div style='margin:8px 0;padding:8px;background:#fff;border:1px solid #dbeafe;border-radius:8px;font-size:12px;line-height:1.45'>" +
+            "<div><strong>Señal más fuerte:</strong> " + statsSenal.strongest.rssi + " dBm (" + escapeHtml(statsSenal.strongest.animalId) + ")</div>" +
+            "<div><strong>Señal más débil:</strong> " + statsSenal.weakest.rssi + " dBm (" + escapeHtml(statsSenal.weakest.animalId) + ")</div>" +
+            "<div><strong>RSSI promedio:</strong> " + statsSenal.avgRssi.toFixed(1) + " dBm</div>" +
+            "<div><strong>Cobertura estimada actual:</strong> " + Math.round(statsSenal.coberturaMetros).toLocaleString() + " m</div>" +
+            "</div>";
+        }
+
+        function guardarGatewayDesdePanel(index) {
+          const gateway = gateways[index];
+          if (!gateway) return;
+
+          const nombre = document.getElementById("gw_nombre_" + index);
+          const lat = document.getElementById("gw_lat_" + index);
+          const lng = document.getElementById("gw_lng_" + index);
+          const rango = document.getElementById("gw_rango_" + index);
+          const estado = document.getElementById("gw_estado_" + index);
+
+          const nuevoLat = Number(lat && lat.value);
+          const nuevoLng = Number(lng && lng.value);
+          const nuevoRango = Number(rango && rango.value);
+          if (!Number.isFinite(nuevoLat) || !Number.isFinite(nuevoLng)) {
+            alert("Coordenadas inválidas para gateway.");
+            return;
+          }
+          if (!Number.isFinite(nuevoRango) || nuevoRango <= 0) {
+            alert("El rango estimado debe ser mayor a 0.");
+            return;
+          }
+
+          gateway.nombre = (nombre && nombre.value ? nombre.value : gateway.nombre).trim() || "Gateway";
+          gateway.lat = nuevoLat;
+          gateway.lng = nuevoLng;
+          gateway.rango = nuevoRango;
+          gateway.estado = estado && estado.value === "inactiva" ? "inactiva" : "activa";
+
+          guardarGateways();
+          renderGateways();
+          renderSignalVisualization();
+          renderGatewaySettingsPanel();
+        }
+
+        function agregarGateway() {
+          gateways.push({
+            id: "gateway_" + Date.now(),
+            nombre: "Nueva Antena",
+            lat: map.getCenter().lat,
+            lng: map.getCenter().lng,
+            rango: 2500,
+            estado: "activa",
+            rssiPromedio: null,
+            ultimaLectura: null
+          });
+          guardarGateways();
+          renderGateways();
+          renderSignalVisualization();
+          renderGatewaySettingsPanel();
+        }
+
+        function eliminarGateway(index) {
+          if (gateways.length === 1) {
+            alert("Debe quedar al menos un gateway configurado.");
+            return;
+          }
+          gateways.splice(index, 1);
+          guardarGateways();
+          renderGateways();
+          renderSignalVisualization();
+          renderGatewaySettingsPanel();
+        }
+
+        function toggleCoberturaLoRa() {
+          coberturaLoRaVisible = !coberturaLoRaVisible;
+          gatewaysLayers.forEach(function (item) {
+            if (coberturaLoRaVisible) item.circle.addTo(map);
+            else map.removeLayer(item.circle);
+          });
+          actualizarTextoBotonCobertura();
+        }
+
+        function toggleHeatmapLoRa() {
+          heatmapLoRaVisible = !heatmapLoRaVisible;
+          renderSignalVisualization();
+          actualizarTextoBotonHeatmap();
+        }
+
+        function registrarLecturaSenal(reading) {
+          const lectura = normalizarLecturaSenal(reading);
+          if (!lectura) return false;
+          signalReadings.push(lectura);
+          if (signalReadings.length > 1200) {
+            signalReadings = signalReadings.slice(signalReadings.length - 1200);
+          }
+          guardarLecturasSenal();
+          renderSignalVisualization();
+          renderGateways();
+          renderGatewaySettingsPanel();
+          return true;
+        }
         // CARGAR ZONA
 
 
@@ -1951,13 +3038,6 @@
             .replace(/</g, "&lt;");
         }
 
-        function escapeHtml(s) {
-          return String(s)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
-        }
-
         function syncAnimalCardSelectedClass(checkbox) {
           var card = checkbox && checkbox.closest ? checkbox.closest(".animal-card") : null;
           if (!card) return;
@@ -2066,7 +3146,7 @@
             let clase = "normal";
             if (a.estado === "Enfermo") clase = "enfermo";
             if (a.estado === "Vacunar") clase = "vacunar";
-            if (a.estado === "Preñado") clase = "prenado";
+            if (a.estado === "Preñado" || a.estado === "Preñada") clase = "prenado";
 
             var sel = selectedAnimales.some(function (s) { return String(s) === String(a.id); });
             var attrId = escapeAttr(a.id);
@@ -2213,7 +3293,7 @@
                 color = "red";
               } else if (a.estado === "Vacunar") {
                 color = "orange";
-              } else if (a.estado === "Preñado") {
+              } else if (a.estado === "Preñado" || a.estado === "Preñada") {
                 color = "green";
               }
 
@@ -2340,9 +3420,13 @@
               panel.innerHTML =
                 "🐄 Total: " + total +
                 " | ⚠️ Fuera: " + fuera +
-                " | ⚫ Inactivos: " + inactivos;
+                " | ⚫ Inactivos: " + inactivos +
+                (statsSenal ? " | 📡 Cobertura estimada actual: " + Math.round(statsSenal.coberturaMetros).toLocaleString() + " m" : "");
             }
           }
+          renderSignalVisualization();
+          renderGateways();
+          renderGatewaySettingsPanel();
         }
 
         // ZONA DETECCIÓN
@@ -2453,24 +3537,64 @@
         }
 
         // EDITAR
-        async function editarEstado(i) {
-          let nuevo = prompt("Nuevo estado:");
-          if (nuevo) {
-            let animal = animales[i];
+        function seleccionarEstadoConDropdown(valorActual) {
+          return new Promise(function (resolve) {
+            const overlay = document.createElement("div");
+            overlay.style.cssText = "position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:9999;";
+            const card = document.createElement("div");
+            card.style.cssText = "background:white;border-radius:10px;padding:14px;width:min(360px,92vw);box-shadow:0 8px 30px rgba(0,0,0,.25);";
+            card.innerHTML =
+              "<h3 style='margin:0 0 10px 0;'>Editar estado</h3>" +
+              "<select id='estadoEditorSelect' style='width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;margin-bottom:8px;'>" + opcionesEstadoHtml(valorActual) + "</select>" +
+              "<button type='button' id='estadoEditorNuevo' style='width:100%;padding:8px;border:none;border-radius:6px;background:#6d28d9;color:white;margin-bottom:8px;'>+ Nuevo Estado</button>" +
+              "<div style='display:flex;gap:8px;'>" +
+              "<button type='button' id='estadoEditorCancelar' style='flex:1;padding:8px;border:none;border-radius:6px;background:#64748b;color:white;'>Cancelar</button>" +
+              "<button type='button' id='estadoEditorGuardar' style='flex:1;padding:8px;border:none;border-radius:6px;background:#16a34a;color:white;'>Guardar</button>" +
+              "</div>";
+            overlay.appendChild(card);
+            document.body.appendChild(overlay);
 
-            // Actualizar en Supabase
-            const actualizado = await actualizarAnimalEnSupabase(animal.id, {
-              estado: nuevo
-            });
-
-            if (actualizado) {
-              // Actualizar en memoria
-              animales[i].estado = nuevo;
-              console.log("Estado actualizado:", animal.id);
-              mostrar();
-            } else {
-              alert("Error al actualizar el estado");
+            function cerrar(resultado) {
+              if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+              resolve(resultado);
             }
+
+            const select = card.querySelector("#estadoEditorSelect");
+            const btnNuevo = card.querySelector("#estadoEditorNuevo");
+            const btnCancel = card.querySelector("#estadoEditorCancelar");
+            const btnSave = card.querySelector("#estadoEditorGuardar");
+            btnCancel.onclick = function () { cerrar(null); };
+            btnSave.onclick = function () { cerrar(select ? select.value : ""); };
+            btnNuevo.onclick = async function () {
+              await nuevoEstadoAnimal();
+              if (select) {
+                const prev = select.value;
+                select.innerHTML = opcionesEstadoHtml(prev);
+                select.value = prev || "";
+              }
+            };
+            overlay.addEventListener("click", function (ev) {
+              if (ev.target === overlay) cerrar(null);
+            });
+          });
+        }
+
+        async function editarEstado(i) {
+          const animal = animales[i];
+          if (!animal) return;
+          const nuevo = await seleccionarEstadoConDropdown(animal.estado || "");
+          if (nuevo == null) return;
+
+          const actualizado = await actualizarAnimalEnSupabase(animal.id, {
+            estado: normalizarEstadoAnimal(nuevo)
+          });
+
+          if (actualizado) {
+            animales[i].estado = normalizarEstadoAnimal(nuevo);
+            console.log("Estado actualizado:", animal.id);
+            mostrar();
+          } else {
+            alert("Error al actualizar el estado");
           }
         }
 
@@ -3134,7 +4258,7 @@
           }).join("");
           return (
             '<div id="chatPanel" style="padding: 15px; background: white; border-radius: 10px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; width: 100%; box-sizing: border-box;">' +
-            '<h3 style="margin-top:0;">🤖 Asistente AgroTrack</h3>' +
+            '<h3 style="margin-top:0;">🤖 Asistente GanadoControl</h3>' +
             '<p class="chat-intro">Escribí una pregunta o tocá <strong>Ayuda rápida</strong>. Palabras clave: animal, peso, ganancia, tanque, mapa.</p>' +
             '<div class="chat-ayuda-rapida" role="navigation" aria-label="Ayuda rápida">' +
             btnHtml +
@@ -3406,6 +4530,7 @@
 
         // SISTEMA DE VISTAS
         function mostrarVista(tipo) {
+          window.__vistaActiva = tipo;
           let panel = document.getElementById("panelLateral");
           if (!panel) return;
 
@@ -3417,11 +4542,14 @@
             mostrarRanking(animales);
           } else if (tipo === 'ingreso') {
             panel.innerHTML = vistaIngreso();
+            renderizarSelectEstadoAnimal("");
           } else if (tipo === 'rebanos') {
             renderizarRebanos();
           } else if (tipo === 'tanque') {
             mostrarSeccion('tanque');
             cargarTanqueDesdeSupabase();
+          } else if (tipo === 'porteras') {
+            renderPorterasPanel();
           } else if (tipo === 'ayuda') {
             panel.innerHTML = vistaAyuda();
           }
@@ -3454,7 +4582,8 @@
           html += '<input id="lat" placeholder="Latitud" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
           html += '<input id="lng" placeholder="Longitud" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
           html += '<input id="peso" placeholder="Peso (kg)" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
-          html += '<select id="estado" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;"><option value="">-- Sin estado --</option><option>Vacunar</option><option>Preñado</option><option>Enfermo</option></select>';
+          html += '<select id="estado" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">' + opcionesEstadoHtml("") + '</select>';
+          html += '<button type="button" onclick="nuevoEstadoAnimal()" style="width: 100%; padding: 8px; margin: 0 0 8px 0; background: #6d28d9; color: white; border: none; border-radius: 5px; cursor: pointer;">+ Nuevo Estado</button>';
           html += '<button id="btnGuardar" type="button" onclick="agregarAnimal()" style="width: 100%; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px 0; font-weight: bold;">Guardar</button>';
           html += '<button onclick="document.getElementById(\'fileInput\').click()" style="width: 100%; padding: 10px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px 0;">📂 Importar CSV</button>';
           html += '<input type="file" id="fileInput" style="display:none;" onchange="importarCSV()">';
@@ -3518,11 +4647,29 @@
         window.actualizarNivelTanque = actualizarNivelTanque;
         window.simularLecturaTanque = simularLecturaTanque;
         window.cargarTanqueDesdeSupabase = cargarTanqueDesdeSupabase;
+        window.actualizarPortera = actualizarPortera;
+        window.guardarConfigPortera = guardarConfigPortera;
+        window.crearPorteraDesdePanel = crearPorteraDesdePanel;
+        window.verificarAlertasPortera = verificarAlertasPortera;
+        window.reproducirAlarma = reproducirAlarma;
+        window.enviarPush = enviarPush;
+        window.toggleCoberturaLoRa = toggleCoberturaLoRa;
+        window.toggleHeatmapLoRa = toggleHeatmapLoRa;
+        window.guardarGatewayDesdePanel = guardarGatewayDesdePanel;
+        window.agregarGateway = agregarGateway;
+        window.eliminarGateway = eliminarGateway;
+        window.registrarLecturaSenal = registrarLecturaSenal;
+        window.nuevoEstadoAnimal = nuevoEstadoAnimal;
+
+        porteras = cargarPorteras();
+        if (!porteras.length) porteras = defaultPorteras();
+        iniciarMonitorPorteras();
 
         const { data: { session } } = await supabase.auth.getSession();
         console.log("SESSION INICIAL:", session);
         if (session) {
           console.log("Sesión detectada al iniciar, cargando animales...");
+          await sincronizarEstadosCustomConSupabase();
           await cargarAnimales();
           await cargarPerfilUsuario();
           iniciarSimulacionDrenajeBateria();
@@ -3536,6 +4683,8 @@
             showLogin();
             animales = [];
             selectedAnimales = [];
+            customAnimalStatuses = cargarEstadosCustomLocal();
+            renderizarSelectEstadoAnimal("");
             perfilUsuario = null;
             updatePerfilUI();
             mostrar();
@@ -3547,6 +4696,7 @@
             console.log("SESSION ACTIVA:", active);
             document.getElementById("loginScreen").style.display = "none";
             console.log("Usuario listo, cargando datos...");
+            await sincronizarEstadosCustomConSupabase();
             await cargarAnimales();
             await cargarPerfilUsuario();
             iniciarSimulacionDrenajeBateria();
@@ -3556,6 +4706,10 @@
         checkLogin(); // UI según sesión; datos: bootstrap getSession + SIGNED_IN
 
         console.log("JS OK");
+        ocultarSplashApp();
+      });
+      window.addEventListener("load", function () {
+        setTimeout(ocultarSplashApp, 300);
       });
       async function testInsertDirecto() {
   console.log("🧪 TEST INSERT DIRECTO");
