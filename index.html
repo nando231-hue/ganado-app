@@ -183,6 +183,8 @@
 
     /* MAPA */
     #map {
+      position: relative;
+      z-index: 1;
       flex: 1;
       width: 100%;
       height: 100%;
@@ -300,42 +302,43 @@
 
     #chatContainer {
       min-height: 220px;
-      max-height: 360px;
-      height: 40vh;
+      max-height: 420px;
+      height: 46vh;
       overflow-y: auto;
       border: 1px solid #e2e8f0;
-      padding: 12px;
+      padding: 14px;
       margin-bottom: 10px;
-      background: #f1f5f9;
-      border-radius: 10px;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+      border-radius: 12px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       scroll-behavior: smooth;
     }
 
     .chat-bubble {
       max-width: 94%;
-      border-radius: 12px;
-      padding: 10px 12px;
+      border-radius: 14px;
+      padding: 11px 13px;
       font-size: 13px;
-      line-height: 1.45;
+      line-height: 1.5;
     }
 
     .chat-bubble-user {
       align-self: flex-end;
-      background: #1e3a5f;
-      color: #f8fafc;
+      background: linear-gradient(180deg, #1e40af 0%, #1d4ed8 100%);
+      color: #eff6ff;
       border-bottom-right-radius: 4px;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.22);
     }
 
     .chat-bubble-bot {
       align-self: flex-start;
       background: #fff;
       color: #1e293b;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #dbeafe;
       border-bottom-left-radius: 4px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
     }
 
     .chat-bubble-body {
@@ -385,26 +388,26 @@
 
     .chat-input-container {
       display: flex;
-      gap: 8px;
-      padding: 10px;
+      gap: 10px;
+      padding: 8px 2px 2px 2px;
       align-items: center;
       box-sizing: border-box;
     }
 
     .chat-input {
       flex: 1;
-      height: 40px;
-      border-radius: 8px;
-      padding: 8px 12px;
-      border: 1px solid #cbd5e1;
+      min-height: 46px;
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid #bfdbfe;
       font-size: 14px;
       box-sizing: border-box;
     }
 
     .chat-send {
-      width: 90px;
-      height: 40px;
-      border-radius: 8px;
+      width: 76px;
+      height: 38px;
+      border-radius: 10px;
       border: none;
       background: #0d9488;
       color: #fff;
@@ -511,13 +514,13 @@
         top: auto;
         width: 100%;
         height: auto;
-        padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+        padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
         z-index: 5000;
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 8px;
-        border-top-left-radius: 14px;
-        border-top-right-radius: 14px;
+        gap: 6px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.22);
       }
 
@@ -529,8 +532,8 @@
 
       #contenido {
         margin-left: 0;
-        padding: 10px;
-        padding-bottom: calc(130px + env(safe-area-inset-bottom));
+        padding: 8px;
+        padding-bottom: calc(100px + env(safe-area-inset-bottom));
       }
 
       #layoutAnimales {
@@ -546,19 +549,95 @@
       #panelLateral,
       #panelControles {
         width: 100%;
+        padding: 8px;
       }
 
       #map {
-        height: 52vh;
-        min-height: 300px;
+        height: 46vh;
+        min-height: 240px;
       }
 
       #menu button {
         margin: 0;
-        padding: 10px 6px;
-        min-height: 46px;
-        font-size: 12px;
+        padding: 8px 4px;
+        min-height: 35px;
+        font-size: 11px;
+        border-radius: 8px;
+      }
+
+      #menu h2 {
+        font-size: 18px;
+      }
+
+      #userProfileLabel {
+        font-size: 11px !important;
+        padding: 5px 8px !important;
+      }
+
+      input,
+      select,
+      button {
+        min-height: 38px;
+        padding: 8px !important;
+        margin: 3px 0 !important;
+        font-size: 13px !important;
+      }
+
+      #formulario,
+      #tanque {
+        padding: 12px;
+      }
+
+      #lista .animal-card {
+        gap: 0 8px;
+        padding: 10px 10px 8px;
+        margin-bottom: 6px;
         border-radius: 10px;
+      }
+
+      .animal-card-title {
+        font-size: 14px;
+      }
+
+      .animal-card-meta {
+        margin-top: 2px;
+        font-size: 11.5px;
+      }
+
+      .animal-card-peso-wrap {
+        margin-top: 6px;
+      }
+
+      .animal-card-peso-label {
+        font-size: 10px;
+      }
+
+      .animal-card-peso-valor {
+        font-size: 17px;
+      }
+
+      .animal-card-bateria {
+        margin-top: 5px;
+        font-size: 11px;
+      }
+
+      .animal-card-metrics {
+        margin-top: 8px;
+        padding-top: 8px;
+        font-size: 10.8px;
+        line-height: 1.35;
+      }
+
+      .animal-card-actions {
+        gap: 5px;
+        margin-top: 7px;
+        padding-top: 7px;
+      }
+
+      #lista .animal-card-actions button {
+        min-height: 32px;
+        padding: 5px 8px !important;
+        font-size: 11px !important;
       }
     }
 
@@ -733,6 +812,427 @@
     .animal-card.prenado {
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 4px 0 0 #22c55e;
     }
+
+    .tour-launch-btn {
+      background: #334155;
+      color: #f8fafc;
+      border: 1px solid #475569;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      width: auto;
+      min-height: 38px;
+      margin: 2px 0 10px 0;
+    }
+
+    .tour-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.72);
+      z-index: 14000;
+    }
+
+    .tour-highlight {
+      position: relative !important;
+      z-index: 14002 !important;
+      border-radius: 10px !important;
+      box-shadow: 0 0 0 3px #60a5fa, 0 8px 24px rgba(15, 23, 42, 0.4) !important;
+    }
+
+    .tour-tooltip {
+      position: fixed;
+      z-index: 14003;
+      width: min(360px, calc(100vw - 24px));
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      box-shadow: 0 18px 36px rgba(15, 23, 42, 0.35);
+      padding: 12px;
+      color: #0f172a;
+    }
+
+    .tour-tooltip h4 {
+      margin: 0 0 6px 0;
+      font-size: 15px;
+      color: #1e3a8a;
+    }
+
+    .tour-tooltip p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.45;
+      color: #334155;
+    }
+
+    .tour-controls {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    .tour-controls button {
+      min-height: 34px;
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 8px;
+      width: auto;
+      margin: 0;
+    }
+
+    /* ================== UI REFRESH OVERRIDES ================== */
+    :root {
+      --gc-bg: #0b1220;
+      --gc-surface: #ffffff;
+      --gc-surface-soft: #f8fafc;
+      --gc-border: #e2e8f0;
+      --gc-text: #0f172a;
+      --gc-muted: #64748b;
+      --gc-accent: #2563eb;
+      --gc-radius: 14px;
+      --gc-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+    }
+
+    body {
+      background-image: linear-gradient(180deg, #0b1220 0%, #111827 40%, #0f172a 100%);
+      background-attachment: fixed;
+      color: var(--gc-text);
+    }
+
+    #appContent {
+      min-height: 100vh;
+    }
+
+    #menu {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      border-right: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: 4px 0 20px rgba(2, 6, 23, 0.3);
+    }
+
+    #menu h2 {
+      margin-top: 2px;
+      margin-bottom: 12px;
+      font-size: 22px;
+      letter-spacing: 0.01em;
+    }
+
+    #menu button {
+      background: rgba(148, 163, 184, 0.16);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+    }
+
+    #menu button:hover {
+      transform: translateY(-1px);
+      background: rgba(148, 163, 184, 0.24);
+      border-color: rgba(148, 163, 184, 0.35);
+    }
+
+    #contenido {
+      background: rgba(241, 245, 249, 0.98);
+      padding: 12px;
+      min-height: 100vh;
+    }
+
+    #layoutAnimales {
+      display: grid;
+      grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+      gap: 12px;
+      height: calc(100vh - 32px);
+      min-height: 640px;
+      align-items: stretch;
+    }
+
+    #panelLateral,
+    #mapLayout {
+      height: 100%;
+      min-height: 0;
+    }
+
+    #panelLateral {
+      overflow: hidden;
+    }
+
+    #listaPanel,
+    #listaAnimales {
+      height: 100%;
+      min-height: 0;
+    }
+
+    #listaAnimales {
+      background: var(--gc-surface);
+      border: 1px solid var(--gc-border);
+      border-radius: var(--gc-radius);
+      box-shadow: var(--gc-shadow);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #lista {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    #ranking {
+      border-radius: 12px;
+      margin-top: 8px !important;
+    }
+
+    #mapLayout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    #panelControles {
+      width: auto;
+      background: var(--gc-surface);
+      border: 1px solid var(--gc-border);
+      border-radius: var(--gc-radius);
+      box-shadow: var(--gc-shadow);
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    #map {
+      border-radius: 16px;
+      border: 1px solid var(--gc-border);
+      box-shadow: var(--gc-shadow);
+      min-height: 100%;
+      height: 100%;
+    }
+
+    input,
+    select,
+    button {
+      border-radius: 10px;
+    }
+
+    input,
+    select {
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #0f172a;
+    }
+
+    button {
+      background: #1d4ed8;
+      color: #fff;
+      transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.28);
+      filter: brightness(1.02);
+    }
+
+    .animal-card {
+      border-radius: 14px;
+      background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+      box-shadow: 0 8px 18px rgba(2, 6, 23, 0.25);
+      padding: 12px 12px 10px;
+      margin-bottom: 7px;
+      gap: 0 10px;
+    }
+
+    .animal-card-title {
+      font-size: 15px;
+    }
+
+    .animal-card-meta {
+      font-size: 12px;
+    }
+
+    .animal-card-peso-wrap {
+      margin-top: 7px;
+    }
+
+    .animal-card-peso-valor {
+      font-size: 18px;
+    }
+
+    .animal-card-bateria {
+      margin-top: 6px;
+      font-size: 11.5px;
+    }
+
+    .animal-card-metrics {
+      margin-top: 9px;
+      padding-top: 9px;
+      font-size: 11px;
+    }
+
+    .animal-card-actions {
+      margin-top: 8px;
+      padding-top: 8px;
+      gap: 5px;
+    }
+
+    #lista .animal-card-actions button {
+      border-radius: 8px;
+      min-height: 32px;
+      padding: 5px 8px;
+      font-size: 11px;
+      box-shadow: none;
+      transform: none;
+    }
+
+    #formulario,
+    #tanque,
+    #rebanosPanel,
+    #chatPanel,
+    #historialPanel {
+      background: var(--gc-surface);
+      border: 1px solid var(--gc-border);
+      border-radius: var(--gc-radius);
+      box-shadow: var(--gc-shadow);
+    }
+
+    @media (max-width: 1200px) {
+      #layoutAnimales {
+        grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+      }
+
+      #mapLayout {
+        grid-template-columns: 220px minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      #contenido {
+        padding: 8px;
+      }
+
+      #layoutAnimales {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        height: auto;
+        min-height: 0;
+      }
+
+      #panelLateral,
+      #mapLayout,
+      #listaPanel,
+      #listaAnimales {
+        height: auto;
+      }
+
+      #mapLayout {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      #panelControles,
+      #listaAnimales {
+        border-radius: 12px;
+        padding: 8px;
+      }
+
+      #map {
+        height: clamp(270px, 44vh, 420px);
+        min-height: 270px;
+      }
+
+      #menu {
+        padding: 5px 6px calc(5px + env(safe-area-inset-bottom));
+        gap: 5px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+      }
+
+      #menu h2 {
+        font-size: 16px;
+        margin-bottom: 4px;
+      }
+
+      #menu button {
+        min-height: 34px;
+        padding: 7px 4px;
+        font-size: 10.5px;
+        border-radius: 7px;
+      }
+
+      #userProfileLabel {
+        font-size: 10px !important;
+        padding: 4px 6px !important;
+        margin-bottom: 4px !important;
+      }
+
+      input,
+      select,
+      button {
+        min-height: 36px;
+        padding: 7px !important;
+        margin: 3px 0 !important;
+        font-size: 12.5px !important;
+      }
+
+      #formulario,
+      #tanque,
+      #rebanosPanel,
+      #chatPanel,
+      #historialPanel {
+        padding: 10px;
+      }
+
+      .animal-card {
+        padding: 9px 9px 8px;
+        margin-bottom: 5px;
+        border-radius: 11px;
+        gap: 0 7px;
+      }
+
+      .animal-card-title {
+        font-size: 13px;
+      }
+
+      .animal-card-meta {
+        font-size: 11px;
+        margin-top: 2px;
+      }
+
+      .animal-card-peso-wrap {
+        margin-top: 5px;
+      }
+
+      .animal-card-peso-label {
+        font-size: 9.5px;
+      }
+
+      .animal-card-peso-valor {
+        font-size: 16px;
+      }
+
+      .animal-card-bateria {
+        margin-top: 4px;
+        font-size: 10.5px;
+      }
+
+      .animal-card-metrics {
+        margin-top: 7px;
+        padding-top: 7px;
+        font-size: 10.2px;
+      }
+
+      .animal-card-actions {
+        margin-top: 6px;
+        padding-top: 6px;
+      }
+
+      #lista .animal-card-actions button {
+        min-height: 30px;
+        padding: 4px 7px !important;
+        font-size: 10.5px !important;
+      }
+    }
   </style>
 </head>
 
@@ -788,12 +1288,12 @@
     <div id="menu">
       <h2>🐄 GanadoControl</h2>
       <div id="userProfileLabel" style="display: none; padding: 6px 10px; margin: 4px 0 8px 0; font-size: 13px; color: #1b4332; background: #e8f5e9; border-radius: 6px; text-align: left;"></div>
-      <button onclick="mostrarVista('animales')">🐄 Animales</button>
-      <button onclick="mostrarVista('ingreso')">➕ Ingresar</button>
-      <button onclick="mostrarVista('rebanos')">🐑 Rebaños</button>
-      <button onclick="mostrarVista('tanque')">💧 Tanque</button>
-      <button onclick="mostrarVista('porteras')">🚧 Porteras</button>
-      <button onclick="mostrarVista('ayuda')">❓ Ayuda</button>
+      <button id="navAnimales" onclick="mostrarVista('animales')">🐄 Animales</button>
+      <button id="navIngresar" onclick="mostrarVista('ingreso')">➕ Ingresar</button>
+      <button id="navRebanos" onclick="mostrarVista('rebanos')">🐑 Rebaños</button>
+      <button id="navTanque" onclick="mostrarVista('tanque')">💧 Tanque</button>
+      <button id="navPorteras" onclick="mostrarVista('porteras')">🚧 Porteras</button>
+      <button id="navAyuda" onclick="mostrarVista('ayuda')">❓ Ayuda</button>
     </div>
 
     <div id="contenido">
@@ -810,7 +1310,7 @@
                 <h3>Animales</h3>
 
                 <input id="buscador" placeholder="Buscar caravana..." oninput="mostrar()">
-                <button type="button" onclick="eliminarSeleccionados()" style="width: 100%; padding: 8px; margin: 0 0 8px 0; background: #c62828; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Eliminar seleccionados</button>
+                <button id="btnEliminarSeleccionados" type="button" onclick="eliminarSeleccionados()" style="width: 100%; padding: 8px; margin: 0 0 8px 0; background: #c62828; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Eliminar seleccionados</button>
 
                 <h4>Filtrar por lote</h4>
                 <select id="filtroLote" onchange="mostrar()">
@@ -855,7 +1355,7 @@
               <button onclick="desactivarDibujo()">🛑 Parar dibujo</button>
               <button onclick="borrarZona()">🗑️ Borrar zona</button>
               <button onclick="guardarZona()">Finalizar zona</button>
-              <button onclick="exportarCSV()">📥 Excel</button>
+              <button id="btnExportarCSV" onclick="exportarCSV()">📥 Excel</button>
               <button onclick="editarZona()">✏️ Editar zona</button>
               <button id="toggleCoberturaBtn" onclick="toggleCoberturaLoRa()">Mostrar/Ocultar Cobertura LoRa</button>
               <button id="toggleHeatmapBtn" onclick="toggleHeatmapLoRa()">Heatmap LoRa: ON</button>
@@ -866,7 +1366,7 @@
               <input id="tiempoInactivo" type="number" step="0.1">
 
               <input type="file" id="filePesos" style="display:none;" onchange="importarPesos()">
-              <button onclick="document.getElementById('filePesos').click()">📥 Actualizar Pesos</button>
+              <button id="btnActualizarPesos" onclick="document.getElementById('filePesos').click()">📥 Actualizar Pesos</button>
               <div id="gatewaySettingsPanel" class="lora-panel"></div>
             </div>
 
@@ -2398,7 +2898,10 @@
         }
 
         // 🗺️ crear mapa
-        map = L.map('map').setView(centro, zoom);
+        map = L.map('map', {
+          tap: true,
+          tapTolerance: 22
+        }).setView(centro, zoom);
         //cargarAnimales(); // ← ESTA LÍNEA AGREGÁS
         setTimeout(function () {
           map.invalidateSize();
@@ -3363,12 +3866,16 @@
                   pesos: a.pesos,
                   bateria: a.bateria
                 }
-              })
-                .addTo(map)
-                .bindPopup(
-                  texto +
-                  `<br><button onclick="verHistorial('${a.id}')">📜 Historial</button>`
-                );
+              }).addTo(map);
+
+              marker.bindPopup(
+                texto +
+                `<br><button onclick="verHistorial('${a.id}')">📜 Historial</button>`
+              );
+
+              marker.on("click touchstart", function () {
+                marker.openPopup();
+              });
 
               marcadores.push(marker);
               if (a.movimientos && a.movimientos.length > 1) {
@@ -4193,38 +4700,321 @@
           scrollChatAlFinal();
         }
 
+        const ayudaKnowledgeBase = [
+          {
+            tema: "Animales",
+            keywords: ["animal", "animales", "caravana", "agregar", "alta", "editar", "eliminar", "registrar"],
+            respuesta: "Para ingresar un animal vaya a Ingresar, complete caravana/datos y toque Guardar. Para editar estado, caravana o eliminar use los botones de cada tarjeta en Animales."
+          },
+          {
+            tema: "Mapa",
+            keywords: ["mapa", "ubicacion", "gps", "marcador", "marker", "popup", "coordenada"],
+            respuesta: "En Mapa puede tocar un marcador para ver detalle del animal, estado y peso. También puede seleccionar coordenadas con toque/click para completar Lat/Lng."
+          },
+          {
+            tema: "Pesajes",
+            keywords: ["peso", "pesaje", "pesar", "kilos", "kg", "engorde", "actualizar peso"],
+            respuesta: "Para actualizar pesos use el flujo del animal o Importar/Actualizar Pesos. El sistema guarda histórico y toma el último registro como peso actual."
+          },
+          {
+            tema: "Ganancias",
+            keywords: ["ganancia", "ganar peso", "proyeccion", "ranking", "evolucion"],
+            respuesta: "La ganancia se calcula automáticamente con al menos dos pesajes. Puede verla en tarjeta, ranking y gráfico histórico por animal."
+          },
+          {
+            tema: "Rebaños",
+            keywords: ["rebano", "rebaño", "lote", "grupo", "crear rebano", "asignar animales"],
+            respuesta: "En Rebaños puede crear grupos, agregar/quitar animales, ver promedios y exportar información del rebaño."
+          },
+          {
+            tema: "Zonas",
+            keywords: ["zona", "dibujar zona", "poligono", "potrero", "fuera de zona"],
+            respuesta: "Use Dibujar zona para marcar límites en mapa y Finalizar zona para guardar. Si un animal queda fuera, verá alerta y marcador destacado."
+          },
+          {
+            tema: "Tanque",
+            keywords: ["tanque", "agua", "nivel", "litros", "capacidad", "lectura"],
+            respuesta: "En Tanque configure capacidad y nivel. Puede simular lecturas LoRa y consultar el historial para monitoreo de agua."
+          },
+          {
+            tema: "Porteras",
+            keywords: ["portera", "porton", "abierta", "cerrada", "horario", "alerta portera"],
+            respuesta: "En Porteras puede crear/editar porteras, cambiar estado abierta/cerrada y definir reglas de alerta por tiempo u horario."
+          },
+          {
+            tema: "Gateways LoRa",
+            keywords: ["gateway", "antena", "lora", "rssi", "snr", "antena principal"],
+            respuesta: "En panel LoRa puede configurar gateways (nombre, coordenadas, rango), estado y ver métricas de señal para planificación de cobertura."
+          },
+          {
+            tema: "Cobertura LoRa",
+            keywords: ["cobertura", "heatmap", "senal", "señal", "zona debil", "debil", "rango"],
+            respuesta: "Puede mostrar/ocultar cobertura y heatmap LoRa. Los puntos usan colores por RSSI y se marcan zonas débiles cuando hay lecturas consistentemente bajas."
+          },
+          {
+            tema: "Importación/Exportación CSV",
+            keywords: ["csv", "excel", "importar", "exportar", "archivo", "descargar"],
+            respuesta: "Use Importar CSV para alta masiva y Exportar para descargar animales. También puede importar pesajes desde archivo separado."
+          },
+          {
+            tema: "Cuenta/Login",
+            keywords: ["login", "sesion", "sesión", "cuenta", "registro", "usuario", "password", "contrasena", "contraseña"],
+            respuesta: "Desde la pantalla inicial puede iniciar sesión o registrarse. Si no ve datos, revise sesión activa y conexión a internet."
+          },
+          {
+            tema: "Batería",
+            keywords: ["bateria", "batería", "collar", "energia", "energía", "porcentaje"],
+            respuesta: "Cada animal muestra batería estimada del collar. Los niveles bajos se visualizan en tarjeta y popup para priorizar mantenimiento."
+          },
+          {
+            tema: "Alertas",
+            keywords: ["alerta", "notificacion", "notificación", "alarma", "fuera", "inactivo"],
+            respuesta: "GanadoControl alerta por animales fuera de zona, inactividad o eventos configurados en porteras. Revise panel lateral y popups para detalle."
+          },
+          {
+            tema: "Estados personalizados",
+            keywords: ["estado", "estado personalizado", "sano", "enfermo", "prenada", "preñada", "vacunar", "vendido", "tratamiento"],
+            respuesta: "Puede usar estados por defecto o crear nuevos con + Nuevo Estado. Los estados personalizados se guardan localmente y se sincronizan con su cuenta."
+          }
+        ];
+
+        const ayudaTemasFrecuentes = [
+          "Animales",
+          "Pesajes",
+          "Cobertura LoRa",
+          "Importación/Exportación CSV",
+          "Estados personalizados",
+          "Cuenta/Login"
+        ];
+
+        function normalizarTextoAyuda(texto) {
+          return String(texto || "")
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^\w\s]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+        }
+
+        function puntajeTemaAyuda(item, consultaNorm) {
+          if (!consultaNorm) return 0;
+          var score = 0;
+          var palabras = consultaNorm.split(" ").filter(Boolean);
+          item.keywords.forEach(function (kwRaw) {
+            var kw = normalizarTextoAyuda(kwRaw);
+            if (!kw) return;
+            if (consultaNorm.includes(kw)) score += kw.length >= 6 ? 6 : 4;
+            palabras.forEach(function (p) {
+              if (p.length < 3) return;
+              if (kw.includes(p) || p.includes(kw)) score += 2;
+            });
+          });
+          var temaNorm = normalizarTextoAyuda(item.tema);
+          if (consultaNorm.includes(temaNorm)) score += 5;
+          return score;
+        }
+
+        function sugerenciasAyuda(consultaNorm, top) {
+          return ayudaKnowledgeBase
+            .map(function (item) {
+              return { tema: item.tema, score: puntajeTemaAyuda(item, consultaNorm) };
+            })
+            .filter(function (x) { return x.score > 0; })
+            .sort(function (a, b) { return b.score - a.score; })
+            .slice(0, top || 4);
+        }
+
         function responder(pregunta) {
-          pregunta = (pregunta || "").toLowerCase();
-
-          if (pregunta.includes("animal")) {
-            return "Para agregar un animal, completá los datos y presioná Guardar.";
+          var consultaNorm = normalizarTextoAyuda(pregunta);
+          if (!consultaNorm) {
+            return "Escribí tu consulta. Ejemplos: \"cómo importar csv\", \"editar peso\", \"cobertura lora\".";
           }
 
-          if (pregunta.includes("peso")) {
-            return "Podés registrar el peso desde cada animal. El sistema calcula automáticamente la ganancia.";
+          var candidatos = ayudaKnowledgeBase
+            .map(function (item) {
+              return { item: item, score: puntajeTemaAyuda(item, consultaNorm) };
+            })
+            .sort(function (a, b) { return b.score - a.score; });
+
+          if (candidatos.length && candidatos[0].score >= 6) {
+            return candidatos[0].item.respuesta;
           }
 
-          if (pregunta.includes("ganancia")) {
-            return "La ganancia se calcula automáticamente en base a los pesos registrados.";
+          var sugeridos = sugerenciasAyuda(consultaNorm, 4);
+          if (!sugeridos.length) {
+            sugeridos = ayudaKnowledgeBase.slice(0, 4).map(function (x) { return { tema: x.tema, score: 1 }; });
           }
-
-          if (pregunta.includes("tanque")) {
-            return "El tanque permite controlar el nivel de agua ingresando capacidad y nivel actual.";
-          }
-
-          if (pregunta.includes("mapa")) {
-            return "El mapa muestra la ubicación de los animales en tiempo real.";
-          }
-
-          return "Probá preguntar sobre animales, peso, ganancias, tanque o mapa.";
+          return "No encontré respuesta exacta. Quizás quisiste consultar sobre:\n- " +
+            sugeridos.map(function (s) { return s.tema; }).join("\n- ");
         }
 
         function enlazarBotonesAyudaRapida() {
           document.querySelectorAll(".quick-btn").forEach(function (btn) {
             btn.addEventListener("click", function () {
-              enviarPregunta(btn.innerText);
+              var payload = btn.getAttribute("data-topic") || btn.innerText;
+              enviarPregunta(payload);
             });
           });
+        }
+
+        var tourState = {
+          active: false,
+          currentIndex: 0,
+          steps: []
+        };
+
+        function buildTourSteps() {
+          return [
+            { title: "Navegación", selector: "#menu", description: "Desde este menú accedes a todos los módulos principales del sistema.", onBefore: function () { mostrarVista("animales"); } },
+            { title: "Animales", selector: "#listaAnimales", description: "Aquí visualizas todos tus animales registrados con su información principal.", onBefore: function () { mostrarVista("animales"); } },
+            { title: "Tarjetas de Animal", selector: "#lista .animal-card, #listaAnimales", description: "Cada tarjeta muestra peso, batería, ganancia y estado actual del animal.", onBefore: function () { mostrarVista("animales"); } },
+            { title: "Actualizar Peso", selector: "#btnActualizarPesos", description: "Para actualizar el peso de un animal, selecciónalo y presiona actualizar peso. El sistema recalculará automáticamente ganancias y proyecciones.", onBefore: function () { mostrarVista("animales"); } },
+            { title: "Eliminar Animales", selector: "#btnEliminarSeleccionados", description: "Puedes seleccionar uno o varios animales para eliminarlos en lote.", onBefore: function () { mostrarVista("animales"); } },
+            { title: "Ingresar Animal", selector: "#btnGuardar", description: "Desde aquí agregas nuevos animales completando sus datos básicos.", onBefore: function () { mostrarVista("ingreso"); } },
+            { title: "Mapa", selector: "#map", description: "El mapa permite visualizar la ubicación actual de cada animal.", onBefore: function () { mostrarVista("animales"); } },
+            { title: "Información en Mapa", selector: "#map", description: "Tocando un animal en el mapa podrás ver su ficha rápida.", onBefore: function () { mostrarVista("animales"); } },
+            { title: "Zonas/Cercos", selector: "#panelControles", description: "Aquí puedes definir zonas permitidas o cercos virtuales.", onBefore: function () { mostrarVista("animales"); } },
+            { title: "Rebaños", selector: "#navRebanos", description: "Permite organizar animales en grupos de manejo." },
+            { title: "Tanque", selector: "#navTanque", description: "Aquí controlas nivel, consumo e histórico del tanque." },
+            { title: "Porteras", selector: "#navPorteras", description: "Monitorea apertura/cierre y recibe alertas de seguridad." },
+            { title: "Antena LoRa", selector: "#gatewaySettingsPanel", description: "La antena LoRa recibe la señal enviada por los collares. Su cobertura permite conectar animales a larga distancia.", onBefore: function () { mostrarVista("animales"); } },
+            { title: "Cobertura LoRa", selector: "#toggleCoberturaBtn", description: "En el mapa podrás ver la cobertura estimada y calidad de señal de la antena.", onBefore: function () { mostrarVista("animales"); } },
+            { title: "Exportar/Descargar Datos", selector: "#btnExportarCSV", description: "Puedes descargar/exportar animales y registros desde la sección correspondiente para respaldos o análisis.", onBefore: function () { mostrarVista("animales"); } },
+            { title: "Ayuda", selector: "#navAyuda", description: "Aquí puedes resolver dudas sobre cualquier función del sistema." }
+          ];
+        }
+
+        function limpiarHighlightTour() {
+          document.querySelectorAll(".tour-highlight").forEach(function (el) {
+            el.classList.remove("tour-highlight");
+          });
+        }
+
+        function cerrarTourGuiado() {
+          tourState.active = false;
+          limpiarHighlightTour();
+          var overlay = document.getElementById("tourOverlay");
+          if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+          var tooltip = document.getElementById("tourTooltip");
+          if (tooltip && tooltip.parentNode) tooltip.parentNode.removeChild(tooltip);
+          window.removeEventListener("resize", reposicionarTooltipTour);
+          window.removeEventListener("scroll", reposicionarTooltipTour, true);
+        }
+
+        function reposicionarTooltipTour() {
+          if (!tourState.active) return;
+          var step = tourState.steps[tourState.currentIndex];
+          if (!step) return;
+          var el = document.querySelector(step.selector);
+          var tooltip = document.getElementById("tourTooltip");
+          if (!el || !tooltip) return;
+
+          var rect = el.getBoundingClientRect();
+          var pad = 10;
+          var top = rect.bottom + 10;
+          var left = rect.left;
+
+          if (top + tooltip.offsetHeight > window.innerHeight - pad) {
+            top = Math.max(pad, rect.top - tooltip.offsetHeight - 10);
+          }
+          if (left + tooltip.offsetWidth > window.innerWidth - pad) {
+            left = window.innerWidth - tooltip.offsetWidth - pad;
+          }
+          if (left < pad) left = pad;
+          if (top < pad) top = pad;
+
+          tooltip.style.top = top + "px";
+          tooltip.style.left = left + "px";
+        }
+
+        function renderTourStep() {
+          if (!tourState.active) return;
+          var step = tourState.steps[tourState.currentIndex];
+          if (!step) return;
+
+          if (typeof step.onBefore === "function") step.onBefore();
+
+          setTimeout(function () {
+            var el = document.querySelector(step.selector);
+            if (!el) {
+              if (tourState.currentIndex < tourState.steps.length - 1) {
+                tourState.currentIndex += 1;
+                renderTourStep();
+              } else {
+                cerrarTourGuiado();
+              }
+              return;
+            }
+
+            limpiarHighlightTour();
+            el.classList.add("tour-highlight");
+            try { el.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" }); } catch (e) { }
+
+            var tooltip = document.getElementById("tourTooltip");
+            if (!tooltip) {
+              tooltip = document.createElement("div");
+              tooltip.id = "tourTooltip";
+              tooltip.className = "tour-tooltip";
+              document.body.appendChild(tooltip);
+            }
+
+            var isLast = tourState.currentIndex === tourState.steps.length - 1;
+            var isFirst = tourState.currentIndex === 0;
+            tooltip.innerHTML =
+              "<div style='font-size:11px;color:#64748b;margin-bottom:4px'>Paso " + (tourState.currentIndex + 1) + " de " + tourState.steps.length + "</div>" +
+              "<h4>" + escapeHtml(step.title) + "</h4>" +
+              "<p>" + escapeHtml(step.description) + "</p>" +
+              "<div class='tour-controls'>" +
+              "<button type='button' id='tourExitBtn' style='background:#64748b'>Salir</button>" +
+              "<button type='button' id='tourPrevBtn' style='background:#475569'" + (isFirst ? " disabled" : "") + ">Anterior</button>" +
+              (isLast ? "" : "<button type='button' id='tourNextBtn' style='background:#1d4ed8'>Siguiente</button>") +
+              "<button type='button' id='tourFinishBtn' style='background:#16a34a'" + (!isLast ? " disabled" : "") + ">Finalizar</button>" +
+              "</div>";
+
+            var btnClose = document.getElementById("tourExitBtn");
+            var btnPrev = document.getElementById("tourPrevBtn");
+            var btnNext = document.getElementById("tourNextBtn");
+            var btnFinish = document.getElementById("tourFinishBtn");
+            if (btnClose) btnClose.onclick = cerrarTourGuiado;
+            if (btnPrev) {
+              btnPrev.onclick = function () {
+                if (tourState.currentIndex <= 0) return;
+                tourState.currentIndex -= 1;
+                renderTourStep();
+              };
+            }
+            if (btnNext) {
+              btnNext.onclick = function () {
+                if (tourState.currentIndex >= tourState.steps.length - 1) return;
+                tourState.currentIndex += 1;
+                renderTourStep();
+              };
+            }
+            if (btnFinish) {
+              btnFinish.onclick = cerrarTourGuiado;
+            }
+
+            reposicionarTooltipTour();
+          }, 60);
+        }
+
+        function iniciarTourGuiado() {
+          cerrarTourGuiado();
+          tourState.steps = buildTourSteps();
+          tourState.currentIndex = 0;
+          tourState.active = true;
+
+          var overlay = document.createElement("div");
+          overlay.id = "tourOverlay";
+          overlay.className = "tour-overlay";
+          overlay.addEventListener("click", cerrarTourGuiado);
+          document.body.appendChild(overlay);
+
+          window.addEventListener("resize", reposicionarTooltipTour);
+          window.addEventListener("scroll", reposicionarTooltipTour, true);
+
+          renderTourStep();
         }
 
         function enviarPregunta(texto) {
@@ -4246,20 +5036,15 @@
         }
 
         function construirHTMLPanelAsistente() {
-          var labels = [
-            "Cómo agregar animal",
-            "Registrar peso",
-            "Ver ganancia",
-            "Tanque",
-            "Mapa"
-          ];
+          var labels = ayudaTemasFrecuentes.slice();
           var btnHtml = labels.map(function (label) {
-            return '<button type="button" class="quick-btn">' + escapeHtml(label) + "</button>";
+            return '<button type="button" class="quick-btn" data-topic="' + escapeAttr(label) + '">' + escapeHtml(label) + "</button>";
           }).join("");
           return (
             '<div id="chatPanel" style="padding: 15px; background: white; border-radius: 10px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; width: 100%; box-sizing: border-box;">' +
             '<h3 style="margin-top:0;">🤖 Asistente GanadoControl</h3>' +
-            '<p class="chat-intro">Escribí una pregunta o tocá <strong>Ayuda rápida</strong>. Palabras clave: animal, peso, ganancia, tanque, mapa.</p>' +
+            '<p class="chat-intro">Escribí tu consulta en lenguaje natural o tocá una sugerencia. El asistente busca por palabras similares en toda la guía de GanadoControl.</p>' +
+            '<button type="button" class="tour-launch-btn" onclick="iniciarTourGuiado()">🎓 Iniciar Tour</button>' +
             '<div class="chat-ayuda-rapida" role="navigation" aria-label="Ayuda rápida">' +
             btnHtml +
             "</div>" +
@@ -4559,7 +5344,7 @@
           let html = '<div id="listaPanel" style="padding: 10px;"><div id="listaAnimales">';
           html += '<h3>🐄 Animales</h3>';
           html += '<input id="buscador" placeholder="Buscar caravana..." oninput="mostrar()" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px;">';
-          html += '<button type="button" onclick="eliminarSeleccionados()" style="width: 100%; padding: 8px; margin: 0 0 8px 0; background: #c62828; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Eliminar seleccionados</button>';
+          html += '<button id="btnEliminarSeleccionados" type="button" onclick="eliminarSeleccionados()" style="width: 100%; padding: 8px; margin: 0 0 8px 0; background: #c62828; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Eliminar seleccionados</button>';
           html += '<h4>Filtrar por lote</h4>';
           html += '<select id="filtroLote" onchange="mostrar()" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px;">';
           html += '<option value="todos">Todos</option></select>';
@@ -4602,7 +5387,7 @@
             var c = document.getElementById("chatContainer");
             if (c && !c.dataset.bienvenida) {
               c.dataset.bienvenida = "1";
-              mostrarMensajeBot("Hola. Escribí una pregunta o tocá un botón de ayuda rápida (animal, peso, ganancia, tanque, mapa).");
+              mostrarMensajeBot("Hola. Puedo ayudarte con animales, mapa, pesajes, ganancias, rebaños, zonas, tanque, porteras, LoRa, CSV, cuenta, batería, alertas y estados personalizados.");
             }
           });
           return html;
@@ -4660,6 +5445,7 @@
         window.eliminarGateway = eliminarGateway;
         window.registrarLecturaSenal = registrarLecturaSenal;
         window.nuevoEstadoAnimal = nuevoEstadoAnimal;
+        window.iniciarTourGuiado = iniciarTourGuiado;
 
         porteras = cargarPorteras();
         if (!porteras.length) porteras = defaultPorteras();
