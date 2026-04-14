@@ -545,24 +545,13 @@
         flex-direction: column;
         height: auto;
         align-items: stretch;
-        min-height: 0;
+        min-height: auto;
       }
 
       #panelLateral,
       #panelControles {
         width: 100%;
         padding: 8px;
-      }
-
-      #map {
-        flex: 0 0 auto;
-        flex-shrink: 0;
-        align-self: stretch;
-        width: 100%;
-        box-sizing: border-box;
-        min-height: 45vh;
-        height: clamp(45vh, 52vh, 60vh);
-        max-height: 60vh;
       }
 
       #menu button {
@@ -997,28 +986,30 @@
       gap: 12px;
     }
 
-    #mapColumnWrap {
-      min-height: 0;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-
     .btn-expandir-mapa {
       display: none;
     }
 
-    #mapHostRegular {
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-    }
+    @media (min-width: 769px) {
+      #mapColumnWrap {
+        min-height: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
 
-    #mapHostRegular #map {
-      flex: 1;
-      min-height: 0;
-      width: 100%;
+      #mapHostRegular {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #mapHostRegular #map {
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+      }
     }
 
     #panelControles {
@@ -1161,24 +1152,13 @@
         flex-direction: column;
         gap: 8px;
         align-items: stretch;
-        min-height: 0;
+        min-height: auto;
       }
 
       #panelControles,
       #listaAnimales {
         border-radius: 12px;
         padding: 8px;
-      }
-
-      #map {
-        flex: 0 0 auto;
-        flex-shrink: 0;
-        align-self: stretch;
-        width: 100%;
-        box-sizing: border-box;
-        min-height: 45vh;
-        height: clamp(45vh, 52vh, 60vh);
-        max-height: 60vh;
       }
 
       #menu {
@@ -1366,21 +1346,40 @@
         color: #fff;
       }
 
+      /* Padres: sin altura forzada ni flex que colapse el mapa */
+      #mapLayout {
+        min-height: auto;
+        overflow: visible;
+      }
+
       #mapColumnWrap {
         display: flex;
         flex-direction: column;
-        flex: 0 0 auto;
+        flex: none;
         align-self: stretch;
         width: 100%;
+        height: auto;
         min-height: 0;
+        overflow: visible;
       }
 
       #mapHostRegular {
-        display: flex;
-        flex-direction: column;
-        flex: 0 0 auto;
-        min-height: 0;
+        display: block;
         width: 100%;
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+      }
+
+      /* Solo el div Leaflet lleva altura responsive (móvil) */
+      #map {
+        height: 45vh !important;
+        min-height: 300px !important;
+        width: 100%;
+        flex: none !important;
+        max-height: none !important;
+        align-self: stretch;
+        box-sizing: border-box;
       }
 
       .map-fullscreen-inner #map {
@@ -3096,13 +3095,23 @@
           });
         }
 
+        function invalidateMapSizeDelayed300() {
+          setTimeout(function () {
+            if (window.map) window.map.invalidateSize();
+          }, 300);
+        }
+
         var mapResizeHandlersRegistered = false;
         function setupMapResizeInvalidation() {
           if (mapResizeHandlersRegistered) return;
           mapResizeHandlersRegistered = true;
-          window.addEventListener("resize", invalidateMapSizeWhenReady);
+          window.addEventListener("resize", function onMapWindowResize() {
+            invalidateMapSizeWhenReady();
+            invalidateMapSizeDelayed300();
+          });
           window.addEventListener("orientationchange", function () {
             setTimeout(invalidateMapSizeWhenReady, 350);
+            invalidateMapSizeDelayed300();
           });
           var mapDiv = document.getElementById("map");
           if (mapDiv && typeof ResizeObserver !== "undefined") {
@@ -3133,6 +3142,7 @@
           invalidateMapSizeWhenReady();
           setTimeout(invalidateMapSizeWhenReady, 120);
           setTimeout(invalidateMapSizeWhenReady, 380);
+          invalidateMapSizeDelayed300();
         }
 
         function cerrarMapaFullscreen() {
@@ -3149,6 +3159,7 @@
           invalidateMapSizeWhenReady();
           setTimeout(invalidateMapSizeWhenReady, 120);
           setTimeout(invalidateMapSizeWhenReady, 380);
+          invalidateMapSizeDelayed300();
         }
 
         document.addEventListener("keydown", function onMapFullscreenKeydown(ev) {
@@ -3164,11 +3175,13 @@
           tap: true,
           tapTolerance: 22
         }).setView(centro, zoom);
+        window.map = map;
         setupMapResizeInvalidation();
         //cargarAnimales(); // ← ESTA LÍNEA AGREGÁS
         setTimeout(function () {
           invalidateMapSizeWhenReady();
         }, 500);
+        invalidateMapSizeDelayed300();
 
         // capas activas
         normal.addTo(map);
@@ -3698,6 +3711,7 @@
           setTimeout(function () {
             invalidateMapSizeWhenReady();
           }, 200);
+          invalidateMapSizeDelayed300();
         }
 
         // AGREGAR
@@ -5606,11 +5620,14 @@
             panel.innerHTML = vistaAyuda();
           }
 
+          if (typeof cerrarMapaFullscreen === "function") {
+            cerrarMapaFullscreen();
+          }
           if (typeof invalidateMapSizeWhenReady === "function") {
             setTimeout(invalidateMapSizeWhenReady, 0);
           }
-          if (typeof cerrarMapaFullscreen === "function") {
-            cerrarMapaFullscreen();
+          if (typeof invalidateMapSizeDelayed300 === "function") {
+            invalidateMapSizeDelayed300();
           }
         }
 
