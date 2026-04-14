@@ -544,6 +544,8 @@
       #mapLayout {
         flex-direction: column;
         height: auto;
+        align-items: stretch;
+        min-height: 0;
       }
 
       #panelLateral,
@@ -553,8 +555,14 @@
       }
 
       #map {
-        height: 46vh;
-        min-height: 240px;
+        flex: 0 0 auto;
+        flex-shrink: 0;
+        align-self: stretch;
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 45vh;
+        height: clamp(45vh, 52vh, 60vh);
+        max-height: 60vh;
       }
 
       #menu button {
@@ -989,6 +997,30 @@
       gap: 12px;
     }
 
+    #mapColumnWrap {
+      min-height: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .btn-expandir-mapa {
+      display: none;
+    }
+
+    #mapHostRegular {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #mapHostRegular #map {
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+    }
+
     #panelControles {
       width: auto;
       background: var(--gc-surface);
@@ -1128,6 +1160,8 @@
         display: flex;
         flex-direction: column;
         gap: 8px;
+        align-items: stretch;
+        min-height: 0;
       }
 
       #panelControles,
@@ -1137,8 +1171,14 @@
       }
 
       #map {
-        height: clamp(270px, 44vh, 420px);
-        min-height: 270px;
+        flex: 0 0 auto;
+        flex-shrink: 0;
+        align-self: stretch;
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 45vh;
+        height: clamp(45vh, 52vh, 60vh);
+        max-height: 60vh;
       }
 
       #menu {
@@ -1231,6 +1271,140 @@
         min-height: 30px;
         padding: 4px 7px !important;
         font-size: 10.5px !important;
+      }
+    }
+
+    /* ========== Mapa pantalla completa (móvil <768px) ========== */
+    .map-fullscreen-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 15000;
+      box-sizing: border-box;
+      padding: max(6px, env(safe-area-inset-top)) max(6px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left));
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.78);
+    }
+
+    .map-fullscreen-overlay.is-open {
+      display: flex;
+    }
+
+    .map-fullscreen-dialog {
+      display: flex;
+      flex-direction: column;
+      width: min(100vw - 12px, 100%);
+      height: min(calc(100dvh - 12px), calc(100vh - 12px));
+      max-height: 100%;
+      min-width: 0;
+      min-height: min(90vh, calc(100dvh - 12px));
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--gc-surface, #ffffff);
+      border: 1px solid var(--gc-border, #e2e8f0);
+      box-shadow: 0 24px 48px rgba(2, 6, 23, 0.45);
+    }
+
+    .map-fullscreen-toolbar {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--gc-border, #e2e8f0);
+      background: var(--gc-surface-soft, #f8fafc);
+    }
+
+    .map-fullscreen-close {
+      width: auto !important;
+      max-width: none;
+      margin: 0;
+      min-height: 40px;
+      padding: 8px 16px !important;
+      font-size: 14px !important;
+      font-weight: 600;
+      border-radius: 10px;
+      background: #1d4ed8;
+      color: #fff;
+    }
+
+    .map-fullscreen-inner {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .map-fs-sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    body.map-fs-open {
+      overflow: hidden;
+    }
+
+    @media (max-width: 768px) {
+      .btn-expandir-mapa {
+        display: block;
+        width: 100%;
+        margin: 0 0 8px 0;
+        flex-shrink: 0;
+        min-height: 42px;
+        font-size: 14px !important;
+        font-weight: 600;
+        background: #1d4ed8;
+        color: #fff;
+      }
+
+      #mapColumnWrap {
+        display: flex;
+        flex-direction: column;
+        flex: 0 0 auto;
+        align-self: stretch;
+        width: 100%;
+        min-height: 0;
+      }
+
+      #mapHostRegular {
+        display: flex;
+        flex-direction: column;
+        flex: 0 0 auto;
+        min-height: 0;
+        width: 100%;
+      }
+
+      .map-fullscreen-inner #map {
+        flex: 1;
+        min-height: 0 !important;
+        height: 100% !important;
+        max-height: none !important;
+        width: 100% !important;
+        border-radius: 0 0 14px 14px;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .btn-expandir-mapa {
+        display: none !important;
+      }
+
+      .map-fullscreen-overlay {
+        display: none !important;
+        pointer-events: none;
+      }
+
+      .map-fullscreen-overlay.is-open {
+        display: none !important;
       }
     }
   </style>
@@ -1371,7 +1545,12 @@
             </div>
 
             <!-- MAPA -->
-            <div id="map"></div>
+            <div id="mapColumnWrap">
+              <button type="button" id="btnExpandirMapa" class="btn-expandir-mapa" onclick="abrirMapaFullscreen()">Expandir mapa</button>
+              <div id="mapHostRegular">
+                <div id="map"></div>
+              </div>
+            </div>
 
           </div>
 
@@ -1432,6 +1611,17 @@
         <button type="button" onclick="simularLecturaTanque()">Aplicar lectura</button>
         <h4 style="margin-top:18px;">Histórico reciente</h4>
         <div id="tanqueHistorial"></div>
+      </div>
+
+      <!-- Mapa pantalla completa (móvil): el nodo #map se mueve aquí al expandir -->
+      <div id="mapFullscreenOverlay" class="map-fullscreen-overlay" role="dialog" aria-modal="true" aria-labelledby="mapFullscreenTitle" aria-hidden="true">
+        <div class="map-fullscreen-dialog">
+          <div class="map-fullscreen-toolbar">
+            <span id="mapFullscreenTitle" class="map-fs-sr-only">Mapa en pantalla completa</span>
+            <button type="button" id="btnCerrarMapaFullscreen" class="map-fullscreen-close" onclick="cerrarMapaFullscreen()">Cerrar</button>
+          </div>
+          <div id="mapFullscreenInner" class="map-fullscreen-inner"></div>
+        </div>
       </div>
 
     </div>
@@ -2897,14 +3087,87 @@
           zoom = data.zoom;
         }
 
+        function invalidateMapSizeWhenReady() {
+          if (!map) return;
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              map.invalidateSize();
+            });
+          });
+        }
+
+        var mapResizeHandlersRegistered = false;
+        function setupMapResizeInvalidation() {
+          if (mapResizeHandlersRegistered) return;
+          mapResizeHandlersRegistered = true;
+          window.addEventListener("resize", invalidateMapSizeWhenReady);
+          window.addEventListener("orientationchange", function () {
+            setTimeout(invalidateMapSizeWhenReady, 350);
+          });
+          var mapDiv = document.getElementById("map");
+          if (mapDiv && typeof ResizeObserver !== "undefined") {
+            new ResizeObserver(invalidateMapSizeWhenReady).observe(mapDiv);
+          }
+        }
+
+        var mapFullscreenAbierto = false;
+
+        function abrirMapaFullscreen() {
+          if (mapFullscreenAbierto) return;
+          if (window.matchMedia && window.matchMedia("(min-width: 769px)").matches) return;
+          var inner = document.getElementById("mapFullscreenInner");
+          var overlay = document.getElementById("mapFullscreenOverlay");
+          var mapEl = document.getElementById("map");
+          if (!inner || !overlay || !mapEl || !map) return;
+          inner.appendChild(mapEl);
+          overlay.classList.add("is-open");
+          overlay.setAttribute("aria-hidden", "false");
+          document.body.classList.add("map-fs-open");
+          mapFullscreenAbierto = true;
+          var btnCerrar = document.getElementById("btnCerrarMapaFullscreen");
+          if (btnCerrar) {
+            try {
+              btnCerrar.focus();
+            } catch (ignore) { /* noop */ }
+          }
+          invalidateMapSizeWhenReady();
+          setTimeout(invalidateMapSizeWhenReady, 120);
+          setTimeout(invalidateMapSizeWhenReady, 380);
+        }
+
+        function cerrarMapaFullscreen() {
+          if (!mapFullscreenAbierto) return;
+          var host = document.getElementById("mapHostRegular");
+          var mapEl = document.getElementById("map");
+          var overlay = document.getElementById("mapFullscreenOverlay");
+          if (!host || !mapEl || !overlay) return;
+          host.appendChild(mapEl);
+          overlay.classList.remove("is-open");
+          overlay.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("map-fs-open");
+          mapFullscreenAbierto = false;
+          invalidateMapSizeWhenReady();
+          setTimeout(invalidateMapSizeWhenReady, 120);
+          setTimeout(invalidateMapSizeWhenReady, 380);
+        }
+
+        document.addEventListener("keydown", function onMapFullscreenKeydown(ev) {
+          if (!mapFullscreenAbierto) return;
+          if (ev.key === "Escape") {
+            ev.preventDefault();
+            cerrarMapaFullscreen();
+          }
+        });
+
         // 🗺️ crear mapa
         map = L.map('map', {
           tap: true,
           tapTolerance: 22
         }).setView(centro, zoom);
+        setupMapResizeInvalidation();
         //cargarAnimales(); // ← ESTA LÍNEA AGREGÁS
         setTimeout(function () {
-          map.invalidateSize();
+          invalidateMapSizeWhenReady();
         }, 500);
 
         // capas activas
@@ -3419,6 +3682,10 @@
         // CAMBIO DE SECCIÓN
         function mostrarSeccion(s) {
 
+          if (s !== "animales") {
+            cerrarMapaFullscreen();
+          }
+
           document.getElementById("animales").style.display = "none";
           document.getElementById("formulario").style.display = "none";
           document.getElementById("tanque").style.display = "none";
@@ -3429,7 +3696,7 @@
 
           // 🔥 ESTO ARREGLA EL MAPA
           setTimeout(function () {
-            map.invalidateSize();
+            invalidateMapSizeWhenReady();
           }, 200);
         }
 
@@ -5338,6 +5605,13 @@
           } else if (tipo === 'ayuda') {
             panel.innerHTML = vistaAyuda();
           }
+
+          if (typeof invalidateMapSizeWhenReady === "function") {
+            setTimeout(invalidateMapSizeWhenReady, 0);
+          }
+          if (typeof cerrarMapaFullscreen === "function") {
+            cerrarMapaFullscreen();
+          }
         }
 
         function vistaAnimales() {
@@ -5440,6 +5714,8 @@
         window.enviarPush = enviarPush;
         window.toggleCoberturaLoRa = toggleCoberturaLoRa;
         window.toggleHeatmapLoRa = toggleHeatmapLoRa;
+        window.abrirMapaFullscreen = abrirMapaFullscreen;
+        window.cerrarMapaFullscreen = cerrarMapaFullscreen;
         window.guardarGatewayDesdePanel = guardarGatewayDesdePanel;
         window.agregarGateway = agregarGateway;
         window.eliminarGateway = eliminarGateway;
