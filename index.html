@@ -222,6 +222,18 @@
       touch-action: manipulation;
     }
 
+    .bloqueado {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #f5f5f5;
+      border: 1px dashed #888;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin: 6px 0;
+      font-size: 13px;
+      color: #333;
+    }
+
     #appSplash {
       position: fixed;
       inset: 0;
@@ -266,6 +278,20 @@
 
       to {
         transform: rotate(360deg);
+      }
+    }
+
+    @keyframes parpadeo {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+
+      100% {
+        opacity: 1;
       }
     }
 
@@ -433,7 +459,7 @@
     /* ================== TANQUE AGUA (LoRa) ================== */
     #tanque {
       display: none;
-      max-width: 520px;
+      max-width: 720px;
       margin: 0 auto;
       background: white;
       padding: 20px;
@@ -502,6 +528,111 @@
       background: #f8fafc;
       border-radius: 8px;
       border: 1px solid #e2e8f0;
+    }
+
+    #listaTanques {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .tanques-empty {
+      color: #64748b;
+      font-size: 14px;
+      margin: 8px 0;
+    }
+
+    .tanque-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 14px 12px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background: #fafafa;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .tanque-card:hover {
+      border-color: #94a3b8;
+    }
+
+    .tanque-card.selected {
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.25);
+      background: #f0f9ff;
+    }
+
+    .tanque-card-title {
+      font-weight: 700;
+      font-size: 16px;
+      color: #0f172a;
+    }
+
+    .tanque-card-meta {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    .tanque-card-alertas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tanque-alert-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .tanque-alert-badge.tanque-alert-critico {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .tanque-alert-badge.tanque-alert-ok {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .tanque-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .tanque-card-actions button {
+      flex: 1;
+      min-width: 88px;
+    }
+
+    .tanque-form-wrap {
+      margin: 14px 0 18px;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px dashed #cbd5e1;
+      background: #f8fafc;
+    }
+
+    .tanque-form-wrap label {
+      display: block;
+      margin-top: 8px;
+      font-size: 13px;
+      color: #334155;
+    }
+
+    .tanque-detalle-panel {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #e2e8f0;
     }
 
     /* 📱 MOBILE */
@@ -952,6 +1083,32 @@
       overflow: hidden;
     }
 
+    /* Panel Configuración: ocupa alto del lateral y permite scroll completo */
+    #panelLateral > .gc-settings {
+      align-self: stretch;
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: 100vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .gc-settings {
+      box-sizing: border-box;
+      max-width: 520px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px 18px 20px;
+      background: var(--gc-surface, #fff);
+      border: 1px solid var(--gc-border, #e2e8f0);
+      border-radius: var(--gc-radius, 12px);
+      box-shadow: var(--gc-shadow, 0 2px 12px rgba(15, 23, 42, 0.06));
+      max-height: 100vh;
+      overflow-y: auto;
+      text-align: left;
+      color: #0f172a;
+    }
+
     #listaPanel,
     #listaAnimales {
       height: 100%;
@@ -1003,6 +1160,7 @@
         min-height: 0;
         display: flex;
         flex-direction: column;
+        position: relative;
       }
 
       #mapHostRegular #map {
@@ -1184,6 +1342,142 @@
         font-size: 10px !important;
         padding: 4px 6px !important;
         margin-bottom: 4px !important;
+      }
+
+      .gc-settings h3 {
+        margin: 0 0 12px;
+        font-size: 1.2rem;
+      }
+
+      .gc-settings-section {
+        margin-bottom: 20px;
+      }
+
+      .gc-settings-section:last-child {
+        margin-bottom: 0;
+      }
+
+      .gc-settings-section h4 {
+        margin: 0 0 10px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #334155;
+      }
+
+      .gc-settings-divider {
+        border: none;
+        border-top: 1px solid #e2e8f0;
+        margin: 16px 0;
+      }
+
+      .gc-settings-field {
+        margin-bottom: 10px;
+      }
+
+      .gc-settings-field label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 4px;
+      }
+
+      .gc-settings-readonly {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #f8fafc;
+        font-size: 14px;
+        color: #475569;
+      }
+
+      .gc-settings .gc-btn {
+        width: 100%;
+        padding: 10px 14px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 14px;
+        margin-top: 8px;
+      }
+
+      .gc-settings .gc-btn--primary {
+        background: #2563eb;
+        color: #fff;
+      }
+
+      .gc-settings .gc-btn--accent {
+        background: #059669;
+        color: #fff;
+      }
+
+      .gc-settings .gc-btn--muted {
+        background: #64748b;
+        color: #fff;
+      }
+
+      .gc-settings .gc-btn--danger {
+        background: #b91c1c;
+        color: #fff;
+      }
+
+      .gc-settings .gc-btn--ghost {
+        background: #f1f5f9;
+        color: #334155;
+        border: 1px solid #cbd5e1;
+      }
+
+      .gc-plan-upgrade {
+        padding: 12px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+      }
+
+      .gc-plan-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 10px 0 12px;
+      }
+
+      .gc-plan-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        cursor: pointer;
+        background: #fff;
+      }
+
+      .gc-settings-msg {
+        font-size: 13px;
+        margin-top: 8px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: #fef3c7;
+        color: #92400e;
+        display: none;
+      }
+
+      .gc-settings-msg.is-visible {
+        display: block;
+      }
+
+      .gc-toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: #fff;
       }
 
       input,
@@ -1369,6 +1663,7 @@
         height: auto;
         min-height: 0;
         overflow: visible;
+        position: relative;
       }
 
       /* Solo el div Leaflet lleva altura responsive (móvil) */
@@ -1446,6 +1741,14 @@
           style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
         <input id="registerTelefono" type="tel" placeholder="Teléfono"
           style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+        <label for="registerTipoCliente"
+          style="display: block; text-align: left; font-size: 13px; margin: 10px 0 4px; color: #333;">Producto</label>
+        <select id="registerTipoCliente"
+          style="width: 100%; padding: 10px; margin: 0 0 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+          <option value="collar_ganado">Collar de ganado</option>
+          <option value="control_portera">Control de portera</option>
+          <option value="control_tanque">Control de tanque</option>
+        </select>
         <input id="email" type="email" placeholder="Email"
           style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
         <input type="password" id="registerPass" placeholder="Contraseña"
@@ -1461,12 +1764,23 @@
     <div id="menu">
       <h2>🐄 GanadoControl</h2>
       <div id="userProfileLabel" style="display: none; padding: 6px 10px; margin: 4px 0 8px 0; font-size: 13px; color: #1b4332; background: #e8f5e9; border-radius: 6px; text-align: left;"></div>
+      <div id="panelSolicitudPlan" style="display: none; margin: 0 0 10px 0; padding: 10px; background: #fef9c3; border: 1px solid #eab308; border-radius: 8px; font-size: 12px; color: #713f12; text-align: left;">
+        <div id="solicitudPlanMensaje"></div>
+        <button type="button" id="btnAnularSolicitudPlan" style="display: none; margin-top: 8px; width: 100%; padding: 8px; background: #b45309; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Anular solicitud</button>
+      </div>
+      <div id="seccionAnimales">
       <button id="navAnimales" onclick="mostrarVista('animales')">🐄 Animales</button>
       <button id="navIngresar" onclick="mostrarVista('ingreso')">➕ Ingresar</button>
       <button id="navRebanos" onclick="mostrarVista('rebanos')">🐑 Rebaños</button>
+      <div id="bloqueadoRebanos" class="bloqueado" style="display:none;">🔒 Rebaños (Disponible en plan Ganado)</div>
+      </div>
       <button id="navTanque" onclick="mostrarVista('tanque')">💧 Tanque</button>
+      <div id="seccionPorteras">
       <button id="navPorteras" onclick="mostrarVista('porteras')">🚧 Porteras</button>
+      </div>
       <button id="navAyuda" onclick="mostrarVista('ayuda')">❓ Ayuda</button>
+      <button type="button" id="navConfiguracion" onclick="mostrarVista('configuracion')">⚙️ Configuración</button>
+      <button type="button" id="btnLogout">Cerrar sesión</button>
     </div>
 
     <div id="contenido">
@@ -1532,6 +1846,9 @@
               <button onclick="editarZona()">✏️ Editar zona</button>
               <button id="toggleCoberturaBtn" onclick="toggleCoberturaLoRa()">Mostrar/Ocultar Cobertura LoRa</button>
               <button id="toggleHeatmapBtn" onclick="toggleHeatmapLoRa()">Heatmap LoRa: ON</button>
+              <div id="bloqueadoPeso" class="bloqueado" style="display:none;">🔒 Peso (Disponible en plan Ganado)</div>
+              <div id="bloqueadoProyeccion" class="bloqueado" style="display:none;">🔒 Proyección (Disponible en plan Ganado)</div>
+              <div id="bloqueadoAlertas" class="bloqueado" style="display:none;">🔒 Alertas (Disponible en plan Ganado)</div>
 
               <div id="alertaZona"></div>
               <div id="panelInfo"></div>
@@ -1547,6 +1864,20 @@
             <div id="mapColumnWrap">
               <button type="button" id="btnExpandirMapa" class="btn-expandir-mapa" onclick="abrirMapaFullscreen()">Expandir mapa</button>
               <div id="mapHostRegular">
+                <div id="alertasContainer" style="
+position: absolute;
+top: 10px;
+left: 50%;
+transform: translateX(-50%);
+display: flex;
+flex-direction: column;
+gap: 5px;
+z-index: 999;
+pointer-events: none;
+max-width: calc(100% - 24px);
+align-items: center;
+box-sizing: border-box;
+"></div>
                 <div id="map"></div>
               </div>
             </div>
@@ -1569,47 +1900,69 @@
         <input id="lng" placeholder="Longitud">
         <input id="peso" placeholder="Peso (kg)">
 
-        <select id="estado">
-          <option value="">-- Sin estado --</option>
-          <option>Sano</option>
-          <option>Enfermo</option>
-          <option>Preñada</option>
-          <option>En Tratamiento</option>
-          <option>Vacunar</option>
-          <option>Vendido</option>
-        </select>
-        <button type="button" onclick="nuevoEstadoAnimal()">+ Nuevo Estado</button>
+        <select id="estadoFormularioOculto" data-gc-estado-animal="1" aria-hidden="true" style="display:none;"></select>
+        <button type="button" id="btnNuevoEstadoAnimalForm" onclick="nuevoEstadoAnimal()">+ Nuevo Estado</button>
 
         <button>Guardar</button>
         <input type="file" id="fileInput" style="display:none;" onchange="importarCSV()">
         <button onclick="document.getElementById('fileInput').click()">📂 Importar CSV</button>
       </div>
 
-      <!-- TANQUE AGUA (LoRa) -->
+      <!-- TANQUES AGUA (LoRa) — multi-tanque -->
+      <div id="seccionTanques">
       <div id="tanque" style="display:none;">
-        <h2>💧 Tanque de agua</h2>
-        <p style="color:#64748b;font-size:14px;margin-top:0;">Monitor de nivel · compatible con lecturas LoRa</p>
-        <div class="tanque-visual">
-          <div class="tanque-cilindro" aria-hidden="true">
-            <div id="tanqueNivelFill" class="tanque-fill tanque-ok"></div>
-          </div>
-          <div class="tanque-stats">
-            <p>Nivel actual: <strong id="tanquePct">0</strong> %</p>
-            <p>Litros actuales: <strong id="tanqueLitros">0</strong> L</p>
-            <p>Capacidad total: <strong id="tanqueCapDisplay">0</strong> L</p>
-            <p>Llenado (litros / capacidad): <strong id="tanquePctRel">0</strong> %</p>
+        <h2>💧 Tanques de agua</h2>
+        <p style="color:#64748b;font-size:14px;margin-top:0;">Listado de tanques · nivel y compatible con lecturas LoRa</p>
+
+        <button type="button" onclick="abrirFormularioTanqueNuevo()" style="width:100%;margin-top:8px;">+ Agregar tanque</button>
+
+        <div id="tanqueFormWrap" class="tanque-form-wrap" style="display:none;">
+          <h4 id="tanqueFormTitulo" style="margin-top:0;">Nuevo tanque</h4>
+          <label for="tanqueFormNombre">Nombre</label>
+          <input type="text" id="tanqueFormNombre" placeholder="Ej. Tanque norte" maxlength="120">
+          <label for="tanqueFormCapacidad">Capacidad (litros)</label>
+          <input type="number" id="tanqueFormCapacidad" min="1" step="1" placeholder="Ej. 5000">
+          <label for="tanqueFormTipo">Tipo</label>
+          <input type="text" id="tanqueFormTipo" placeholder="Ej. Elevado, enterrado, LoRa…" maxlength="80">
+          <label for="tanqueFormLat">Latitud (opcional)</label>
+          <input type="text" id="tanqueFormLat" placeholder="Ej. -34.6">
+          <label for="tanqueFormLng">Longitud (opcional)</label>
+          <input type="text" id="tanqueFormLng" placeholder="Ej. -58.4">
+          <label for="tanqueFormNivelIni">Nivel inicial (%)</label>
+          <input type="number" id="tanqueFormNivelIni" min="0" max="100" step="0.1" value="0">
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+            <button type="button" onclick="confirmarFormularioTanque()" style="flex:1;">Guardar</button>
+            <button type="button" onclick="cerrarFormularioTanque()" style="flex:1;background:#64748b;color:#fff;">Cancelar</button>
           </div>
         </div>
-        <label for="tanqueCapacidadInput">Capacidad del tanque (litros)</label>
-        <input type="number" id="tanqueCapacidadInput" min="1" step="1" placeholder="Ej. 5000">
-        <label for="tanqueNivelInput">Nivel actual manual (%)</label>
-        <input type="number" id="tanqueNivelInput" min="0" max="100" step="0.1" placeholder="0–100">
-        <button type="button" onclick="guardarConfigTanque()">Guardar configuración</button>
-        <h4 style="margin-top:18px;">Simular lectura LoRa (nivel %)</h4>
-        <input type="number" id="tanqueSimInput" min="0" max="100" step="0.1" placeholder="Valor 0–100">
-        <button type="button" onclick="simularLecturaTanque()">Aplicar lectura</button>
-        <h4 style="margin-top:18px;">Histórico reciente</h4>
-        <div id="tanqueHistorial"></div>
+
+        <div id="listaTanques"></div>
+
+        <div id="tanqueDetallePanel" class="tanque-detalle-panel" style="display:none;">
+          <h3 id="tanqueDetalleTitulo" style="margin-top:0;font-size:18px;">Detalle</h3>
+          <div class="tanque-visual">
+            <div class="tanque-cilindro" aria-hidden="true">
+              <div id="tanqueNivelFill" class="tanque-fill tanque-ok"></div>
+            </div>
+            <div class="tanque-stats">
+              <p>Nivel actual: <strong id="tanquePct">0</strong> %</p>
+              <p>Litros actuales: <strong id="tanqueLitros">0</strong> L</p>
+              <p>Capacidad total: <strong id="tanqueCapDisplay">0</strong> L</p>
+              <p>Llenado (litros / capacidad): <strong id="tanquePctRel">0</strong> %</p>
+            </div>
+          </div>
+          <label for="tanqueCapacidadInput">Capacidad del tanque (litros)</label>
+          <input type="number" id="tanqueCapacidadInput" min="1" step="1" placeholder="Ej. 5000">
+          <label for="tanqueNivelInput">Nivel actual manual (%)</label>
+          <input type="number" id="tanqueNivelInput" min="0" max="100" step="0.1" placeholder="0–100">
+          <button type="button" onclick="guardarConfigTanque()">Guardar configuración</button>
+          <h4 style="margin-top:18px;">Simular lectura LoRa (nivel %)</h4>
+          <input type="number" id="tanqueSimInput" min="0" max="100" step="0.1" placeholder="Valor 0–100">
+          <button type="button" onclick="simularLecturaTanque()">Aplicar lectura</button>
+          <h4 style="margin-top:18px;">Histórico reciente</h4>
+          <div id="tanqueHistorial"></div>
+        </div>
+      </div>
       </div>
 
       <!-- Mapa pantalla completa (móvil): el nodo #map se mueve aquí al expandir -->
@@ -1643,8 +1996,12 @@
       const SUPABASE_URL = "https://dpsrcvfaunvamluvyysy.supabase.co";
       const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwc3JjdmZhdW52YW1sdXZ5eXN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NjY3NTYsImV4cCI6MjA5MTI0Mjc1Nn0.VFaFR97BDFe6G-rD1wvnOq4tsMIHbXwI5_fBKSdBjeA";
 
+      /** UUID del plan gratuito/básico en tu tabla de planes (debe existir en BD). Sustituí por el id real creado en Supabase. */
+      const DEFAULT_PLAN_ID = "00000000-0000-0000-0000-000000000001";
+
       // Inicializar Supabase (única instancia)
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      window.FEATURES_MODO_FALLBACK = true;
       console.log("✅ Supabase listo:", supabase);
       window.onerror = console.error;
       window.addEventListener("error", function (ev) {
@@ -1655,9 +2012,314 @@
       });
 
       // SISTEMA DE USUARIO CON SUPABASE
-      // Perfil extendido: tabla public.usuarios (id = auth.users.id, PK para upsert sin duplicados)
+      // Perfil extendido: tabla public.usuarios (id = auth.users.id, PK para upsert sin duplicados; opcional tipo_cliente TEXT)
       //   nombre TEXT, apellido TEXT, ciudad TEXT, telefono TEXT
       let perfilUsuario = null;
+      let solicitudPlanActiva = null;
+      window.solicitudes = [];
+      window.alertasActivas = { animal: false, portera: false };
+      window.alertasHabilitadas = true;
+      const nativeAlert = typeof window.alert === "function" ? window.alert.bind(window) : null;
+      window.alert = function (mensaje) {
+        if (!window.alertasHabilitadas) {
+          console.log("Intento de alerta bloqueado");
+          return;
+        }
+        if (typeof nativeAlert === "function") nativeAlert(mensaje);
+      };
+      /** Nombre/código del plan actual (tabla planes o fallback). */
+      let planActualUi = { nombre: "—", codigo: "", planId: null };
+      const GC_LS_SONIDO_ALERTAS = "ganadocontrol_sonido_alertas_v1";
+      // Fallbacks globales para evitar crashes si se invocan fuera de alcance.
+      function iniciarSimulacionDrenajeBateria() {}
+      function detenerSimulacionDrenajeBateria() {}
+
+      function sonidoAlertasActivado() {
+        return localStorage.getItem(GC_LS_SONIDO_ALERTAS) !== "0";
+      }
+
+      function setSonidoAlertasActivado(activo) {
+        localStorage.setItem(GC_LS_SONIDO_ALERTAS, activo ? "1" : "0");
+      }
+
+      function notificar(mensaje) {
+        try {
+          if (!window.alertasHabilitadas) {
+            console.log("Intento de alerta bloqueado");
+            return;
+          }
+          if (!alertasHabilitadas()) return;
+          if (typeof Notification === "undefined") return;
+          if (Notification.permission === "granted") {
+            new Notification("Alerta", { body: String(mensaje || "") });
+          }
+        } catch (e) {
+          console.log("notificar:", e);
+        }
+      }
+      window.notificar = notificar;
+
+      function mostrarAlerta(id, mensaje, color) {
+        try {
+          if (!window.alertasHabilitadas) {
+            console.log("Intento de alerta bloqueado");
+            return;
+          }
+          if (!alertasHabilitadas()) return;
+          if (color === undefined || color === null) color = "red";
+          var sid = String(id || "alerta").replace(/[^a-zA-Z0-9_-]/g, "_");
+          var cont = document.getElementById("alertasContainer");
+          if (!cont) return;
+          var existente = document.getElementById("alerta_" + sid);
+          if (!existente) {
+            var div = document.createElement("div");
+            div.id = "alerta_" + sid;
+            div.style.background = color;
+            div.style.color = "white";
+            div.style.padding = "8px 16px";
+            div.style.borderRadius = "6px";
+            div.style.fontWeight = "bold";
+            div.style.animation = "parpadeo 1s infinite";
+            div.style.textAlign = "center";
+            div.style.boxSizing = "border-box";
+            div.style.maxWidth = "100%";
+            div.innerText = String(mensaje || "");
+            cont.appendChild(div);
+          } else {
+            existente.innerText = String(mensaje || "");
+            existente.style.background = color;
+          }
+        } catch (e) {
+          console.log("mostrarAlerta:", e);
+        }
+      }
+      window.mostrarAlerta = mostrarAlerta;
+
+      function ocultarAlerta(id) {
+        try {
+          var sid = String(id || "").replace(/[^a-zA-Z0-9_-]/g, "_");
+          var el = document.getElementById("alerta_" + sid);
+          if (el) el.remove();
+        } catch (e) {
+          console.log("ocultarAlerta:", e);
+        }
+      }
+      window.ocultarAlerta = ocultarAlerta;
+
+      function renderAlertas() {
+        try {
+          if (!window.alertasActivas) {
+            window.alertasActivas = { animal: false, portera: false };
+          }
+          if (!window.alertasHabilitadas || !alertasHabilitadas()) {
+            ocultarAlerta("animal");
+            ocultarAlerta("portera");
+            return;
+          }
+          if (window.alertasActivas.animal) {
+            mostrarAlerta("animal", "🐄 Animal fuera de zona", "red");
+          } else {
+            ocultarAlerta("animal");
+          }
+          if (window.alertasActivas.portera) {
+            mostrarAlerta("portera", "🚪 Portera abierta", "orange");
+          } else {
+            ocultarAlerta("portera");
+          }
+        } catch (e) {
+          console.log("renderAlertas:", e);
+        }
+      }
+      window.renderAlertas = renderAlertas;
+
+      function ocultarTodasAlertasMapa() {
+        if (!window.alertasActivas) {
+          window.alertasActivas = { animal: false, portera: false };
+        }
+        window.alertasActivas.animal = false;
+        window.alertasActivas.portera = false;
+        renderAlertas();
+      }
+      window.ocultarTodasAlertasMapa = ocultarTodasAlertasMapa;
+
+      function esPlanBasicoActual() {
+        if (!planActualUi || !planActualUi.planId) return false;
+        if (planActualUi.planId === DEFAULT_PLAN_ID) return true;
+        var t = ((planActualUi.nombre || "") + " " + (planActualUi.codigo || "")).toLowerCase();
+        return t.indexOf("bas") >= 0 || t.indexOf("basic") >= 0;
+      }
+
+      function etiquetaTipoCliente(tc) {
+        var m = {
+          collar_ganado: "Collar de ganado",
+          control_portera: "Control de portera",
+          control_tanque: "Control de tanque"
+        };
+        return m[tc] || (tc ? String(tc) : "—");
+      }
+
+      function aplicarUIMensajesSolicitudPlanEnPaneles() {
+        var solicitud = solicitudPlanActiva;
+        var panel = document.getElementById("panelSolicitudPlan");
+        var msg = document.getElementById("solicitudPlanMensaje");
+        var btn = document.getElementById("btnAnularSolicitudPlan");
+        var solMsg = document.getElementById("settingsSolicitudMsg");
+        var solAnul = document.getElementById("settingsBtnAnularSolicitud");
+
+        if (!solicitud) {
+          if (panel) panel.style.display = "block";
+          if (msg) msg.textContent = "Sin solicitudes de plan.";
+          if (btn) btn.style.display = "none";
+          if (solMsg) {
+            solMsg.textContent = "Sin solicitudes de plan.";
+            solMsg.classList.add("is-visible");
+          }
+          if (solAnul) solAnul.style.display = "none";
+          return;
+        }
+
+        var estadoSol = solicitud.estado != null ? String(solicitud.estado).toLowerCase().trim() : "";
+        var tipoSol = solicitud.tipo != null ? String(solicitud.tipo).toLowerCase().trim() : "";
+        var esCancelacionPendiente = estadoSol === "pendiente" && tipoSol === "cancelacion";
+        var puedeCancelar = estadoSol === "pendiente" || estadoSol === "aprobado";
+
+        if (panel) panel.style.display = "block";
+        if (btn) {
+          btn.style.display = puedeCancelar ? "block" : "none";
+          if (estadoSol === "pendiente") btn.textContent = esCancelacionPendiente ? "Anular solicitud de cancelación" : "Anular solicitud";
+          else if (estadoSol === "aprobado") btn.textContent = "Cancelar suscripción";
+        }
+        if (msg) {
+          if (esCancelacionPendiente) msg.textContent = "Solicitud de cancelación pendiente";
+          else if (estadoSol === "pendiente") msg.textContent = "Solicitud pendiente";
+          else if (estadoSol === "aprobado") msg.textContent = "Plan activado";
+          else if (estadoSol === "cancelado") msg.textContent = "Solicitud cancelada";
+          else if (estadoSol === "") msg.textContent = "Última solicitud sin estado definido.";
+          else msg.textContent = "Estado de solicitud: " + (solicitud.estado != null ? String(solicitud.estado) : "sin estado");
+        }
+
+        var mensajeSolicitud = msg ? msg.textContent : "";
+        if (solMsg) {
+          solMsg.textContent = mensajeSolicitud;
+          solMsg.classList.toggle("is-visible", !!mensajeSolicitud);
+        }
+        if (solAnul) {
+          solAnul.style.display = puedeCancelar ? "block" : "none";
+          if (estadoSol === "pendiente") solAnul.textContent = esCancelacionPendiente ? "Anular solicitud de cancelación" : "Anular solicitud";
+          else if (estadoSol === "aprobado") solAnul.textContent = "Cancelar suscripción";
+        }
+      }
+
+      async function cargarSolicitudPlan() {
+        const panel = document.getElementById("panelSolicitudPlan");
+        const msg = document.getElementById("solicitudPlanMensaje");
+        const btn = document.getElementById("btnAnularSolicitudPlan");
+
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session || !session.user || !session.user.id) {
+          solicitudPlanActiva = null;
+          window.solicitudes = [];
+          if (panel) panel.style.display = "none";
+          if (msg) msg.textContent = "";
+          if (btn) btn.style.display = "none";
+          aplicarUIMensajesSolicitudPlanEnPaneles();
+          return;
+        }
+
+        const { data: rows, error } = await supabase
+          .from("solicitudes_plan")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .order("created_at", { ascending: false })
+          .limit(1);
+
+        if (error) {
+          console.warn("solicitudes_plan:", error);
+          solicitudPlanActiva = null;
+          window.solicitudes = [];
+          if (panel) panel.style.display = "block";
+          if (msg) msg.textContent = "No se pudo cargar el estado de la solicitud.";
+          if (btn) btn.style.display = "none";
+          var solMsgErr = document.getElementById("settingsSolicitudMsg");
+          var solAnulErr = document.getElementById("settingsBtnAnularSolicitud");
+          if (solMsgErr) {
+            solMsgErr.textContent = "No se pudo cargar el estado de la solicitud.";
+            solMsgErr.classList.add("is-visible");
+          }
+          if (solAnulErr) solAnulErr.style.display = "none";
+          return;
+        }
+
+        window.solicitudes = rows || [];
+        var solicitud = window.solicitudes.length ? window.solicitudes[0] : null;
+        solicitudPlanActiva = solicitud;
+
+        aplicarUIMensajesSolicitudPlanEnPaneles();
+      }
+
+      async function renderConfiguracion() {
+        try {
+          if (typeof window.mostrarVista === "function" && window.__vistaActiva === "configuracion") {
+            window.mostrarVista("configuracion");
+          }
+          if (typeof window.refrescarVistaConfiguracion === "function") {
+            await window.refrescarVistaConfiguracion();
+          }
+        } catch (e) {
+          console.log("renderConfiguracion:", e);
+        }
+      }
+
+      async function anularSolicitudPlan() {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session || !session.user || !session.user.id) {
+            alert("No hay sesión.");
+            return;
+          }
+
+          var sol = solicitudPlanActiva;
+          var estadoSol = sol && sol.estado != null ? String(sol.estado).toLowerCase().trim() : "";
+
+          if (estadoSol === "aprobado") {
+            const { error } = await supabase.from("solicitudes_plan").insert([{
+              user_id: session.user.id,
+              tipo: "cancelacion",
+              estado: "pendiente",
+              created_at: new Date().toISOString(),
+              cancelado: false
+            }]);
+            if (error) {
+              console.error(error);
+              alert("No se pudo enviar la solicitud: " + (error.message || String(error)));
+              return;
+            }
+            alert("Solicitud de cancelación enviada");
+            await cargarSolicitudPlan();
+            await renderConfiguracion();
+            return;
+          }
+
+          const { error } = await supabase
+            .from("solicitudes_plan")
+            .update({ estado: "cancelado" })
+            .eq("user_id", session.user.id)
+            .in("estado", ["pendiente", "aprobado"]);
+
+          if (error) {
+            console.error(error);
+            alert("No se pudo anular: " + (error.message || String(error)));
+            return;
+          }
+
+          console.log("Solicitud cancelada correctamente");
+
+          await cargarSolicitudPlan();
+          await renderConfiguracion();
+        } catch (e) {
+          console.log("Error en cancelación:", e);
+        }
+      }
 
       function updatePerfilUI() {
         const el = document.getElementById("userProfileLabel");
@@ -1683,26 +2345,105 @@
         return String(valor).trim();
       }
 
+      /** Filas de public.estados (user_id null = catálogo global). */
+      let estadosAnimalesRows = [];
+      window.estados = Array.isArray(window.estados) ? window.estados : [];
+
       function escapeHtml(text) {
         const div = document.createElement("div");
         div.textContent = text;
         return div.innerHTML;
       }
 
-      function cargarEstadosCustomLocal() {
-        const raw = JSON.parse(localStorage.getItem(CUSTOM_ANIMAL_STATUSES_KEY) || "[]");
-        if (!Array.isArray(raw)) return [];
-        return raw.map(normalizarEstadoAnimal).filter(Boolean);
+      function nombreEstadoDesdeRow(row) {
+        if (!row || typeof row !== "object") return "";
+        if (row.nombre != null && String(row.nombre).trim() !== "") return String(row.nombre).trim();
+        if (row.nombre_estado != null && String(row.nombre_estado).trim() !== "") return String(row.nombre_estado).trim();
+        if (row.descripcion != null && String(row.descripcion).trim() !== "") return String(row.descripcion).trim();
+        if (row.label != null && String(row.label).trim() !== "") return String(row.label).trim();
+        if (row.titulo != null && String(row.titulo).trim() !== "") return String(row.titulo).trim();
+        if (row.name != null && String(row.name).trim() !== "") return String(row.name).trim();
+        if (typeof row.estado === "string" && row.estado.trim() !== "") return row.estado.trim();
+        return "";
       }
 
-      function guardarEstadosCustomLocal() {
-        localStorage.setItem(CUSTOM_ANIMAL_STATUSES_KEY, JSON.stringify(customAnimalStatuses));
+      /** Clases CSS / color mapa según texto del estado (sin lista fija en frontend). */
+      function claseTarjetaEstadoAnimal(estado) {
+        var e = normalizarEstadoAnimal(estado).toLowerCase();
+        if (e.indexOf("enferm") >= 0) return "enfermo";
+        if (e.indexOf("vacun") >= 0) return "vacunar";
+        if (e.indexOf("preñ") >= 0 || e.indexOf("pren") >= 0) return "prenado";
+        return "normal";
+      }
+
+      function colorMapaPorEstadoAnimal(estado) {
+        var c = claseTarjetaEstadoAnimal(estado);
+        if (c === "enfermo") return "red";
+        if (c === "vacunar") return "orange";
+        if (c === "prenado") return "green";
+        return "blue";
+      }
+
+      function obtenerEstadosRows() {
+        return Array.isArray(window.estados) ? window.estados : [];
+      }
+
+      function forzarRenderEstados(selected) {
+        renderizarSelectEstadoAnimal(selected || "");
+        setTimeout(function () {
+          renderizarSelectEstadoAnimal(selected || "");
+        }, 0);
+      }
+
+      async function cargarEstadosDesdeSupabase() {
+        estadosAnimalesRows = [];
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session || !session.user || !session.user.id) {
+            window.estados = [];
+            estadosAnimalesRows = [];
+            forzarRenderEstados("");
+            return;
+          }
+          const { data: estadosData, error } = await supabase
+            .from("estados")
+            .select("*")
+            .or(`user_id.eq.${session.user.id},user_id.is.null`);
+
+          console.log("ESTADOS DESDE DB:", estadosData);
+
+          if (error) {
+            console.warn("cargarEstadosDesdeSupabase:", error);
+            window.estados = [];
+            estadosAnimalesRows = [];
+            forzarRenderEstados("");
+            return;
+          }
+          var rows = Array.isArray(estadosData) ? estadosData.slice() : [];
+          rows.sort(function (a, b) {
+            var oa = a && a.orden != null && !isNaN(Number(a.orden)) ? Number(a.orden) : null;
+            var ob = b && b.orden != null && !isNaN(Number(b.orden)) ? Number(b.orden) : null;
+            if (oa != null || ob != null) {
+              if (oa == null) return 1;
+              if (ob == null) return -1;
+              if (oa !== ob) return oa - ob;
+            }
+            return nombreEstadoDesdeRow(a).localeCompare(nombreEstadoDesdeRow(b), undefined, { sensitivity: "base" });
+          });
+          window.estados = rows;
+          estadosAnimalesRows = rows;
+        } catch (e) {
+          console.warn("cargarEstadosDesdeSupabase:", e);
+          window.estados = [];
+          estadosAnimalesRows = [];
+        }
+        forzarRenderEstados("");
       }
 
       function listaEstadosAnimales() {
         const merged = [];
-        DEFAULT_ANIMAL_STATUSES.concat(customAnimalStatuses).forEach(function (s) {
-          const clean = normalizarEstadoAnimal(s);
+        obtenerEstadosRows().forEach(function (row) {
+          const clean = nombreEstadoDesdeRow(row);
           if (!clean) return;
           if (!merged.some(function (x) { return x.toLowerCase() === clean.toLowerCase(); })) {
             merged.push(clean);
@@ -1711,63 +2452,50 @@
         return merged;
       }
 
-      function opcionesEstadoHtml(selected) {
+      /** Opciones HTML solo desde filas cargadas de Supabase (estadosAnimalesRows). */
+      function opcionesEstadoHtmlDesdeFilas(selected) {
         const selectedNorm = normalizarEstadoAnimal(selected);
-        let html = '<option value="">-- Sin estado --</option>';
-        listaEstadosAnimales().forEach(function (estado) {
+        const estados = obtenerEstadosRows();
+        console.log("ESTADOS USADOS EN SELECT:", estados);
+        let html = "";
+        html += estados.map(function (e) {
+          const estado = nombreEstadoDesdeRow(e);
+          if (!estado) return "";
           const sel = selectedNorm.toLowerCase() === estado.toLowerCase() ? " selected" : "";
-          html += "<option" + sel + ">" + escapeHtml(estado) + "</option>";
-        });
+          return "<option value=\"" + escapeHtml(estado) + "\"" + sel + ">" + escapeHtml(estado) + "</option>";
+        }).join("");
+        if (selectedNorm && !estados.some(function (r) {
+          return nombreEstadoDesdeRow(r).toLowerCase() === selectedNorm.toLowerCase();
+        })) {
+          html += "<option value=\"" + escapeHtml(selectedNorm) + "\" selected>" + escapeHtml(selectedNorm) + "</option>";
+        }
         return html;
       }
 
+      function opcionesEstadoHtml(selected) {
+        return opcionesEstadoHtmlDesdeFilas(selected);
+      }
+
       function renderizarSelectEstadoAnimal(selected) {
-        const select = document.getElementById("estado");
-        if (!select) return;
-        select.innerHTML = opcionesEstadoHtml(selected);
-      }
-
-      async function guardarEstadosCustomSupabase() {
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) return;
-          const metadataActual = user.user_metadata || {};
-          const customPrevios = Array.isArray(metadataActual.customAnimalStatuses) ? metadataActual.customAnimalStatuses : [];
-          const prevNorm = customPrevios.map(normalizarEstadoAnimal).filter(Boolean);
-          const nowNorm = customAnimalStatuses.map(normalizarEstadoAnimal).filter(Boolean);
-          if (JSON.stringify(prevNorm) === JSON.stringify(nowNorm)) return;
-          await supabase.auth.updateUser({
-            data: Object.assign({}, metadataActual, { customAnimalStatuses: nowNorm })
-          });
-        } catch (e) {
-          console.warn("No se pudo persistir estados personalizados en Supabase:", e);
-        }
-      }
-
-      async function sincronizarEstadosCustomConSupabase() {
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) return;
-          const remotos = Array.isArray(user.user_metadata && user.user_metadata.customAnimalStatuses)
-            ? user.user_metadata.customAnimalStatuses
-            : [];
-          const combinados = [];
-          customAnimalStatuses.concat(remotos).forEach(function (s) {
-            const clean = normalizarEstadoAnimal(s);
-            if (!clean) return;
-            if (DEFAULT_ANIMAL_STATUSES.some(function (d) { return d.toLowerCase() === clean.toLowerCase(); })) return;
-            if (!combinados.some(function (x) { return x.toLowerCase() === clean.toLowerCase(); })) combinados.push(clean);
-          });
-          customAnimalStatuses = combinados;
-          guardarEstadosCustomLocal();
-          await guardarEstadosCustomSupabase();
-          renderizarSelectEstadoAnimal("");
-        } catch (e) {
-          console.warn("No se pudo sincronizar estados personalizados:", e);
-        }
+        const html = opcionesEstadoHtmlDesdeFilas(selected);
+        document.querySelectorAll("select[data-gc-estado-animal]").forEach(function (select) {
+          select.innerHTML = html;
+        });
+        const selectById = document.getElementById("estadoSelect");
+        if (selectById) selectById.innerHTML = html;
+        const selectLegacy = document.getElementById("estado");
+        if (selectLegacy) selectLegacy.innerHTML = html;
+        const editorSelect = document.getElementById("estadoEditorSelect");
+        if (editorSelect) editorSelect.innerHTML = html;
       }
 
       async function nuevoEstadoAnimal() {
+        if (!featureOn("animales")) {
+          return alert("Función no disponible");
+        }
+        if (!featureOn("estados")) {
+          return alert("Función no disponible");
+        }
         const estadoNuevo = normalizarEstadoAnimal(prompt("Nuevo estado animal:"));
         if (!estadoNuevo) return;
         const existe = listaEstadosAnimales().some(function (s) { return s.toLowerCase() === estadoNuevo.toLowerCase(); });
@@ -1775,10 +2503,25 @@
           alert("Ese estado ya existe.");
           return;
         }
-        customAnimalStatuses.push(estadoNuevo);
-        guardarEstadosCustomLocal();
-        await guardarEstadosCustomSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          return alert("Iniciá sesión para crear estados.");
+        }
+        const payload = { nombre: estadoNuevo, user_id: user.id };
+        const { error } = await supabase.from("estados").insert([payload]);
+        if (error) {
+          console.warn("nuevoEstadoAnimal insert:", error);
+          return alert("No se pudo guardar el estado: " + (error.message || String(error)));
+        }
+        await cargarEstadosDesdeSupabase();
         renderizarSelectEstadoAnimal(estadoNuevo);
+        if (typeof window.mostrar === "function") {
+          try {
+            window.mostrar();
+          } catch (e2) {
+            console.warn("mostrar tras nuevo estado:", e2);
+          }
+        }
       }
 
       async function cargarPerfilUsuario() {
@@ -1786,25 +2529,740 @@
           const { data: { user } } = await supabase.auth.getUser();
           if (!user) {
             perfilUsuario = null;
+            window.alertasHabilitadas = true;
             updatePerfilUI();
             return;
           }
           const { data, error } = await supabase
-            .from("usuarios")
-            .select("nombre, apellido, ciudad, telefono")
+            .from("profiles")
+            .select("*")
             .eq("id", user.id)
             .maybeSingle();
           if (error) {
             console.warn("cargarPerfilUsuario:", error);
             perfilUsuario = null;
+            window.alertasHabilitadas = true;
           } else {
             perfilUsuario = data;
+            window.alertasHabilitadas = data ? (data.alertas_activas ?? true) : true;
           }
         } catch (e) {
           console.warn("cargarPerfilUsuario:", e);
           perfilUsuario = null;
+          window.alertasHabilitadas = true;
         }
         updatePerfilUI();
+      }
+
+      async function solicitarCambioPlanUsuario(planSolicitado) {
+        const clean = String(planSolicitado || "").trim();
+        if (clean !== "Ganado" && clean !== "Completo") {
+          return alert("Elegí un plan válido.");
+        }
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session || !session.user || !session.user.id) {
+          return alert("Iniciá sesión.");
+        }
+        const { error } = await supabase.from("solicitudes_plan").insert([{
+          user_id: session.user.id,
+          plan_solicitado: clean,
+          estado: "pendiente",
+          cancelado: false
+        }]);
+        if (error) {
+          console.warn("solicitudes_plan insert:", error);
+          return alert("No se pudo enviar: " + (error.message || String(error)));
+        }
+        alert("Solicitud enviada");
+        await cargarSolicitudPlan();
+        await refrescarVistaConfiguracion();
+      }
+
+      function mostrarOpcionesUpgradePlan() {
+        var btn = document.getElementById("settingsBtnMejorarPlan");
+        var pnl = document.getElementById("settingsPlanChoicePanel");
+        if (btn) btn.style.display = "none";
+        if (pnl) pnl.style.display = "block";
+      }
+
+      async function enviarSolicitudPlanDesdePanel() {
+        var g = document.getElementById("settingsPlanGanado");
+        var c = document.getElementById("settingsPlanCompleto");
+        var v = (g && g.checked) ? "Ganado" : ((c && c.checked) ? "Completo" : "");
+        if (!v) {
+          return alert("Elegí Plan Ganado o Plan Completo.");
+        }
+        await solicitarCambioPlanUsuario(v);
+      }
+
+      async function refrescarVistaConfiguracion() {
+        const emailEl = document.getElementById("settingsEmail");
+        const planEl = document.getElementById("settingsPlanNombre");
+        const prodEl = document.getElementById("settingsTipoCliente");
+        const upgradeWrap = document.getElementById("settingsUpgradeWrap");
+        const sonidoToggle = document.getElementById("settingsToggleSonido");
+
+        try {
+          await cargarPerfilUsuario();
+        } catch (e) {
+          console.log("Error perfil ignorado:", e);
+        }
+
+        const { data: { session } } = await supabase.auth.getSession();
+        var featsEarly = window.features || {};
+        if (featsEarly.alertas === true && session && session.user && session.user.id) {
+          try {
+            const { data: profAlerta, error: errAlerta } = await supabase
+              .from("profiles")
+              .select("alertas_activas")
+              .eq("id", session.user.id)
+              .maybeSingle();
+            if (!errAlerta && profAlerta) {
+              if (perfilUsuario) {
+                perfilUsuario.alertas_activas = profAlerta.alertas_activas;
+              }
+              window.alertasHabilitadas = profAlerta.alertas_activas ?? true;
+            }
+          } catch (ignore) {}
+        }
+        if (emailEl) {
+          emailEl.value = session && session.user && session.user.email ? session.user.email : "";
+        }
+        if (planEl) {
+          planEl.textContent = planActualUi && planActualUi.nombre ? planActualUi.nombre : "—";
+        }
+        if (prodEl) {
+          var tc = perfilUsuario && perfilUsuario.tipo_cliente ? perfilUsuario.tipo_cliente : "";
+          prodEl.textContent = etiquetaTipoCliente(tc);
+        }
+        if (upgradeWrap) {
+          upgradeWrap.style.display = esPlanBasicoActual() ? "block" : "none";
+        }
+        var btnMej = document.getElementById("settingsBtnMejorarPlan");
+        var pnlChoice = document.getElementById("settingsPlanChoicePanel");
+        if (btnMej && pnlChoice && esPlanBasicoActual()) {
+          btnMej.style.display = "block";
+          pnlChoice.style.display = "none";
+        } else if (btnMej && pnlChoice) {
+          btnMej.style.display = "none";
+          pnlChoice.style.display = "none";
+        }
+        if (sonidoToggle) {
+          sonidoToggle.checked = sonidoAlertasActivado();
+        }
+
+        var alertasWrap = document.getElementById("settingsAlertasActivasWrap");
+        var toggleAlertas = document.getElementById("toggleAlertas");
+        var feats = featsEarly;
+        if (alertasWrap) {
+          alertasWrap.style.display = feats.alertas === true ? "flex" : "none";
+        }
+        if (toggleAlertas && feats.alertas === true) {
+          var aa = perfilUsuario && Object.prototype.hasOwnProperty.call(perfilUsuario, "alertas_activas")
+            ? perfilUsuario.alertas_activas
+            : null;
+          toggleAlertas.checked = aa !== false;
+          window.alertasHabilitadas = toggleAlertas.checked;
+          toggleAlertas.onchange = async function (e) {
+            try {
+              var t = e.target;
+              var checked = !!(t && t.checked);
+              window.alertasHabilitadas = checked;
+              const { data: { session } } = await supabase.auth.getSession();
+              if (!session || !session.user || !session.user.id) {
+                window.alertasHabilitadas = !checked;
+                if (t) t.checked = !checked;
+                return;
+              }
+              const { error } = await supabase
+                .from("profiles")
+                .update({ alertas_activas: checked })
+                .eq("id", session.user.id);
+              if (error) {
+                console.warn("alertas_activas:", error);
+                if (t) t.checked = !checked;
+                window.alertasHabilitadas = !checked;
+                return;
+              }
+              if (perfilUsuario) perfilUsuario.alertas_activas = checked;
+              if (typeof window.actualizarAlertaBarraMapa === "function") {
+                window.actualizarAlertaBarraMapa();
+              }
+              if (typeof window.mostrar === "function") {
+                try {
+                  window.mostrar();
+                } catch (mostrarErr) {
+                  console.log("mostrar tras toggle alertas:", mostrarErr);
+                }
+              }
+            } catch (err) {
+              console.log("toggleAlertas:", err);
+            }
+          };
+        }
+
+        await cargarSolicitudPlan();
+
+        var btnCancelPlan = document.getElementById("btnCancelarPlan");
+        if (btnCancelPlan) {
+          btnCancelPlan.style.display = session && session.user && session.user.id ? "inline-block" : "none";
+        }
+      }
+
+      async function cambiarPasswordDesdeSettings() {
+        var a = document.getElementById("settingsPassNew");
+        var b = document.getElementById("settingsPassConf");
+        if (!a || !b) return;
+        var p1 = String(a.value || "");
+        var p2 = String(b.value || "");
+        if (p1.length < 6) {
+          return alert("La contraseña debe tener al menos 6 caracteres.");
+        }
+        if (p1 !== p2) {
+          return alert("Las contraseñas no coinciden.");
+        }
+        const { error } = await supabase.auth.updateUser({ password: p1 });
+        if (error) {
+          return alert("No se pudo actualizar: " + (error.message || String(error)));
+        }
+        a.value = "";
+        b.value = "";
+        alert("Contraseña actualizada.");
+      }
+
+      async function cerrarSesionDesdeSettings() {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          return alert("Error al cerrar sesión: " + (error.message || String(error)));
+        }
+      }
+
+      async function eliminarCuentaUsuarioAvanzado() {
+        if (!confirm("¿Eliminar tu cuenta y los datos asociados en la app? Esta acción no se puede deshacer.")) {
+          return;
+        }
+        if (prompt("Escribí ELIMINAR para confirmar.") !== "ELIMINAR") {
+          return alert("Cancelado.");
+        }
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session || !session.user || !session.user.id) {
+          return alert("No hay sesión.");
+        }
+        var uid = session.user.id;
+        var errs = [];
+
+        function pushErr(label, err) {
+          if (err) errs.push(label + ": " + (err.message || String(err)));
+        }
+
+        var r1 = await supabase.from("animales").delete().eq("user_id", uid);
+        pushErr("animales", r1.error);
+        var r2 = await supabase.from("estados").delete().eq("user_id", uid);
+        pushErr("estados", r2.error);
+        var r3 = await supabase.from("solicitudes_plan").delete().eq("user_id", uid);
+        pushErr("solicitudes_plan", r3.error);
+        var r4 = await supabase.from("user_plan").delete().eq("user_id", uid);
+        pushErr("user_plan", r4.error);
+        var r5 = await supabase.from("profiles").delete().eq("id", uid);
+        pushErr("profiles", r5.error);
+
+        if (errs.length) {
+          console.warn("eliminarCuenta:", errs);
+          alert("Algunos datos no se pudieron borrar (revisá permisos RLS en Supabase):\n" + errs.join("\n"));
+        }
+
+        await supabase.auth.signOut();
+      }
+
+      /** Sincroniza public.profiles con auth (id + email). Requiere tabla profiles y política INSERT/UPDATE para el usuario. */
+      async function upsertProfileAuth(session) {
+        try {
+          if (!session || !session.user) return;
+          const u = session.user;
+          if (!u.id) return;
+          const { error } = await supabase.from("profiles").upsert(
+            { id: u.id, email: u.email != null ? u.email : null },
+            { onConflict: "id" }
+          );
+          if (error) console.warn("profiles upsert:", error);
+        } catch (e) {
+          console.log("Error perfil ignorado:", e);
+        }
+      }
+
+      // Plan → features: public.user_plan (user_id, plan_id), public.plan_features (plan_id, feature text, enabled bool).
+      function featuresAccesoCompletoPorDefecto() {
+        return {
+          animales: true,
+          rebanos: true,
+          tanques: true,
+          porteras: true,
+          alertas: true,
+          tiempo_real: true,
+          peso: true,
+          proyeccion: true,
+          historial: true,
+          estados: true
+        };
+      }
+
+      /** Solo si el usuario no tiene fila en user_plan (sin plan asignado). */
+      function featuresFallbackSinPlan() {
+        return {
+          animales: true,
+          rebanos: true,
+          alertas: true,
+          peso: true,
+          proyeccion: true,
+          tanques: true,
+          porteras: true,
+          historial: false,
+          estados: false
+        };
+      }
+
+      /**
+       * Modo fallback: opt-out (solo bloquea si la clave es === false).
+       * Modo plan: whitelist (solo permite si la clave es === true).
+       */
+      function featureOn(key) {
+        if (window.features == null) {
+          return window.FEATURES_MODO_FALLBACK === true;
+        }
+        if (window.FEATURES_MODO_FALLBACK === true) {
+          return window.features[key] !== false;
+        }
+        return window.features[key] === true;
+      }
+
+      function alertasHabilitadas() {
+        const features = window.features || {};
+        if (features.alertas !== true) return false;
+        if (!window.alertasHabilitadas) return false;
+        return true;
+      }
+
+      function ocultarAnimales() {
+        const secAnim = document.getElementById("seccionAnimales");
+        if (secAnim) secAnim.style.display = "none";
+        const elForm = document.getElementById("formulario");
+        if (elForm) elForm.style.display = "none";
+      }
+
+      function ocultarTanques() {
+        const secTan = document.getElementById("seccionTanques");
+        if (secTan) secTan.style.display = "none";
+        const navTan = document.getElementById("navTanque");
+        if (navTan) navTan.style.display = "none";
+      }
+
+      function ocultarPorteras() {
+        const secPor = document.getElementById("seccionPorteras");
+        if (secPor) secPor.style.display = "none";
+      }
+
+      function ocultarRebanos() {
+        const navReb = document.getElementById("navRebanos");
+        if (navReb) navReb.style.display = "none";
+        const rebPanel = document.getElementById("rebanosPanel");
+        if (rebPanel) rebPanel.style.display = "none";
+      }
+
+      function mostrarHistorial() {
+        const el = document.getElementById("historialPanel");
+        if (el) el.style.display = "";
+      }
+
+      function ocultarHistorial() {
+        const el = document.getElementById("historialPanel");
+        if (el) el.style.display = "none";
+      }
+
+      function mostrarBotonNuevoEstado() {
+        const b1 = document.getElementById("btnNuevoEstadoAnimalForm");
+        const b2 = document.getElementById("btnNuevoEstadoAnimalIngreso");
+        if (b1) b1.style.display = "";
+        if (b2) b2.style.display = "";
+      }
+
+      function ocultarBotonNuevoEstado() {
+        const b1 = document.getElementById("btnNuevoEstadoAnimalForm");
+        const b2 = document.getElementById("btnNuevoEstadoAnimalIngreso");
+        if (b1) b1.style.display = "none";
+        if (b2) b2.style.display = "none";
+      }
+
+      function aplicarHistorialYEstadosUI() {
+        if (featureOn("historial")) {
+          mostrarHistorial();
+        } else {
+          ocultarHistorial();
+        }
+        if (featureOn("estados")) {
+          mostrarBotonNuevoEstado();
+        } else {
+          ocultarBotonNuevoEstado();
+        }
+        renderizarSelectEstadoAnimal("");
+      }
+
+      function setBloqueado(id, activo) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.style.display = activo ? "block" : "none";
+      }
+
+      function setBotonBloqueado(id, bloqueado, textoBase) {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.disabled = !!bloqueado;
+        if (!btn.dataset.baseLabel) {
+          btn.dataset.baseLabel = textoBase || btn.textContent || "";
+        }
+        btn.textContent = bloqueado ? ("🔒 " + btn.dataset.baseLabel) : btn.dataset.baseLabel;
+        btn.style.opacity = bloqueado ? "0.5" : "";
+        btn.style.cursor = bloqueado ? "not-allowed" : "";
+        btn.title = bloqueado ? "Disponible en plan Ganado" : "";
+      }
+
+      function aplicarBloqueosVisuales() {
+        var pesoOff = !featureOn("peso");
+        var proyOff = !featureOn("proyeccion");
+        var rebanosOff = !featureOn("rebanos");
+        var alertasOff = !featureOn("alertas");
+
+        setBloqueado("bloqueadoPeso", pesoOff);
+        setBloqueado("bloqueadoProyeccion", proyOff);
+        setBloqueado("bloqueadoRebanos", rebanosOff);
+        setBloqueado("bloqueadoAlertas", alertasOff);
+
+        setBotonBloqueado("btnActualizarPesos", pesoOff, "📥 Actualizar Pesos");
+        setBotonBloqueado("navRebanos", rebanosOff, "🐑 Rebaños");
+      }
+
+      function aplicarFeaturesDesdePlan() {
+        const features = window.features;
+        console.log("Features actuales (UI):", features, "modoFallback:", window.FEATURES_MODO_FALLBACK);
+
+        if (!featureOn("animales")) ocultarAnimales();
+        else {
+          const secAnim = document.getElementById("seccionAnimales");
+          if (secAnim) secAnim.style.display = "";
+        }
+
+        if (!featureOn("tanques")) ocultarTanques();
+        else {
+          const secTan = document.getElementById("seccionTanques");
+          if (secTan) secTan.style.display = "";
+          const navTan = document.getElementById("navTanque");
+          if (navTan) navTan.style.display = "";
+        }
+
+        if (!featureOn("porteras")) ocultarPorteras();
+        else {
+          const secPor = document.getElementById("seccionPorteras");
+          if (secPor) secPor.style.display = "";
+        }
+
+        const navReb = document.getElementById("navRebanos");
+        if (navReb) navReb.style.display = "";
+
+        var elAnim = document.getElementById("animales");
+        if (elAnim) {
+          var ocultarMapa = !featureOn("animales") && !featureOn("porteras");
+          elAnim.style.display = ocultarMapa ? "none" : "";
+        }
+        var elForm = document.getElementById("formulario");
+        if (elForm) {
+          if (!featureOn("animales")) elForm.style.display = "none";
+          else elForm.style.display = "";
+        }
+
+        aplicarHistorialYEstadosUI();
+        aplicarBloqueosVisuales();
+      }
+
+      function registrarServiceWorkerSiAlertas() {
+        if (!("serviceWorker" in navigator)) return;
+        if (!alertasHabilitadas()) return;
+        navigator.serviceWorker.register("sw.js")
+          .then(function (registration) {
+            console.log("Service Worker registrado:", registration.scope);
+          })
+          .catch(function (error) {
+            console.warn("Error registrando Service Worker:", error);
+          });
+      }
+
+      function initApp() {
+        console.log("App iniciada con features:", window.features);
+
+        if (featureOn("animales")) {
+          mostrarVista("animales");
+          return;
+        }
+        if (featureOn("tanques")) {
+          mostrarVista("tanque");
+          return;
+        }
+        if (featureOn("porteras")) {
+          mostrarVista("porteras");
+          return;
+        }
+        if (featureOn("rebanos")) {
+          mostrarVista("rebanos");
+          return;
+        }
+        mostrarVista("ayuda");
+      }
+
+      async function asegurarUserPlanPorDefecto(session) {
+        if (!session || !session.user || !session.user.id) return;
+
+        const { data: existing, error } = await supabase
+          .from("user_plan")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .single();
+
+        if (!error && existing && existing.plan_id != null) {
+          return;
+        }
+
+        if (error && error.code !== "PGRST116") {
+          console.warn("asegurarUserPlanPorDefecto (lectura user_plan):", error);
+          return;
+        }
+
+        const { error: insErr } = await supabase.from("user_plan").insert([{
+          user_id: session.user.id,
+          plan_id: DEFAULT_PLAN_ID
+        }]);
+
+        if (insErr) {
+          console.warn("asegurarUserPlanPorDefecto (insert user_plan):", insErr);
+        }
+      }
+
+      async function cargarPlanUsuario() {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (!session || !session.user) {
+          planActualUi = { nombre: "—", codigo: "", planId: null };
+          window.FEATURES_MODO_FALLBACK = true;
+          window.features = featuresAccesoCompletoPorDefecto();
+          console.log("USER:", null);
+          console.log("PLAN:", null);
+          console.log("FEATURES:", window.features);
+          aplicarFeaturesDesdePlan();
+          return;
+        }
+
+        console.log("USER:", session.user.id);
+
+        await asegurarUserPlanPorDefecto(session);
+
+        const { data: userPlan, error: planErr } = await supabase
+          .from("user_plan")
+          .select("plan_id")
+          .eq("user_id", session.user.id)
+          .single();
+
+        if (planErr && planErr.code !== "PGRST116") {
+          console.warn("user_plan:", planErr);
+        }
+
+        if (!userPlan) {
+          planActualUi = { nombre: "Sin asignar", codigo: "", planId: null };
+          window.FEATURES_MODO_FALLBACK = true;
+          window.features = featuresFallbackSinPlan();
+          console.warn("No user_plan row, fallback TEMP");
+          console.log("PLAN:", null);
+          console.log("FEATURES:", window.features);
+          aplicarFeaturesDesdePlan();
+          return;
+        }
+
+        const tienePlanId = userPlan.plan_id != null && userPlan.plan_id !== "";
+
+        if (!tienePlanId) {
+          planActualUi = { nombre: "Sin asignar", codigo: "", planId: null };
+          window.FEATURES_MODO_FALLBACK = true;
+          window.features = featuresFallbackSinPlan();
+          console.warn("user_plan sin plan_id, fallback TEMP");
+          console.log("PLAN:", userPlan);
+          console.log("FEATURES:", window.features);
+          aplicarFeaturesDesdePlan();
+          return;
+        }
+
+        window.FEATURES_MODO_FALLBACK = false;
+
+        planActualUi = {
+          nombre: "—",
+          codigo: "",
+          planId: userPlan.plan_id
+        };
+
+        const { data: plan, error: errPlanNombre } = await supabase
+          .from("planes")
+          .select("nombre")
+          .eq("id", userPlan.plan_id)
+          .single();
+
+        var nombrePlan = "";
+        if (!errPlanNombre && plan && plan.nombre != null) {
+          nombrePlan = String(plan.nombre).trim();
+        }
+        if (nombrePlan) {
+          planActualUi.nombre = nombrePlan;
+          planActualUi.codigo = nombrePlan.toLowerCase().replace(/\s+/g, "_");
+        } else {
+          if (errPlanNombre) {
+            console.warn("planes (nombre):", errPlanNombre);
+          }
+          if (userPlan.plan_id === DEFAULT_PLAN_ID) {
+            planActualUi.nombre = "Básico";
+            planActualUi.codigo = "basico";
+          } else {
+            planActualUi.nombre = "—";
+            planActualUi.codigo = "";
+          }
+        }
+
+        const { data: featuresData } = await supabase
+          .from("plan_features")
+          .select("*")
+          .eq("plan_id", userPlan.plan_id);
+        console.log("FEATURES DESDE plan_features:", featuresData);
+
+        if (featuresData && featuresData.length > 0) {
+          window.features = {};
+          featuresData.forEach(function (f) {
+            if (f.feature == null || String(f.feature).trim() === "") return;
+            if (f.enabled === false || f.enabled === 0) return;
+            window.features[String(f.feature).trim()] = true;
+          });
+        } else {
+          console.warn("No features found for plan, empty whitelist");
+          window.features = {};
+        }
+
+        console.log("PLAN:", userPlan);
+        console.log("FEATURES:", window.features);
+        aplicarFeaturesDesdePlan();
+      }
+
+      function limpiarUI() {
+        ocultarTodasAlertasMapa();
+        detenerSimulacionDrenajeBateria();
+        window.appIniciada = false;
+        document.getElementById("loginScreen").style.display = "flex";
+        showLogin();
+        animalesGlobal = [];
+        animales = animalesGlobal;
+        selectedAnimales = [];
+        if (typeof map !== "undefined" && map) {
+          if (window.marcadores && window.marcadores.length) {
+            window.marcadores.forEach(function (m) {
+              map.removeLayer(m);
+            });
+          }
+          window.marcadores = [];
+          if (window.polylinesAnimales && window.polylinesAnimales.length) {
+            window.polylinesAnimales.forEach(function (p) {
+              map.removeLayer(p);
+            });
+          }
+          window.polylinesAnimales = [];
+          if (window.porterasMarkers && window.porterasMarkers.length) {
+            window.porterasMarkers.forEach(function (mk) {
+              map.removeLayer(mk);
+            });
+          }
+          window.porterasMarkers = [];
+        }
+        modoSeleccionUbicacionPortera = false;
+        selectedLat = null;
+        selectedLng = null;
+        if (typeof map !== "undefined" && map && map.getContainer()) {
+          map.getContainer().style.cursor = "";
+        }
+        tanques = [];
+        tanqueSeleccionadoId = null;
+        renderListaTanques();
+        window.estados = [];
+        estadosAnimalesRows = [];
+        renderizarSelectEstadoAnimal("");
+        perfilUsuario = null;
+        solicitudPlanActiva = null;
+        window.solicitudes = [];
+        window.FEATURES_MODO_FALLBACK = true;
+        window.features = featuresAccesoCompletoPorDefecto();
+        aplicarFeaturesDesdePlan();
+        updatePerfilUI();
+        porteras = [];
+        syncWindowPorteras();
+        renderPorterasPanel();
+        actualizarMarcadoresPorterasEnMapa();
+        mostrar();
+        void cargarSolicitudPlan();
+      }
+
+      async function initAppConSesion(session) {
+        if (window.appIniciada) {
+          console.log("App ya iniciada, evitar duplicado");
+          return;
+        }
+        if (!session || !session.user) return;
+        window.appIniciada = true;
+        animalesGlobal = [];
+        animales = animalesGlobal;
+        selectedAnimales = [];
+        if (typeof map !== "undefined" && map) {
+          if (window.marcadores && window.marcadores.length) {
+            window.marcadores.forEach(function (m) {
+              map.removeLayer(m);
+            });
+          }
+          window.marcadores = [];
+          if (window.polylinesAnimales && window.polylinesAnimales.length) {
+            window.polylinesAnimales.forEach(function (p) {
+              map.removeLayer(p);
+            });
+          }
+          window.polylinesAnimales = [];
+          if (window.porterasMarkers && window.porterasMarkers.length) {
+            window.porterasMarkers.forEach(function (mk) {
+              map.removeLayer(mk);
+            });
+          }
+          window.porterasMarkers = [];
+        }
+        modoSeleccionUbicacionPortera = false;
+        selectedLat = null;
+        selectedLng = null;
+        if (typeof map !== "undefined" && map && map.getContainer()) {
+          map.getContainer().style.cursor = "";
+        }
+        document.getElementById("loginScreen").style.display = "none";
+        console.log("Usuario listo, cargando datos...");
+        await cargarEstadosDesdeSupabase();
+        await upsertProfileAuth(session);
+        await cargarPlanUsuario();
+        initApp();
+        if (featureOn("animales")) await cargarAnimales();
+        if (typeof window.cargarZonasDesdeSupabase === "function") await window.cargarZonasDesdeSupabase();
+        if (featureOn("porteras")) await cargarPorteras();
+        if (featureOn("tanques")) await cargarTanquesDesdeSupabase();
+        try {
+          await cargarPerfilUsuario();
+        } catch (e) {
+          console.log("Error perfil ignorado:", e);
+        }
+        await cargarSolicitudPlan();
+        iniciarSimulacionDrenajeBateria();
+        registrarServiceWorkerSiAlertas();
       }
 
       async function checkLogin() {
@@ -1813,30 +3271,13 @@
           const session = data?.session;
           console.log("SESSION ACTIVA:", session);
           if (session && !error) {
-            document.getElementById("loginScreen").style.display = "none";
-            // Agregar botón de logout al menú
-            let menu = document.getElementById("menu");
-            if (menu && !document.getElementById("logoutBtn")) {
-              let logoutBtn = document.createElement("button");
-              logoutBtn.id = "logoutBtn";
-              logoutBtn.innerHTML = "🚪 Cerrar Sesión";
-              logoutBtn.onclick = logout;
-              logoutBtn.style.cssText = "background: #f44336; color: white; border: none; border-radius: 5px; padding: 8px 12px; cursor: pointer; margin-top: 10px;";
-              menu.appendChild(logoutBtn);
-            }
-            await cargarPerfilUsuario();
-            // Datos: solo vía onAuthStateChange (SIGNED_IN)
+            await initAppConSesion(session);
           } else {
-            document.getElementById("loginScreen").style.display = "flex";
-            showLogin(); // Mostrar formulario de login por defecto
-            perfilUsuario = null;
-            updatePerfilUI();
+            limpiarUI();
           }
         } catch (err) {
           console.error("Error checking login:", err);
-          document.getElementById("loginScreen").style.display = "flex";
-          perfilUsuario = null;
-          updatePerfilUI();
+          limpiarUI();
         }
       }
 
@@ -1883,18 +3324,7 @@
           } else {
             console.log('login success', email);
             document.getElementById("loginScreen").style.display = "none";
-            // Agregar botón de logout dinámicamente
-            let menu = document.getElementById("menu");
-            if (menu && !document.getElementById("logoutBtn")) {
-              let logoutBtn = document.createElement("button");
-              logoutBtn.id = "logoutBtn";
-              logoutBtn.innerHTML = "🚪 Cerrar Sesión";
-              logoutBtn.onclick = logout;
-              logoutBtn.style.cssText = "background: #f44336; color: white; border: none; border-radius: 5px; padding: 8px 12px; cursor: pointer; margin-top: 10px;";
-              menu.appendChild(logoutBtn);
-            }
-            await cargarPerfilUsuario();
-            // UI de auth: onAuthStateChange (SIGNED_IN) dispara cargarAnimales()
+            // El flujo completo lo maneja onAuthStateChange (SIGNED_IN).
           }
         } catch (err) {
           console.error('login exception', err);
@@ -1910,12 +3340,17 @@
         let apellidoInput = document.getElementById("registerApellido");
         let ciudadInput = document.getElementById("registerCiudad");
         let telefonoInput = document.getElementById("registerTelefono");
+        let tipoClienteInput = document.getElementById("registerTipoCliente");
         let email = emailInput ? String(emailInput.value).trim() : "";
         let password = passwordInput ? passwordInput.value : "";
         let nombre = nombreInput ? String(nombreInput.value).trim() : "";
         let apellido = apellidoInput ? String(apellidoInput.value).trim() : "";
         let ciudad = ciudadInput ? String(ciudadInput.value).trim() : "";
         let telefono = telefonoInput ? String(telefonoInput.value).trim() : "";
+        var tipoCliente = tipoClienteInput ? String(tipoClienteInput.value).trim() : "collar_ganado";
+        if (tipoCliente !== "collar_ganado" && tipoCliente !== "control_portera" && tipoCliente !== "control_tanque") {
+          tipoCliente = "collar_ganado";
+        }
 
         if (!email || !password) {
           alert("Ingresa email y contraseña");
@@ -1946,16 +3381,25 @@
           return;
         }
 
-        const { error: perfilError } = await supabase.from("usuarios").upsert(
+        const { error: perfilError } = await supabase.from("profiles").upsert(
           [{
             id: authUser.id,
             nombre: nombre,
             apellido: apellido,
             ciudad: ciudad || null,
-            telefono: telefono || null
+            telefono: telefono || null,
+            tipo_cliente: tipoCliente,
+            alertas_activas: true
           }],
           { onConflict: "id" }
         );
+
+        const { data: { session: sessionTrasRegistro } } = await supabase.auth.getSession();
+        if (sessionTrasRegistro?.user) {
+          await upsertProfileAuth(sessionTrasRegistro);
+          await cargarPlanUsuario();
+          await cargarEstadosDesdeSupabase();
+        }
 
         if (perfilError) {
           console.error("Error guardando perfil en usuarios:", perfilError);
@@ -1963,7 +3407,12 @@
         } else {
           alert("Usuario creado correctamente");
           console.log('register success', email);
-          await cargarPerfilUsuario();
+          try {
+            await cargarPerfilUsuario();
+          } catch (e) {
+            console.log("Error perfil ignorado:", e);
+          }
+          await cargarSolicitudPlan();
         }
       }
 
@@ -2000,17 +3449,9 @@
       }
 
       async function logout() {
-        try {
-          const { error } = await supabase.auth.signOut();
-          if (error) {
-            console.error("Error logging out:", error);
-          }
-          // Remover botón de logout
-          let logoutBtn = document.getElementById("logoutBtn");
-          if (logoutBtn) logoutBtn.remove();
-          checkLogin();
-        } catch (err) {
-          console.error("Error logging out:", err);
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error("Error logout:", error);
         }
       }
 
@@ -2019,6 +3460,18 @@
       window.showLogin = showLogin;
       window.showRegister = showRegister;
       window.cargarPerfilUsuario = cargarPerfilUsuario;
+      window.cargarPlanUsuario = cargarPlanUsuario;
+      window.asegurarUserPlanPorDefecto = asegurarUserPlanPorDefecto;
+      window.cargarSolicitudPlan = cargarSolicitudPlan;
+      window.anularSolicitudPlan = anularSolicitudPlan;
+      window.renderConfiguracion = renderConfiguracion;
+      window.refrescarVistaConfiguracion = refrescarVistaConfiguracion;
+      window.cambiarPasswordDesdeSettings = cambiarPasswordDesdeSettings;
+      window.cerrarSesionDesdeSettings = cerrarSesionDesdeSettings;
+      window.eliminarCuentaUsuarioAvanzado = eliminarCuentaUsuarioAvanzado;
+      window.solicitarCambioPlanUsuario = solicitarCambioPlanUsuario;
+      window.mostrarOpcionesUpgradePlan = mostrarOpcionesUpgradePlan;
+      window.enviarSolicitudPlanDesdePanel = enviarSolicitudPlanDesdePanel;
 
       function attachAuthListeners() {
         console.log('attachAuthListeners');
@@ -2036,7 +3489,27 @@
             register();
           });
         }
+
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            login();
+          }
+        });
+
+        const btnAnularSol = document.getElementById("btnAnularSolicitudPlan");
+        if (btnAnularSol) {
+          btnAnularSol.addEventListener("click", function () {
+            void anularSolicitudPlan();
+          });
+        }
       }
+
+      document.getElementById("btnLogout")?.addEventListener("click", async function () {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error("Error logout:", error);
+        }
+      });
 
       function ocultarSplashApp() {
         const splash = document.getElementById("appSplash");
@@ -2045,67 +3518,189 @@
       }
 
       let animalesConPeso = [];
-      let animales = []; // Mismo ámbito que checkLogin / contarAnimalesEnZona (carga desde Supabase tras login)
+      let animalesGlobal = [];
+      let animales = animalesGlobal; // Mismo ámbito que checkLogin / contarAnimalesEnZona (carga desde Supabase tras login)
       let selectedAnimales = []; // caravanas seleccionadas para borrado múltiple
       let simulacionBateriaIntervalId = null;
       let zonas = [];
       let porteraMonitorIntervalId = null;
       let alarmIntervals = {};
       let porteras = [];
-      const DEFAULT_ANIMAL_STATUSES = ["Sano", "Enfermo", "Preñada", "En Tratamiento", "Vacunar", "Vendido"];
-      const CUSTOM_ANIMAL_STATUSES_KEY = "ganadocontrol_custom_animal_statuses_v1";
-      let customAnimalStatuses = [];
+      window.porteras = porteras;
+
+      function syncWindowPorteras() {
+        try {
+          window.porteras = porteras;
+        } catch (e) {
+          /* ignore */
+        }
+      }
+
+      function actualizarTiempoPorteras() {
+        try {
+          var list = window.porteras;
+          if (!Array.isArray(list)) return;
+          var ahora = new Date();
+          list.forEach(function (p) {
+            if (!p || p.id == null) return;
+            var el = document.getElementById("tiempo_portera_" + String(p.id));
+            if (!el) return;
+            var abierta = p.estado === "abierta";
+            var raw = p.abierta_desde != null ? p.abierta_desde : p.abiertaDesde;
+            if (!abierta || raw == null) {
+              el.innerText = "0 min";
+              return;
+            }
+            var inicio = new Date(raw);
+            if (isNaN(inicio.getTime())) {
+              el.innerText = "0 min";
+              return;
+            }
+            var diff = (ahora - inicio) / 60000;
+            if (diff < 0) diff = 0;
+            el.innerText = diff.toFixed(1) + " min";
+          });
+        } catch (e) {
+          console.log("actualizarTiempoPorteras:", e);
+        }
+      }
+      window.actualizarTiempoPorteras = actualizarTiempoPorteras;
+      let alertaAnimalesActiva = false;
+      let intervaloAlertaAnimales = null;
+      let audioCtx = null;
+      let audioGanado = null;
+      let audioPortera = null;
+      try {
+        var _audioBase = typeof document !== "undefined" && document.baseURI ? document.baseURI : window.location.href;
+        var _ganadoUrl = new URL("alerta_ganado.mp3", _audioBase).href;
+        var _porteraUrl = new URL("alerta_portera.mp3", _audioBase).href;
+        audioGanado = new Audio(_ganadoUrl);
+        audioPortera = new Audio(_porteraUrl);
+        if (audioGanado) {
+          console.log("Audio intentando cargar:", audioGanado.src);
+          audioGanado.addEventListener("error", function () {
+            try {
+              console.error("No se pudo cargar audio alerta_ganado.mp3:", audioGanado && audioGanado.src, audioGanado && audioGanado.error);
+            } catch (ignore) {}
+          });
+        }
+        if (audioPortera) {
+          console.log("Audio intentando cargar:", audioPortera.src);
+          audioPortera.addEventListener("error", function () {
+            try {
+              console.error("No se pudo cargar audio alerta_portera.mp3:", audioPortera && audioPortera.src, audioPortera && audioPortera.error);
+            } catch (ignore) {}
+          });
+        }
+      } catch (e) {
+        console.log("Audio no disponible");
+        audioGanado = null;
+        audioPortera = null;
+      }
+      function initAudio() {
+        try {
+          if (!audioCtx) {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            audioCtx = new AC();
+            console.log("AudioContext iniciado");
+          }
+          if (audioCtx.state === "suspended") {
+            audioCtx.resume().catch(function () {});
+          }
+        } catch (e) {
+          console.warn("initAudio:", e);
+        }
+      }
+      let audioHabilitado = false;
+      document.addEventListener("click", async function () {
+        initAudio();
+        audioHabilitado = true;
+        try {
+          if (typeof Notification !== "undefined" && Notification.requestPermission) {
+            Notification.requestPermission().catch(function () {});
+          }
+        } catch (e) {
+          console.log("Notification.requestPermission:", e);
+        }
+        try {
+          if (audioGanado && typeof audioGanado.play === "function") {
+            await audioGanado.play().catch(function () {});
+            if (typeof audioGanado.pause === "function") audioGanado.pause();
+            audioGanado.currentTime = 0;
+          }
+          if (audioPortera && typeof audioPortera.play === "function") {
+            await audioPortera.play().catch(function () {});
+            if (typeof audioPortera.pause === "function") audioPortera.pause();
+            audioPortera.currentTime = 0;
+          }
+          console.log("Audio desbloqueado");
+        } catch (e) {
+          console.log("Error audio:", e);
+        }
+      }, { once: true });
       const GATEWAYS_STORAGE_KEY = "agrotrack_gateways_v1";
       const SIGNAL_READINGS_STORAGE_KEY = "agrotrack_signal_readings_v1";
-      const PORTERAS_STORAGE_KEY = "agrotrack_porteras_v1";
       const PORTERA_ALERT_COOLDOWN_MS = 5 * 60 * 1000;
       document.addEventListener("DOMContentLoaded", async function () {
-        customAnimalStatuses = cargarEstadosCustomLocal();
+        attachAuthListeners();
+        var btnMapa = document.getElementById("navAnimales");
+        var btnPorteras = document.getElementById("navPorteras");
+        var btnTanques = document.getElementById("navTanque");
+        if (btnMapa) {
+          btnMapa.onclick = function () {
+            vistaActual = "mapa";
+            renderVista();
+          };
+        }
+        if (btnPorteras) {
+          btnPorteras.onclick = function () {
+            vistaActual = "porteras";
+            renderVista();
+          };
+        }
+        if (btnTanques) {
+          btnTanques.onclick = function () {
+            vistaActual = "tanques";
+            renderVista();
+          };
+        }
         renderizarSelectEstadoAnimal("");
         setTimeout(ocultarSplashApp, 1200);
 
-        // Registrar Service Worker para alertas web
-        if ("serviceWorker" in navigator) {
-          navigator.serviceWorker.register("sw.js")
-            .then(function (registration) {
-              console.log("Service Worker registrado:", registration.scope);
-            })
-            .catch(function (error) {
-              console.warn("Error registrando Service Worker:", error);
-            });
-        }
-
         let map;
+        let modoSeleccionUbicacionPortera = false;
+        var selectedLat = null;
+        var selectedLng = null;
+
         async function cargarAnimales() {
+          if (!featureOn("animales")) {
+            animalesGlobal = [];
+            animales = animalesGlobal;
+            selectedAnimales = [];
+            mostrar();
+            return;
+          }
           console.log("Cargando animales desde Supabase...");
           try {
-            const { data: sessWrap } = await supabase.auth.getSession();
-            const sessionActiva = sessWrap?.session;
-            console.log("SESSION ACTIVA:", sessionActiva);
-            if (!sessionActiva) {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
               console.warn("cargarAnimales: sin sesión, no se consulta Supabase");
-              animales = [];
-              selectedAnimales = [];
-              mostrar();
               return;
             }
 
             const { data, error } = await supabase
               .from("animales")
-              .select("*");
-
-            console.log("DATOS CRUDOS:", data);
-            console.log("ERROR:", error);
+              .select("*")
+              .eq("user_id", session.user.id);
 
             if (error) {
               console.error("Error cargando animales:", error);
-              animales = [];
-              selectedAnimales = [];
-              mostrar();
               return;
             }
 
-            animales = (data || []).map(function (a) {
+            var rows = data || [];
+            animalesGlobal = rows.map(function (a) {
               var pesosArr = normalizePesosFromDb(a.pesos);
               var numPeso = normalizeNumPeso(a.peso);
               var bat = a.bateria != null && a.bateria !== "" ? normalizarBateria(a.bateria) : 100;
@@ -2125,17 +3720,66 @@
                 bateria: bat
               };
             });
-            mostrar();
+            animales = animalesGlobal;
+            console.log("Animales cargados:", animalesGlobal);
+            mostrar(animalesGlobal);
 
           } catch (err) {
             console.error("ERROR al cargar animales:", err);
-            animales = [];
-            selectedAnimales = [];
-            mostrar();
           }
         }
 
         window.cargarAnimales = cargarAnimales;
+
+        function inicializarRealtimeAnimales() {
+          if (window.realtimeSub) {
+            try {
+              if (typeof supabase.removeChannel === "function") {
+                supabase.removeChannel(window.realtimeSub);
+              } else {
+                window.realtimeSub.unsubscribe();
+              }
+            } catch (e) {
+              try {
+                window.realtimeSub.unsubscribe();
+              } catch (e2) {
+                console.warn("No se pudo cerrar realtime previo:", e2);
+              }
+            }
+          }
+          window.realtimeSub = supabase
+            .channel("animales-changes")
+            .on(
+              "postgres_changes",
+              {
+                event: "*",
+                schema: "public",
+                table: "animales"
+              },
+              async function (payload) {
+                console.log("Realtime cambio:", payload);
+                await cargarAnimales();
+              }
+            )
+            .subscribe();
+          console.log("Realtime activo animales");
+        }
+
+        async function asegurarRealtimeAnimales() {
+          inicializarRealtimeAnimales();
+        }
+        inicializarRealtimeAnimales();
+
+        document.addEventListener("visibilitychange", async function () {
+          if (document.hidden) return;
+          console.log("Volvió a la pestaña → recargando animales");
+          try {
+            await asegurarRealtimeAnimales();
+            await cargarAnimales();
+          } catch (e) {
+            console.warn("visibilitychange recarga animales:", e);
+          }
+        });
 
         // FUNCIONES HELPER PARA SUPABASE
         // 
@@ -2165,9 +3809,16 @@
         //   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         //   capacidad DOUBLE PRECISION NOT NULL DEFAULT 0,
         //   nivel_actual DOUBLE PRECISION NOT NULL DEFAULT 0,
-        //   updated_at TIMESTAMPTZ DEFAULT NOW(),
-        //   historial JSONB DEFAULT '[]'
+        //   historial JSONB DEFAULT '[]',
+        //   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+        //   lat DOUBLE PRECISION,
+        //   lng DOUBLE PRECISION
         // );
+        // CREATE INDEX IF NOT EXISTS idx_tanques_user_id ON tanques(user_id);
+        // -- Migración mínima (si faltan columnas):
+        // -- ALTER TABLE tanques ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE;
+        // -- ALTER TABLE tanques ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION;
+        // -- ALTER TABLE tanques ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;
 
         function coordenadaONull(val) {
           if (val === null || val === undefined) return null;
@@ -2183,23 +3834,6 @@
           return isNaN(n) ? null : n;
         }
 
-        function defaultPorteras() {
-          return [
-            {
-              id: "entrada_norte",
-              nombre: "Entrada Norte",
-              estado: "cerrada", // abierta | cerrada
-              ultimaActualizacion: null,
-              horarioPermitido: {
-                desde: "08:00",
-                hasta: "18:00"
-              },
-              tiempoMaxAbierta: 10, // minutos
-              abiertaDesde: null
-            }
-          ];
-        }
-
         function normalizarHoraHHMM(valor, fallback) {
           const base = String(valor || "").trim();
           if (!/^\d{2}:\d{2}$/.test(base)) return fallback;
@@ -2209,36 +3843,117 @@
           return base;
         }
 
-        function cargarPorteras() {
-          try {
-            const raw = localStorage.getItem(PORTERAS_STORAGE_KEY);
-            if (!raw) return defaultPorteras();
-            const parsed = JSON.parse(raw);
-            if (!Array.isArray(parsed) || parsed.length === 0) return defaultPorteras();
-            return parsed.map(function (p) {
-              const idNormalizado = String(p.id || "").trim().toLowerCase().replace(/[^a-z0-9_-]/g, "_");
-              return {
-                id: idNormalizado,
-                nombre: String(p.nombre || "Portera").trim(),
-                estado: p.estado === "abierta" ? "abierta" : "cerrada",
-                ultimaActualizacion: p.ultimaActualizacion ? new Date(p.ultimaActualizacion) : null,
-                horarioPermitido: {
-                  desde: normalizarHoraHHMM(p?.horarioPermitido?.desde, "08:00"),
-                  hasta: normalizarHoraHHMM(p?.horarioPermitido?.hasta, "18:00")
-                },
-                tiempoMaxAbierta: Math.max(1, Number(p.tiempoMaxAbierta || 10)),
-                abiertaDesde: p.abiertaDesde ? new Date(p.abiertaDesde) : null,
-                _alertas: p._alertas || {}
-              };
-            }).filter(function (p) { return p.id; });
-          } catch (e) {
-            console.warn("cargarPorteras:", e);
-            return defaultPorteras();
-          }
+        // Porteras en Supabase (tabla public.porteras). Crear en SQL, p. ej.:
+        // CREATE TABLE public.porteras (
+        //   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        //   user_id uuid NOT NULL REFERENCES auth.users (id) ON DELETE CASCADE,
+        //   nombre text NOT NULL,
+        //   estado text NOT NULL DEFAULT 'cerrada',
+        //   lat double precision,
+        //   lng double precision,
+        //   horario_inicio text NOT NULL DEFAULT '08:00',
+        //   horario_fin text NOT NULL DEFAULT '18:00',
+        //   tiempo_max_abierta int NOT NULL DEFAULT 10,
+        //   ultima_actualizacion timestamptz,
+        //   abierta_desde timestamptz,
+        //   alertas_json jsonb NOT NULL DEFAULT '{}'::jsonb
+        // );
+        // CREATE INDEX porteras_user_id_idx ON public.porteras (user_id);
+        // + RLS: SELECT/INSERT/UPDATE/DELETE WHERE auth.uid() = user_id
+
+        function mapPorteraRow(row) {
+          if (!row || !row.id) return null;
+          return {
+            id: row.id,
+            nombre: String(row.nombre || "Portera").trim(),
+            estado: row.estado === "abierta" ? "abierta" : "cerrada",
+            ultimaActualizacion: row.ultima_actualizacion ? new Date(row.ultima_actualizacion) : null,
+            horarioPermitido: {
+              desde: normalizarHoraHHMM(row.horario_inicio, "08:00"),
+              hasta: normalizarHoraHHMM(row.horario_fin, "18:00")
+            },
+            tiempoMaxAbierta: Math.max(1, Number(row.tiempo_max_abierta != null ? row.tiempo_max_abierta : 10)),
+            abierta_desde: row.abierta_desde != null ? String(row.abierta_desde) : null,
+            abiertaDesde: row.abierta_desde ? new Date(row.abierta_desde) : null,
+            _alertas: row.alertas_json && typeof row.alertas_json === "object" ? row.alertas_json : {},
+            lat: row.lat != null && row.lat !== "" ? Number(row.lat) : null,
+            lng: row.lng != null && row.lng !== "" ? Number(row.lng) : null
+          };
         }
 
-        function guardarPorteras() {
-          localStorage.setItem(PORTERAS_STORAGE_KEY, JSON.stringify(porteras));
+        function actualizarMarcadoresPorterasEnMapa() {
+          if (typeof map === "undefined" || !map) return;
+          if (!window.porterasMarkers) window.porterasMarkers = [];
+          window.porterasMarkers.forEach(function (m) {
+            try {
+              map.removeLayer(m);
+            } catch (err) {
+              /* ignore */
+            }
+          });
+          window.porterasMarkers = [];
+          if (!Array.isArray(porteras)) return;
+          porteras.forEach(function (p) {
+            var lat = p.lat != null ? Number(p.lat) : NaN;
+            var lng = p.lng != null ? Number(p.lng) : NaN;
+            if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+            var mk = L.marker([lat, lng], { title: p.nombre || "Portera" }).addTo(map);
+            mk.bindPopup(escapeHtml(p.nombre || "Portera"));
+            window.porterasMarkers.push(mk);
+          });
+        }
+
+        function iniciarSeleccionUbicacionPortera() {
+          if (!featureOn("porteras")) {
+            return alert("Función no disponible");
+          }
+          if (typeof map === "undefined" || !map) {
+            alert("El mapa no está disponible.");
+            return;
+          }
+          modoSeleccionUbicacionPortera = true;
+          map.getContainer().style.cursor = "crosshair";
+          alert("Hacé clic en el mapa para fijar la ubicación de la nueva portera.");
+        }
+
+        async function cargarPorteras() {
+          if (!featureOn("porteras")) {
+            porteras = [];
+            syncWindowPorteras();
+            renderPorterasPanel();
+            actualizarMarcadoresPorterasEnMapa();
+            actualizarAlertaBarraMapa();
+            return;
+          }
+          porteras = [];
+          syncWindowPorteras();
+          try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+              syncWindowPorteras();
+              renderPorterasPanel();
+              actualizarMarcadoresPorterasEnMapa();
+              actualizarAlertaBarraMapa();
+              return;
+            }
+            const { data, error } = await supabase
+              .from("porteras")
+              .select("*")
+              .eq("user_id", session.user.id);
+            if (error) {
+              console.error("cargarPorteras:", error);
+              porteras = [];
+            } else {
+              porteras = (data || []).map(mapPorteraRow).filter(Boolean);
+            }
+          } catch (e) {
+            console.warn("cargarPorteras:", e);
+            porteras = [];
+          }
+          syncWindowPorteras();
+          renderPorterasPanel();
+          actualizarMarcadoresPorterasEnMapa();
+          actualizarAlertaBarraMapa();
         }
 
         function dentroHorario(p) {
@@ -2248,11 +3963,23 @@
         }
 
         function minutosAbierta(p) {
-          if (p.estado !== "abierta" || !p.abiertaDesde) return 0;
-          return (new Date() - new Date(p.abiertaDesde)) / 60000;
+          if (p.estado !== "abierta") return 0;
+          var rawAbierta = p.abierta_desde != null ? p.abierta_desde : p.abiertaDesde;
+          if (rawAbierta == null) return 0;
+          const inicio = new Date(rawAbierta);
+          const ahora = new Date();
+          if (isNaN(inicio.getTime())) return 0;
+          let diff = (ahora - inicio) / 60000;
+          if (diff < 0) diff = 0;
+          return diff;
         }
 
         function mostrarNotificacionUI(msg) {
+          if (!window.alertasHabilitadas) {
+            console.log("Intento de alerta bloqueado");
+            return;
+          }
+          if (!alertasHabilitadas()) return;
           const zona = document.getElementById("alertaZona");
           if (zona) {
             zona.innerHTML = "🚨 " + msg;
@@ -2262,11 +3989,30 @@
           }
         }
 
-        function reproducirAlarma() {
-          const audio = new Audio("alert.mp3");
-          audio.play().catch(function () {
-            reproducirAlerta();
-          });
+        function reproducirAlarmaPortera(porteraAbiertaFueraHorario) {
+          if (!window.alertasHabilitadas) return;
+          if (!alertasHabilitadas() || !porteraAbiertaFueraHorario) return;
+          notificar("Portera abierta");
+        }
+
+        function reproducirAlarma(tipo) {
+          if (!window.alertasHabilitadas) return;
+          if (!alertasHabilitadas()) return;
+          if (!audioHabilitado) return;
+          try {
+            if (tipo === "ganado") {
+              if (audioGanado && typeof audioGanado.play === "function") {
+                audioGanado.currentTime = 0;
+                audioGanado.play().catch(function () {});
+              }
+            }
+            if (tipo === "portera") {
+              if (audioPortera && typeof audioPortera.play === "function") {
+                audioPortera.currentTime = 0;
+                audioPortera.play().catch(function () {});
+              }
+            }
+          } catch (ignore) {}
         }
 
         function enviarPush(msg) {
@@ -2274,17 +4020,19 @@
           console.log("Push:", msg);
         }
 
-        function lanzarAlerta(p, mensaje) {
+        function lanzarAlerta(p, mensaje, porteraAbiertaFueraHorario) {
+          if (!window.alertasHabilitadas) return;
+          if (!alertasHabilitadas()) return;
           console.warn("🚨 ALERTA:", mensaje, p.nombre);
           mostrarNotificacionUI(mensaje + " (" + p.nombre + ")");
           enviarPush(mensaje + " (" + p.nombre + ")");
 
           if (!alarmIntervals[p.id]) {
-            reproducirAlarma();
+            reproducirAlarmaPortera(porteraAbiertaFueraHorario === true);
 
             alarmIntervals[p.id] = setInterval(function () {
               if (p.estado === "abierta") {
-                reproducirAlarma();
+                reproducirAlarmaPortera(porteraAbiertaFueraHorario === true);
               } else {
                 clearInterval(alarmIntervals[p.id]);
                 delete alarmIntervals[p.id];
@@ -2303,91 +4051,212 @@
         }
 
         function verificarAlertasPortera(p) {
+          if (!window.alertasHabilitadas) return;
+          if (!alertasHabilitadas()) return;
           // fuera de horario
           if (p.estado === "abierta" && !dentroHorario(p) && puedeLanzarAlerta(p, "fuera_horario")) {
-            lanzarAlerta(p, "Portera abierta fuera de horario");
+            lanzarAlerta(p, "Portera abierta fuera de horario", true);
           }
 
           // abierta demasiado tiempo
-          if (p.estado === "abierta" && p.abiertaDesde) {
-            const minutos = (new Date() - new Date(p.abiertaDesde)) / 60000;
-            if (minutos > p.tiempoMaxAbierta && puedeLanzarAlerta(p, "demasiado_tiempo")) {
-              lanzarAlerta(p, "Portera abierta demasiado tiempo");
+          if (p.estado === "abierta") {
+            var rawAd = p.abierta_desde != null ? p.abierta_desde : p.abiertaDesde;
+            if (rawAd != null) {
+              const ahora = new Date();
+              const abiertaDesde = new Date(rawAd);
+              if (!isNaN(abiertaDesde.getTime())) {
+                let minutos = (ahora - abiertaDesde) / 1000 / 60;
+                if (minutos < 0) minutos = 0;
+                const tiempoAbierta = minutos;
+                if (tiempoAbierta > p.tiempoMaxAbierta && puedeLanzarAlerta(p, "demasiado_tiempo")) {
+                  lanzarAlerta(p, "Portera abierta demasiado tiempo", false);
+                }
+              }
             }
           }
         }
 
-        function actualizarPortera(id, estado) {
-          const p = porteras.find(function (x) { return x.id === id; });
-          if (!p) return;
-
-          p.estado = estado;
-          p.ultimaActualizacion = new Date();
-
-          if (estado === "abierta") {
-            if (!p.abiertaDesde) {
-              p.abiertaDesde = new Date();
-            }
-          } else {
-            p.abiertaDesde = null;
-            if (alarmIntervals[p.id]) {
-              clearInterval(alarmIntervals[p.id]);
-              delete alarmIntervals[p.id];
-            }
+        async function actualizarPortera(porteraId, estado) {
+          if (!featureOn("porteras")) {
+            return alert("Función no disponible");
           }
-
-          guardarPorteras();
-          verificarAlertasPortera(p);
-          renderPorterasPanel();
-        }
-
-        function guardarConfigPortera(id) {
-          const p = porteras.find(function (x) { return x.id === id; });
-          if (!p) return;
-          const desde = normalizarHoraHHMM(document.getElementById("portera_desde_" + id)?.value, p.horarioPermitido.desde);
-          const hasta = normalizarHoraHHMM(document.getElementById("portera_hasta_" + id)?.value, p.horarioPermitido.hasta);
-          const tiempo = Number(document.getElementById("portera_max_" + id)?.value || p.tiempoMaxAbierta);
-          p.horarioPermitido.desde = desde;
-          p.horarioPermitido.hasta = hasta;
-          p.tiempoMaxAbierta = Math.max(1, tiempo);
-          p.ultimaActualizacion = new Date();
-          guardarPorteras();
-          renderPorterasPanel();
-        }
-
-        function crearPorteraDesdePanel() {
-          const idRaw = String(document.getElementById("nuevaPorteraId")?.value || "").trim().toLowerCase();
-          const nombre = String(document.getElementById("nuevaPorteraNombre")?.value || "").trim();
-          const desde = normalizarHoraHHMM(document.getElementById("nuevaPorteraDesde")?.value, "08:00");
-          const hasta = normalizarHoraHHMM(document.getElementById("nuevaPorteraHasta")?.value, "18:00");
-          const tiempoMax = Math.max(1, Number(document.getElementById("nuevaPorteraMax")?.value || 10));
-          const id = idRaw.replace(/[^a-z0-9_\\-]/g, "_");
-
-          if (!id) {
-            alert("Ingresá un ID válido para la portera");
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            alert("Iniciá sesión para actualizar porteras.");
             return;
           }
+          const p = porteras.find(function (x) { return String(x.id) === String(porteraId); });
+          if (!p) return;
+
+          var abiertaDesdeIso = null;
+          if (estado === "abierta") {
+            abiertaDesdeIso = new Date().toISOString();
+            p.abierta_desde = abiertaDesdeIso;
+            p.abiertaDesde = new Date(abiertaDesdeIso);
+          } else {
+            p.abierta_desde = null;
+            p.abiertaDesde = null;
+          }
+          p.estado = estado === "abierta" ? "abierta" : "cerrada";
+          syncWindowPorteras();
+
+          const { error } = await supabase
+            .from("porteras")
+            .update({
+              estado: estado,
+              ultima_actualizacion: new Date().toISOString(),
+              abierta_desde: abiertaDesdeIso
+            })
+            .eq("id", porteraId)
+            .eq("user_id", session.user.id);
+
+          if (error) {
+            alert("Error al actualizar portera: " + (error.message || String(error)));
+            await cargarPorteras();
+            return;
+          }
+
+          if (estado === "cerrada" && alarmIntervals[porteraId]) {
+            clearInterval(alarmIntervals[porteraId]);
+            delete alarmIntervals[porteraId];
+          }
+
+          await cargarPorteras();
+          const p2 = porteras.find(function (x) { return String(x.id) === String(porteraId); });
+          if (p2) verificarAlertasPortera(p2);
+        }
+
+        async function guardarConfigPortera(porteraId) {
+          if (!featureOn("porteras")) {
+            return alert("Función no disponible");
+          }
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            alert("Iniciá sesión para guardar la configuración.");
+            return;
+          }
+          const p = porteras.find(function (x) { return String(x.id) === String(porteraId); });
+          if (!p) return;
+          const desde = normalizarHoraHHMM(document.getElementById("portera_desde_" + porteraId)?.value, p.horarioPermitido.desde);
+          const hasta = normalizarHoraHHMM(document.getElementById("portera_hasta_" + porteraId)?.value, p.horarioPermitido.hasta);
+          const tiempo = Number(document.getElementById("portera_max_" + porteraId)?.value || p.tiempoMaxAbierta);
+          const latIn = document.getElementById("portera_lat_" + porteraId);
+          const lngIn = document.getElementById("portera_lng_" + porteraId);
+          var payload = {
+            horario_inicio: desde,
+            horario_fin: hasta,
+            tiempo_max_abierta: Math.max(1, tiempo),
+            ultima_actualizacion: new Date().toISOString()
+          };
+          if (latIn && lngIn) {
+            var tsLat = String(latIn.value).trim();
+            var tsLng = String(lngIn.value).trim();
+            if (tsLat === "" && tsLng === "") {
+              payload.lat = null;
+              payload.lng = null;
+            } else if (tsLat !== "" && tsLng !== "") {
+              var la = Number(latIn.value);
+              var lo = Number(lngIn.value);
+              if (Number.isFinite(la) && Number.isFinite(lo)) {
+                payload.lat = la;
+                payload.lng = lo;
+              } else {
+                alert("Latitud y longitud deben ser números válidos.");
+                return;
+              }
+            }
+          }
+
+          const { error } = await supabase
+            .from("porteras")
+            .update(payload)
+            .eq("id", porteraId)
+            .eq("user_id", session.user.id);
+
+          if (error) {
+            alert("Error al guardar configuración: " + (error.message || String(error)));
+            return;
+          }
+          await cargarPorteras();
+        }
+
+        async function crearPortera() {
+          console.log("CLICK crear portera");
+          if (!featureOn("porteras")) {
+            return alert("Función no disponible");
+          }
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            console.warn("crearPortera: sin sesión");
+            alert("Iniciá sesión para crear porteras.");
+            return;
+          }
+          const nomEl = document.getElementById("nombrePortera");
+          const hiEl = document.getElementById("horaInicio");
+          const hfEl = document.getElementById("horaFin");
+          const nombre = nomEl ? String(nomEl.value || "").trim() : "";
+          const horario_inicio = normalizarHoraHHMM(hiEl && hiEl.value, "08:00");
+          const horario_fin = normalizarHoraHHMM(hfEl && hfEl.value, "18:00");
+          const maxEl = document.getElementById("porteraTiempoMax");
+          const tiempoMax = Math.max(1, Number(maxEl && maxEl.value ? maxEl.value : 10));
+          const latRaw = document.getElementById("nuevaPorteraLat") && document.getElementById("nuevaPorteraLat").value;
+          const lngRaw = document.getElementById("nuevaPorteraLng") && document.getElementById("nuevaPorteraLng").value;
+          var laN = latRaw != null && String(latRaw).trim() !== "" ? Number(latRaw) : NaN;
+          var loN = lngRaw != null && String(lngRaw).trim() !== "" ? Number(lngRaw) : NaN;
+          var latIns = Number.isFinite(laN) ? laN : null;
+          var lngIns = Number.isFinite(loN) ? loN : null;
+
           if (!nombre) {
             alert("Ingresá un nombre para la portera");
             return;
           }
-          if (porteras.some(function (p) { return p.id === id; })) {
-            alert("Ya existe una portera con ese ID");
+          if (porteras.some(function (x) { return String(x.nombre || "").trim().toLowerCase() === nombre.toLowerCase(); })) {
+            alert("Ya existe una portera con ese nombre");
             return;
           }
 
-          porteras.push({
-            id: id,
+          const nuevaPortera = {
             nombre: nombre,
             estado: "cerrada",
-            ultimaActualizacion: new Date(),
-            horarioPermitido: { desde: desde, hasta: hasta },
-            tiempoMaxAbierta: tiempoMax,
-            abiertaDesde: null,
-            _alertas: {}
-          });
-          guardarPorteras();
-          renderPorterasPanel();
+            horario_inicio: horario_inicio,
+            horario_fin: horario_fin,
+            lat: latIns,
+            lng: lngIns,
+            tiempo_max_abierta: tiempoMax,
+            user_id: session.user.id
+          };
+          console.log("PORTERA A CREAR:", nuevaPortera);
+
+          const { data, error } = await supabase.from("porteras").insert([nuevaPortera]).select();
+          console.log("RESULTADO:", data, error);
+          if (error) {
+            alert("Error al crear portera: " + (error.message || String(error)));
+            return;
+          }
+          await cargarPorteras();
+        }
+
+        async function eliminarPortera(porteraId) {
+          if (!featureOn("porteras")) {
+            return alert("Función no disponible");
+          }
+          if (!confirm("¿Eliminar esta portera?")) return;
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) return;
+          const { error } = await supabase
+            .from("porteras")
+            .delete()
+            .eq("id", porteraId)
+            .eq("user_id", session.user.id);
+          if (error) {
+            alert("Error al eliminar: " + (error.message || String(error)));
+            return;
+          }
+          if (alarmIntervals[porteraId]) {
+            clearInterval(alarmIntervals[porteraId]);
+            delete alarmIntervals[porteraId];
+          }
+          await cargarPorteras();
         }
 
         function obtenerEstadoVisualPortera(p) {
@@ -2414,46 +4283,99 @@
             html += "<h4 style='margin:0 0 6px 0;'>" + p.nombre + "</h4>";
             html += "<p style='margin:4px 0;color:" + visual.color + ";'><strong>" + visual.texto + "</strong></p>";
             html += "<p style='margin:4px 0;'>Horario permitido: <strong>" + p.horarioPermitido.desde + " - " + p.horarioPermitido.hasta + "</strong></p>";
-            html += "<p style='margin:4px 0;'>Tiempo abierta: <strong>" + tiempoTxt + "</strong></p>";
+            html += "<p style='margin:4px 0;'>Tiempo abierta: <strong><span id='tiempo_portera_" + escapeAttr(String(p.id)) + "'>" + tiempoTxt + "</span></strong></p>";
             html += "<p style='margin:4px 0;'>Máximo permitido: <strong>" + p.tiempoMaxAbierta + " min</strong></p>";
+            html += "<p style='margin:8px 0 4px 0;font-size:12px;'><strong>Ubicación (mapa)</strong></p>";
+            html += "<div style='display:grid; grid-template-columns:1fr 1fr; gap:8px;'>";
+            html += "<input id='portera_lat_" + p.id + "' type='number' step='any' placeholder='Lat' value='" + (p.lat != null && Number.isFinite(Number(p.lat)) ? escapeAttr(String(p.lat)) : "") + "'>";
+            html += "<input id='portera_lng_" + p.id + "' type='number' step='any' placeholder='Lng' value='" + (p.lng != null && Number.isFinite(Number(p.lng)) ? escapeAttr(String(p.lng)) : "") + "'>";
+            html += "</div>";
             html += "<div style='display:flex; gap:8px; margin-top:8px;'>";
-            html += "<button type='button' onclick=\"actualizarPortera('" + p.id + "','abierta')\" style='flex:1; padding:7px; border:none; border-radius:5px; background:#e53935; color:white;'>Abrir</button>";
-            html += "<button type='button' onclick=\"actualizarPortera('" + p.id + "','cerrada')\" style='flex:1; padding:7px; border:none; border-radius:5px; background:#2e7d32; color:white;'>Cerrar</button>";
+            html += "<button type='button' onclick=\"actualizarPortera('" + escapeAttr(String(p.id)) + "','abierta')\" style='flex:1; padding:7px; border:none; border-radius:5px; background:#e53935; color:white;'>Abrir</button>";
+            html += "<button type='button' onclick=\"actualizarPortera('" + escapeAttr(String(p.id)) + "','cerrada')\" style='flex:1; padding:7px; border:none; border-radius:5px; background:#2e7d32; color:white;'>Cerrar</button>";
             html += "</div>";
             html += "<div style='display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;'>";
             html += "<input id='portera_desde_" + p.id + "' type='time' value='" + p.horarioPermitido.desde + "'>";
             html += "<input id='portera_hasta_" + p.id + "' type='time' value='" + p.horarioPermitido.hasta + "'>";
             html += "</div>";
             html += "<input id='portera_max_" + p.id + "' type='number' min='1' value='" + p.tiempoMaxAbierta + "' style='width:100%; margin-top:8px;' placeholder='Tiempo máximo abierta (min)'>";
-            html += "<button type='button' onclick=\"guardarConfigPortera('" + p.id + "')\" style='width:100%; margin-top:8px; padding:8px; border:none; border-radius:5px; background:#1976d2; color:white;'>Guardar configuración</button>";
+            html += "<button type='button' onclick=\"guardarConfigPortera('" + escapeAttr(String(p.id)) + "')\" style='width:100%; margin-top:8px; padding:8px; border:none; border-radius:5px; background:#1976d2; color:white;'>Guardar configuración</button>";
+            html += "<button type='button' onclick=\"eliminarPortera('" + escapeAttr(String(p.id)) + "')\" style='width:100%; margin-top:8px; padding:8px; border:none; border-radius:5px; background:#b71c1c; color:white;'>Eliminar portera</button>";
             html += "</div>";
           });
 
           html += "<h4 style='margin-top:18px;'>⚙️ Crear portera</h4>";
-          html += "<input id='nuevaPorteraId' placeholder='ID (ej: entrada_sur)' style='width:100%; margin:6px 0;'>";
-          html += "<input id='nuevaPorteraNombre' placeholder='Nombre (ej: Entrada Sur)' style='width:100%; margin:6px 0;'>";
+          html += "<label for='nombrePortera' style='display:block;font-size:12px;margin-top:6px;'>Nombre</label>";
+          html += "<input id='nombrePortera' placeholder='Nombre (ej: Entrada Sur)' style='width:100%; margin:4px 0 8px 0;'>";
           html += "<div style='display:grid; grid-template-columns:1fr 1fr; gap:8px;'>";
-          html += "<input id='nuevaPorteraDesde' type='time' value='08:00'>";
-          html += "<input id='nuevaPorteraHasta' type='time' value='18:00'>";
+          html += "<div><label for='horaInicio' style='font-size:12px;'>Inicio</label><input id='horaInicio' type='time' value='08:00' style='width:100%;margin-top:4px;'></div>";
+          html += "<div><label for='horaFin' style='font-size:12px;'>Fin</label><input id='horaFin' type='time' value='18:00' style='width:100%;margin-top:4px;'></div>";
           html += "</div>";
-          html += "<input id='nuevaPorteraMax' type='number' min='1' value='10' style='width:100%; margin:8px 0;' placeholder='Tiempo máximo abierta (min)'>";
-          html += "<button type='button' onclick='crearPorteraDesdePanel()' style='width:100%; padding:9px; background:#5e35b1; color:white; border:none; border-radius:5px;'>Crear portera</button>";
+          html += "<label for='porteraTiempoMax' style='display:block;font-size:12px;margin-top:8px;'>Tiempo máximo abierta (min)</label>";
+          html += "<input id='porteraTiempoMax' type='number' min='1' value='10' style='width:100%; margin:4px 0 8px 0;'>";
+          html += "<p style='margin:10px 0 4px 0;font-size:12px;'><strong>Ubicación en mapa</strong></p>";
+          html += "<div style='display:grid; grid-template-columns:1fr 1fr; gap:8px;'>";
+          html += "<input id='nuevaPorteraLat' type='number' step='any' placeholder='Latitud'>";
+          html += "<input id='nuevaPorteraLng' type='number' step='any' placeholder='Longitud'>";
+          html += "</div>";
+          html += "<button type='button' onclick='iniciarSeleccionUbicacionPortera()' style='width:100%; margin:8px 0; padding:8px; border:1px solid #5e35b1; border-radius:5px; background:#ede9fe; color:#4c1d95; font-weight:600;'>Seleccionar en mapa</button>";
+          html += "<button type='button' id='btnCrearPortera' style='width:100%; padding:9px; background:#5e35b1; color:white; border:none; border-radius:5px;'>Crear portera</button>";
           html += "</div>";
           panel.innerHTML = html;
         }
 
         function verificarTodasPorteras() {
-          if (!Array.isArray(porteras)) return;
+          if (!window.alertasHabilitadas) {
+            actualizarAlertaBarraMapa();
+            return;
+          }
+          if (!Array.isArray(porteras)) {
+            actualizarAlertaBarraMapa();
+            return;
+          }
           porteras.forEach(function (p) {
             verificarAlertasPortera(p);
           });
-          guardarPorteras();
           if (window.__vistaActiva === "porteras") renderPorterasPanel();
+          actualizarAlertaBarraMapa();
         }
+
+        function actualizarAlertaBarraMapa() {
+          try {
+            if (!window.alertasActivas) {
+              window.alertasActivas = { animal: false, portera: false };
+            }
+            if (!alertasHabilitadas()) {
+              window.alertasActivas.animal = false;
+              window.alertasActivas.portera = false;
+              var azClear = document.getElementById("alertaZona");
+              if (azClear) azClear.innerHTML = "";
+              renderAlertas();
+              return;
+            }
+            var hayFuera = Array.isArray(animales) && animales.some(function (a) {
+              return a.fueraZona === true;
+            });
+            window.alertasActivas.animal = !!hayFuera;
+            var hayPorteraAbierta = featureOn("porteras") && Array.isArray(porteras) && porteras.some(function (p) {
+              return p && p.estado === "abierta";
+            });
+            window.alertasActivas.portera = !!hayPorteraAbierta;
+            renderAlertas();
+          } catch (e) {
+            console.log("actualizarAlertaBarraMapa:", e);
+          }
+        }
+        window.actualizarAlertaBarraMapa = actualizarAlertaBarraMapa;
 
         function iniciarMonitorPorteras() {
           if (porteraMonitorIntervalId) clearInterval(porteraMonitorIntervalId);
           porteraMonitorIntervalId = setInterval(verificarTodasPorteras, 30000);
+          if (!window.timerPorteras) {
+            window.timerPorteras = setInterval(function () {
+              actualizarTiempoPorteras();
+            }, 1000);
+          }
         }
 
         function colorBateria(bateria) {
@@ -2578,10 +4500,12 @@
           console.log("🗄️ guardarAnimalDB INICIO", animal);
 
           try {
-            const { data: sessWrap } = await supabase.auth.getSession();
-            const sessionActiva = sessWrap?.session;
-            console.log("SESSION ACTIVA:", sessionActiva);
-            if (!sessionActiva) {
+            if (!featureOn("animales")) {
+              alert("Función no disponible");
+              return false;
+            }
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
               console.error("guardarAnimalDB: sin sesión activa");
               return false;
             }
@@ -2591,11 +4515,13 @@
               return false;
             }
 
-            const { data: existing, error: existingError } = await supabase
+            const { data: existingRows, error: existingError } = await supabase
               .from("animales")
               .select("caravana")
               .eq("caravana", animal.id)
-              .single();
+              .eq("user_id", session.user.id)
+              .limit(1);
+            const existing = existingRows && existingRows[0];
 
             // PGRST116 = no rows found (no duplicate). Any other error should fail loudly.
             if (existingError && existingError.code !== "PGRST116") {
@@ -2609,9 +4535,7 @@
               return false;
             }
 
-            console.log("📦 INTENTO GUARDAR:", animal);
-
-            const payloadRaw = {
+            const animalDB = {
               caravana: animal.id,
               edad: animal.edad,
               raza: animal.raza,
@@ -2620,22 +4544,17 @@
               estado: animal.estado,
               lat: parseFloat(animal.lat),
               lng: parseFloat(animal.lng),
-              peso: Number(animal.peso || 0),
+              peso: Number(animal.peso != null && animal.peso !== "" ? animal.peso : 0),
               pesos: animal.pesos || [],
-              bateria: Number(animal.bateria || 100)
+              bateria: Number(animal.bateria != null && animal.bateria !== "" ? animal.bateria : 100),
+              user_id: session.user.id
             };
 
-            const payload = Object.fromEntries(
-              Object.entries(payloadRaw).filter(function (kv) {
-                return kv[1] !== undefined;
-              })
-            );
-
-            console.log("📦 PAYLOAD:", payload);
+            console.log("ANIMAL A GUARDAR:", animalDB);
 
             const { data, error } = await supabase
               .from("animales")
-              .insert([payload])
+              .insert([animalDB])
               .select();
 
             console.log("✅ DATA:", data);
@@ -2658,6 +4577,9 @@
 
         async function actualizarAnimalEnSupabase(animalId, actualizaciones) {
           try {
+            if (!featureOn("animales")) {
+              return false;
+            }
             const { data: sessWrap } = await supabase.auth.getSession();
             if (!sessWrap?.session) {
               console.error("Usuario no autenticado");
@@ -2703,53 +4625,386 @@
           }
         }
 
-        let tanqueRowIdLocal = null;
+        let tanques = [];
+        let tanqueSeleccionadoId = null;
+        let tanqueFormEditandoId = null;
 
-        async function guardarTanque(capacidad, nivel) {
-          let historialExistente = [];
-          let rowId = tanqueRowIdLocal;
+        function mapRowATanque(row) {
+          if (!row) return null;
+          const cap = parseFloat(row.capacidad) || 0;
+          const niv = parseFloat(row.nivel_actual != null ? row.nivel_actual : row.nivel) || 0;
+          return {
+            id: row.id,
+            nombre: row.nombre != null && String(row.nombre).trim() !== "" ? String(row.nombre).trim() : "Tanque",
+            capacidad: cap,
+            nivel: niv,
+            tipo: row.tipo != null ? String(row.tipo) : "",
+            lat: row.lat != null && row.lat !== "" ? row.lat : null,
+            lng: row.lng != null && row.lng !== "" ? row.lng : null,
+            historial: Array.isArray(row.historial) ? row.historial : []
+          };
+        }
 
-          if (rowId) {
-            const { data: existing, error: fetchErr } = await supabase
-              .from("tanques")
-              .select("historial")
-              .eq("id", rowId)
-              .maybeSingle();
-            if (fetchErr) {
-              console.error("[tanque] error leyendo historial:", fetchErr);
-            } else if (existing && Array.isArray(existing.historial)) {
-              historialExistente = existing.historial;
+        function obtenerTanquePorId(id) {
+          return tanques.find(function (t) { return t.id === id; }) || null;
+        }
+
+        function alertasParaTanque(t) {
+          if (!t) return [];
+          const pct = Math.min(100, Math.max(0, parseFloat(t.nivel) || 0));
+          const cap = Math.max(0, parseFloat(t.capacidad) || 0);
+          const out = [];
+          if (cap <= 0) {
+            out.push({ texto: "Sin capacidad definida", critico: false });
+            return out;
+          }
+          if (pct < 25) out.push({ texto: "Nivel crítico (<25%)", critico: true });
+          else if (pct < 50) out.push({ texto: "Nivel medio (25–50%)", critico: false });
+          else out.push({ texto: "Nivel OK", critico: false, ok: true });
+          return out;
+        }
+
+        async function queryTanquesPorUsuario(uid) {
+          if (!uid) {
+            return supabase.from("tanques").select("*");
+          }
+          let res = await supabase
+            .from("tanques")
+            .select("*")
+            .eq("user_id", uid);
+          if (res.error) {
+            const msg = String(res.error.message || res.error.details || res.error.hint || "");
+            if (/user_id|column|does not exist/i.test(msg)) {
+              res = await supabase.from("tanques").select("*");
             }
+          }
+          return res;
+        }
+
+        async function cargarTanquesDesdeSupabase() {
+          try {
+            if (!featureOn("tanques")) {
+              tanques = [];
+              tanqueSeleccionadoId = null;
+              renderListaTanques();
+              return;
+            }
+            const { data: sessWrap } = await supabase.auth.getSession();
+            if (!sessWrap?.session) {
+              tanques = [];
+              tanqueSeleccionadoId = null;
+              renderListaTanques();
+              return;
+            }
+            const uid = sessWrap.session.user.id;
+            const { data, error } = await queryTanquesPorUsuario(uid);
+            if (error) {
+              console.error("[tanque] Error cargando:", error);
+              alert("Error al cargar tanques: " + (error.message || String(error)));
+              return;
+            }
+            let rows = data || [];
+            if (uid && rows.length) {
+              rows = rows.filter(function (r) {
+                return !r.user_id || r.user_id === uid;
+              });
+            }
+            tanques = rows.map(mapRowATanque).filter(Boolean);
+            if (tanqueSeleccionadoId && !obtenerTanquePorId(tanqueSeleccionadoId)) {
+              tanqueSeleccionadoId = null;
+            }
+            if (!tanqueSeleccionadoId && tanques.length) {
+              tanqueSeleccionadoId = tanques[0].id;
+            }
+            renderListaTanques();
+            aplicarSeleccionTanqueUI();
+          } catch (e) {
+            console.error("[tanque] cargarTanquesDesdeSupabase:", e);
+            alert("Error al cargar tanques: " + (e.message || String(e)));
+          }
+        }
+
+        function renderListaTanques() {
+          const lista = document.getElementById("listaTanques");
+          if (!lista) return;
+          if (!tanques.length) {
+            lista.innerHTML = "<p class=\"tanques-empty\">No hay tanques registrados. Usá «+ Agregar tanque» para crear el primero.</p>";
+            const det = document.getElementById("tanqueDetallePanel");
+            if (det) det.style.display = "none";
+            return;
+          }
+          lista.innerHTML = tanques.map(function (t) {
+            const pct = Math.min(100, Math.max(0, parseFloat(t.nivel) || 0));
+            const sel = t.id === tanqueSeleccionadoId;
+            const alertas = alertasParaTanque(t);
+            const badges = alertas.map(function (a) {
+              const cls = a.critico ? " tanque-alert-critico" : a.ok ? " tanque-alert-ok" : "";
+              return "<span class=\"tanque-alert-badge" + cls + "\">" + escapeHtml(a.texto) + "</span>";
+            }).join("");
+            const tipoLine = t.tipo ? "<div class=\"tanque-card-meta\">Tipo: " + escapeHtml(t.tipo) + "</div>" : "";
+            return (
+              "<div class=\"tanque-card" + (sel ? " selected" : "") + "\" data-tank-id=\"" + escapeHtml(String(t.id)) + "\" onclick=\"seleccionarTanqueDesdeCard(event,'" + t.id + "')\">" +
+              "<div class=\"tanque-card-title\">" + escapeHtml(t.nombre) + "</div>" +
+              tipoLine +
+              "<div class=\"tanque-card-meta\">Nivel: <strong>" + pct.toFixed(1) + " %</strong> · " +
+              (t.capacidad > 0 ? ((t.capacidad * pct) / 100).toFixed(1) + " L / " + t.capacidad.toFixed(0) + " L" : "—") +
+              "</div>" +
+              "<div class=\"tanque-card-alertas\">" + badges + "</div>" +
+              "<div class=\"tanque-card-actions\" onclick=\"event.stopPropagation()\">" +
+              "<button type=\"button\" onclick=\"abrirFormularioEditarTanque('" + t.id + "')\">Editar</button>" +
+              "<button type=\"button\" onclick=\"eliminarTanqueConfirm('" + t.id + "')\" style=\"background:#b91c1c;color:#fff;\">Eliminar</button>" +
+              "</div></div>"
+            );
+          }).join("");
+        }
+
+        function seleccionarTanqueDesdeCard(ev, id) {
+          if (ev && ev.target.closest && ev.target.closest(".tanque-card-actions")) return;
+          seleccionarTanque(id);
+        }
+
+        function seleccionarTanque(id) {
+          tanqueSeleccionadoId = id;
+          renderListaTanques();
+          aplicarSeleccionTanqueUI();
+        }
+
+        function aplicarSeleccionTanqueUI() {
+          const det = document.getElementById("tanqueDetallePanel");
+          const titulo = document.getElementById("tanqueDetalleTitulo");
+          const t = obtenerTanquePorId(tanqueSeleccionadoId);
+          if (!det) return;
+          if (!t) {
+            det.style.display = "none";
+            return;
+          }
+          det.style.display = "block";
+          if (titulo) titulo.textContent = t.nombre;
+          const capIn = document.getElementById("tanqueCapacidadInput");
+          const nivIn = document.getElementById("tanqueNivelInput");
+          const simIn = document.getElementById("tanqueSimInput");
+          if (capIn) capIn.value = t.capacidad != null ? t.capacidad : "";
+          if (nivIn) nivIn.value = t.nivel != null ? t.nivel : "";
+          if (simIn) simIn.value = t.nivel != null ? t.nivel : "";
+          renderTanqueUI(t.capacidad, t.nivel);
+          pintarHistorialTanque(t.historial, t.capacidad);
+        }
+
+        function abrirFormularioTanqueNuevo() {
+          if (!featureOn("tanques")) {
+            return alert("Función no disponible");
+          }
+          tanqueFormEditandoId = null;
+          const w = document.getElementById("tanqueFormWrap");
+          const tit = document.getElementById("tanqueFormTitulo");
+          if (tit) tit.textContent = "Nuevo tanque";
+          document.getElementById("tanqueFormNombre").value = "";
+          document.getElementById("tanqueFormCapacidad").value = "";
+          document.getElementById("tanqueFormTipo").value = "";
+          document.getElementById("tanqueFormLat").value = "";
+          document.getElementById("tanqueFormLng").value = "";
+          document.getElementById("tanqueFormNivelIni").value = "0";
+          if (w) w.style.display = "block";
+        }
+
+        function abrirFormularioEditarTanque(id) {
+          if (!featureOn("tanques")) {
+            return alert("Función no disponible");
+          }
+          const t = obtenerTanquePorId(id);
+          if (!t) return;
+          tanqueFormEditandoId = id;
+          const w = document.getElementById("tanqueFormWrap");
+          const tit = document.getElementById("tanqueFormTitulo");
+          if (tit) tit.textContent = "Editar tanque";
+          document.getElementById("tanqueFormNombre").value = t.nombre || "";
+          document.getElementById("tanqueFormCapacidad").value = t.capacidad != null ? t.capacidad : "";
+          document.getElementById("tanqueFormTipo").value = t.tipo || "";
+          document.getElementById("tanqueFormLat").value = t.lat != null ? t.lat : "";
+          document.getElementById("tanqueFormLng").value = t.lng != null ? t.lng : "";
+          document.getElementById("tanqueFormNivelIni").value = t.nivel != null ? String(t.nivel) : "0";
+          if (w) w.style.display = "block";
+        }
+
+        function cerrarFormularioTanque() {
+          tanqueFormEditandoId = null;
+          const w = document.getElementById("tanqueFormWrap");
+          if (w) w.style.display = "none";
+        }
+
+        async function confirmarFormularioTanque() {
+          if (!featureOn("tanques")) {
+            return alert("Función no disponible");
+          }
+          const nombre = String(document.getElementById("tanqueFormNombre").value || "").trim();
+          const cap = parseFloat(document.getElementById("tanqueFormCapacidad").value);
+          const tipo = String(document.getElementById("tanqueFormTipo").value || "").trim();
+          const lat = coordenadaONull(document.getElementById("tanqueFormLat").value);
+          const lng = coordenadaONull(document.getElementById("tanqueFormLng").value);
+          const niv = parseFloat(document.getElementById("tanqueFormNivelIni").value);
+          if (!nombre) {
+            alert("Indicá un nombre para el tanque.");
+            return;
+          }
+          if (isNaN(cap) || cap <= 0) {
+            alert("Indicá una capacidad válida (litros).");
+            return;
+          }
+          if (isNaN(niv) || niv < 0 || niv > 100) {
+            alert("El nivel inicial debe estar entre 0 y 100 %.");
+            return;
+          }
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session || !session.user || !session.user.id) {
+            alert("Iniciá sesión para guardar tanques.");
+            return;
+          }
+
+          if (tanqueFormEditandoId) {
+            const existente = obtenerTanquePorId(tanqueFormEditandoId);
+            if (!existente) return;
+            const nivelAnt = parseFloat(existente.nivel) || 0;
+            let historial = Array.isArray(existente.historial) ? existente.historial.slice() : [];
+            if (Math.abs(nivelAnt - niv) > 0.0001) {
+              historial = historial.concat([{ nivel: niv, fecha: new Date().toISOString() }]);
+            }
+            const payload = {
+              capacidad: Number(cap),
+              nivel_actual: Number(niv),
+              historial: historial,
+              user_id: session.user.id,
+              lat: lat ? Number(lat) : null,
+              lng: lng ? Number(lng) : null
+            };
+            const { data, error } = await supabase
+              .from("tanques")
+              .update(payload)
+              .eq("id", tanqueFormEditandoId)
+              .select();
+            if (error) {
+              console.error("[tanque] update:", error);
+              alert("Error al actualizar: " + (error.message || String(error)));
+              return;
+            }
+            if (data && data[0]) {
+              const m = mapRowATanque(data[0]);
+              const ix = tanques.findIndex(function (x) { return x.id === m.id; });
+              if (ix >= 0) tanques[ix] = m;
+            }
+            cerrarFormularioTanque();
+            renderListaTanques();
+            aplicarSeleccionTanqueUI();
+            return;
+          }
+
+          const nuevoTanque = {
+            capacidad: Number(cap),
+            nivel_actual: Number(niv),
+            historial: [],
+            user_id: session.user.id,
+            lat: lat != null ? Number(lat) : null,
+            lng: lng != null ? Number(lng) : null
+          };
+          console.log("TANQUE FINAL:", nuevoTanque);
+          const { data, error } = await supabase
+            .from("tanques")
+            .insert([nuevoTanque]);
+          console.log("RESULTADO TANQUE:", data, error);
+          if (error) {
+            console.error("[tanque] insert:", error);
+            alert("Error al crear tanque: " + (error.message || String(error)));
+            return;
+          }
+          await cargarTanquesDesdeSupabase();
+          cerrarFormularioTanque();
+          renderListaTanques();
+          aplicarSeleccionTanqueUI();
+        }
+
+        async function eliminarTanqueConfirm(id) {
+          if (!featureOn("tanques")) {
+            return alert("Función no disponible");
+          }
+          const t = obtenerTanquePorId(id);
+          if (!t) return;
+          if (!confirm("¿Eliminar el tanque «" + t.nombre + "»? Esta acción no se puede deshacer.")) return;
+          const { error } = await supabase.from("tanques").delete().eq("id", id);
+          if (error) {
+            console.error("[tanque] delete:", error);
+            alert("Error al eliminar: " + (error.message || String(error)));
+            return;
+          }
+          tanques = tanques.filter(function (x) { return x.id !== id; });
+          if (tanqueSeleccionadoId === id) {
+            tanqueSeleccionadoId = tanques.length ? tanques[0].id : null;
+          }
+          renderListaTanques();
+          aplicarSeleccionTanqueUI();
+        }
+
+        /**
+         * Guarda nivel y capacidad en Supabase y agrega entrada al historial.
+         * Compatibilidad: guardarTanque(capacidad, nivel) usa el tanque seleccionado.
+         * Forma explícita: guardarTanque(tankId, capacidad, nivel).
+         */
+        async function guardarTanque(tankIdOrCap, nivelOrUndef, nivelOptional) {
+          if (!featureOn("tanques")) {
+            alert("Función no disponible");
+            return false;
+          }
+          var tankId;
+          var capacidad;
+          var nivel;
+          if (arguments.length >= 3) {
+            tankId = tankIdOrCap;
+            capacidad = nivelOrUndef;
+            nivel = nivelOptional;
+          } else if (arguments.length === 2) {
+            capacidad = tankIdOrCap;
+            nivel = nivelOrUndef;
+            tankId = tanqueSeleccionadoId;
           } else {
-            const { data: rows, error: fetchRowErr } = await supabase
-              .from("tanques")
-              .select("id, historial")
-              .order("updated_at", { ascending: false })
-              .limit(1);
-            if (fetchRowErr) {
-              console.error("[tanque] error leyendo fila tanque:", fetchRowErr);
-            } else if (rows && rows.length) {
-              rowId = rows[0].id;
-              tanqueRowIdLocal = rowId;
-              if (Array.isArray(rows[0].historial)) {
-                historialExistente = rows[0].historial;
-              }
-            }
+            console.warn("[tanque] guardarTanque: faltan argumentos");
+            return false;
+          }
+          if (!tankId) {
+            alert("Seleccioná un tanque en la lista o creá uno nuevo.");
+            return false;
+          }
+          let historialExistente = [];
+          const { data: existing, error: fetchErr } = await supabase
+            .from("tanques")
+            .select("historial")
+            .eq("id", tankId)
+            .maybeSingle();
+          if (fetchErr) {
+            console.error("[tanque] error leyendo historial:", fetchErr);
+          } else if (existing && Array.isArray(existing.historial)) {
+            historialExistente = existing.historial;
           }
 
           const nuevoRegistro = {
             nivel: parseFloat(nivel),
             fecha: new Date().toISOString()
           };
-          const historial = [...historialExistente, nuevoRegistro];
+          const historial = historialExistente.concat([nuevoRegistro]);
+
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session || !session.user || !session.user.id) {
+            alert("Iniciá sesión para guardar el tanque.");
+            return false;
+          }
+          const tLocal = obtenerTanquePorId(tankId);
 
           const row = {
-            capacidad: parseFloat(capacidad),
-            nivel_actual: parseFloat(nivel),
-            updated_at: new Date().toISOString(),
-            historial
+            id: tankId,
+            capacidad: Number(capacidad),
+            nivel_actual: Number(nivel),
+            historial: historial,
+            user_id: session.user.id,
+            lat: tLocal && tLocal.lat != null ? Number(tLocal.lat) : null,
+            lng: tLocal && tLocal.lng != null ? Number(tLocal.lng) : null
           };
-          if (rowId) row.id = rowId;
 
           const { data, error } = await supabase
             .from("tanques")
@@ -2759,11 +5014,19 @@
           console.log("TANQUE:", data, error);
 
           if (!error && data && data[0] && data[0].id) {
-            tanqueRowIdLocal = data[0].id;
+            const m = mapRowATanque(data[0]);
+            const ix = tanques.findIndex(function (x) { return x.id === m.id; });
+            if (ix >= 0) tanques[ix] = m;
+            else tanques.push(m);
             pintarHistorialTanque(data[0].historial, data[0].capacidad);
+            renderListaTanques();
           }
 
           return !error;
+        }
+
+        async function cargarTanqueDesdeSupabase() {
+          return cargarTanquesDesdeSupabase();
         }
 
         function renderTanqueUI(capacidad, nivelPct) {
@@ -2809,46 +5072,10 @@
           }).join("");
         }
 
-        async function cargarTanqueDesdeSupabase() {
-          try {
-            const { data: rows, error } = await supabase
-              .from("tanques")
-              .select("*")
-              .order("updated_at", { ascending: false })
-              .limit(1);
-            const data = rows && rows.length ? rows[0] : null;
-
-            if (error) {
-              console.error("[tanque] Error cargando:", error);
-              alert("Error al cargar tanque: " + (error.message || String(error)));
-              return;
-            }
-
-            if (data) {
-              tanqueRowIdLocal = data.id;
-              const capIn = document.getElementById("tanqueCapacidadInput");
-              const nivIn = document.getElementById("tanqueNivelInput");
-              if (capIn) capIn.value = data.capacidad != null ? data.capacidad : "";
-              if (nivIn) nivIn.value = data.nivel_actual != null ? data.nivel_actual : "";
-              renderTanqueUI(data.capacidad, data.nivel_actual);
-              pintarHistorialTanque(data.historial, data.capacidad);
-            } else {
-              tanqueRowIdLocal = null;
-              const capIn = document.getElementById("tanqueCapacidadInput");
-              const nivIn = document.getElementById("tanqueNivelInput");
-              renderTanqueUI(
-                capIn && capIn.value ? capIn.value : 0,
-                nivIn && nivIn.value ? nivIn.value : 0
-              );
-              pintarHistorialTanque([], 0);
-            }
-          } catch (e) {
-            console.error("[tanque] cargarTanqueDesdeSupabase:", e);
-            alert("Error al cargar tanque: " + (e.message || String(e)));
-          }
-        }
-
         async function guardarConfigTanque() {
+          if (!featureOn("tanques")) {
+            return alert("Función no disponible");
+          }
           try {
             const cap = parseFloat(document.getElementById("tanqueCapacidadInput").value);
             const niv = parseFloat(document.getElementById("tanqueNivelInput").value);
@@ -2860,7 +5087,7 @@
               alert("El nivel debe estar entre 0 y 100 %.");
               return;
             }
-            const ok = await guardarTanque(cap, niv);
+            const ok = await guardarTanque(tanqueSeleccionadoId, cap, niv);
             if (!ok) {
               alert("Error al guardar tanque en Supabase (ver consola).");
               return;
@@ -2874,6 +5101,9 @@
         }
 
         async function actualizarNivelTanque(valor) {
+          if (!featureOn("tanques")) {
+            return alert("Función no disponible");
+          }
           try {
             const v = parseFloat(valor);
             if (isNaN(v)) {
@@ -2891,7 +5121,7 @@
               alert("Configurá primero la capacidad (litros) y guardá con «Guardar configuración».");
               return;
             }
-            const ok = await guardarTanque(cap, nivel);
+            const ok = await guardarTanque(tanqueSeleccionadoId, cap, nivel);
             if (!ok) {
               alert("Error al guardar nivel en Supabase (ver consola).");
               return;
@@ -2908,6 +5138,9 @@
         }
 
         async function simularLecturaTanque() {
+          if (!featureOn("tanques")) {
+            return alert("Función no disponible");
+          }
           const v = parseFloat(document.getElementById("tanqueSimInput").value);
           if (isNaN(v)) {
             alert("Ingresá un número entre 0 y 100.");
@@ -2917,6 +5150,9 @@
         }
 
         function importarCSV() {
+          if (!featureOn("animales")) {
+            return alert("Función no disponible");
+          }
 
           let input = document.getElementById("fileInput");
 
@@ -2977,12 +5213,15 @@
               const guardado = await guardarAnimalDB(nuevoAnimal);
 
               if (guardado) {
-                animales.push(nuevoAnimal);
                 agregados++;
               }
             }
 
-            mostrar();
+            if (agregados > 0) {
+              await cargarAnimales();
+            } else {
+              mostrar();
+            }
 
             alert(
               "Animales agregados: " + agregados +
@@ -2999,6 +5238,9 @@
           dibujando = false;
         }
         function activarDibujo() {
+          if (!featureOn("animales")) {
+            return alert("Función no disponible");
+          }
           dibujando = true;
 
           // limpiar puntos anteriores
@@ -3101,6 +5343,21 @@
           }, 300);
         }
 
+        /** Evita leaflet-heat / getImageData con canvas 0×0 cuando el contenedor aún no tiene tamaño. */
+        function mapTieneTamanoVisible() {
+          if (!map || typeof map.getContainer !== "function") return false;
+          try {
+            var el = map.getContainer();
+            if (!el) return false;
+            var r = el.getBoundingClientRect();
+            var w = r.width || el.clientWidth || el.offsetWidth || 0;
+            var h = r.height || el.clientHeight || el.offsetHeight || 0;
+            return w > 0 && h > 0;
+          } catch (e) {
+            return false;
+          }
+        }
+
         var mapResizeHandlersRegistered = false;
         function setupMapResizeInvalidation() {
           if (mapResizeHandlersRegistered) return;
@@ -3176,6 +5433,9 @@
           tapTolerance: 22
         }).setView(centro, zoom);
         window.map = map;
+        window.marcadores = [];
+        window.polylinesAnimales = [];
+        window.porterasMarkers = [];
         setupMapResizeInvalidation();
         //cargarAnimales(); // ← ESTA LÍNEA AGREGÁS
         setTimeout(function () {
@@ -3186,28 +5446,85 @@
         // capas activas
         normal.addTo(map);
 
-        let zonasGuardadas = JSON.parse(localStorage.getItem("zonas")) || [];
+        // SQL recomendado en Supabase (una sola vez):
+        // create table if not exists zonas (
+        //   id uuid default gen_random_uuid() primary key,
+        //   user_id uuid,
+        //   nombre text,
+        //   coordenadas jsonb,
+        //   created_at timestamp default now()
+        // );
+        // alter table zonas enable row level security;
+        // create policy "allow own zonas" on zonas for all using (auth.uid() = user_id);
 
-        zonasGuardadas.forEach(z => {
+        function serializarCoordsZona(latlngs) {
+          return (latlngs || []).map(function (c) {
+            return { lat: Number(c.lat), lng: Number(c.lng) };
+          });
+        }
 
-          if (!z.coords || z.coords.length < 3) return; // 🔥 evita romper mapa
+        function guardarZonasEnLocalStorage() {
+          localStorage.setItem("zonas", JSON.stringify(
+            zonas.map(function (z) {
+              return {
+                id: z.zonaId || null,
+                nombre: z.nombre,
+                coords: z.getLatLngs()[0]
+              };
+            })
+          ));
+        }
 
-          let poly = L.polygon(z.coords, { color: 'blue' }).addTo(map);
+        function limpiarZonasDelMapa() {
+          zonas.forEach(function (z) {
+            try { map.removeLayer(z); } catch (e) { /* noop */ }
+          });
+          zonas = [];
+        }
 
-          poly.nombre = z.nombre || "Sin nombre";
-
+        function agregarZonaEnMapa(zonaRaw) {
+          if (!zonaRaw) return;
+          var coords = Array.isArray(zonaRaw.coordenadas) ? zonaRaw.coordenadas : zonaRaw.coords;
+          if (!coords || coords.length < 3) return;
+          let poly = L.polygon(coords, { color: 'blue' }).addTo(map);
+          poly.zonaId = zonaRaw.id || null;
+          poly.nombre = zonaRaw.nombre || "Sin nombre";
           const cantidad = contarAnimalesEnZona(poly);
           poly.bindPopup("Zona: " + poly.nombre + "<br>Animales en zona: " + cantidad);
-
           poly.on('click', function () {
-            zonas.forEach(z => z.setStyle({ color: 'blue' }));
+            zonas.forEach(function (z) { z.setStyle({ color: 'blue' }); });
             this.setStyle({ color: 'red' });
             zonaSeleccionada = this;
             alert("Zona: " + this.nombre);
           });
-
           zonas.push(poly);
-        });
+        }
+
+        async function cargarZonasDesdeSupabase() {
+          const { data: { session } } = await supabase.auth.getSession();
+          limpiarZonasDelMapa();
+          if (!session || !session.user || !session.user.id) {
+            let zonasGuardadas = JSON.parse(localStorage.getItem("zonas")) || [];
+            zonasGuardadas.forEach(agregarZonaEnMapa);
+            return;
+          }
+          const { data, error } = await supabase
+            .from("zonas")
+            .select("*")
+            .eq("user_id", session.user.id)
+            .order("created_at", { ascending: true });
+          if (error) {
+            console.warn("cargarZonasDesdeSupabase:", error);
+            let zonasGuardadas = JSON.parse(localStorage.getItem("zonas")) || [];
+            zonasGuardadas.forEach(agregarZonaEnMapa);
+            return;
+          }
+          (data || []).forEach(agregarZonaEnMapa);
+          guardarZonasEnLocalStorage();
+        }
+
+        window.cargarZonasDesdeSupabase = cargarZonasDesdeSupabase;
+        await cargarZonasDesdeSupabase();
 
         // selector
         L.control.layers({
@@ -3465,6 +5782,7 @@
         }
 
         function renderSignalVisualization() {
+          if (!window.map) return;
           limpiarCapasSenal();
           consolidarLecturasAnimales();
           statsSenal = calcularStatsSenal();
@@ -3490,7 +5808,12 @@
               "Fecha: " + formatearFechaLectura(s.fecha)
             );
             signalPointLayers.push(point);
-            heatPoints.push([s.lat, s.lng, intensidadHeat(s.rssi)]);
+            var latHeat = Number(s.lat);
+            var lngHeat = Number(s.lng);
+            var intHeat = intensidadHeat(s.rssi);
+            if (Number.isFinite(latHeat) && Number.isFinite(lngHeat) && Number.isFinite(intHeat)) {
+              heatPoints.push([latHeat, lngHeat, intHeat]);
+            }
 
             if (s.rssi < -100) {
               const key = (Math.round(s.lat * 250) / 250).toFixed(3) + "|" + (Math.round(s.lng * 250) / 250).toFixed(3);
@@ -3502,18 +5825,36 @@
             }
           });
 
-          if (heatmapLoRaVisible && window.L && typeof L.heatLayer === "function" && heatPoints.length) {
-            signalHeatLayer = L.heatLayer(heatPoints, {
-              radius: 22,
-              blur: 16,
-              maxZoom: 18,
-              gradient: {
-                0.2: "#dc2626",
-                0.5: "#eab308",
-                0.8: "#22c55e"
-              }
-            }).addTo(map);
-          }
+          (function crearHeatmapLoRaSeguro() {
+            if (!heatmapLoRaVisible || !window.L || typeof L.heatLayer !== "function") return;
+            var puntos = heatPoints.filter(function (p) {
+              return p && p.length >= 3 && Number.isFinite(p[0]) && Number.isFinite(p[1]) && Number.isFinite(p[2]);
+            });
+            if (!puntos || puntos.length === 0) {
+              console.log("No hay datos para heatmap");
+              return;
+            }
+            if (!window.map) return;
+            if (!mapTieneTamanoVisible()) {
+              console.warn("[heatmap LoRa] mapa sin tamaño visible; se omite la capa heat.");
+              return;
+            }
+            try {
+              signalHeatLayer = L.heatLayer(puntos, {
+                radius: 22,
+                blur: 16,
+                maxZoom: 18,
+                gradient: {
+                  0.2: "#dc2626",
+                  0.5: "#eab308",
+                  0.8: "#22c55e"
+                }
+              }).addTo(window.map);
+            } catch (e) {
+              console.warn("Heatmap error:", e);
+              signalHeatLayer = null;
+            }
+          })();
 
           Object.keys(weakBuckets).forEach(function (key) {
             const b = weakBuckets[key];
@@ -3681,8 +6022,23 @@
         // CLICK MAPA (guardar coordenadas + zona)
         map.on('click', function (e) {
 
-          document.getElementById("lat").value = e.latlng.lat;
-          document.getElementById("lng").value = e.latlng.lng;
+          if (modoSeleccionUbicacionPortera) {
+            selectedLat = e.latlng.lat;
+            selectedLng = e.latlng.lng;
+            console.log("Ubicación seleccionada:", selectedLat, selectedLng);
+            var nLat = document.getElementById("nuevaPorteraLat");
+            var nLng = document.getElementById("nuevaPorteraLng");
+            if (nLat) nLat.value = String(selectedLat);
+            if (nLng) nLng.value = String(selectedLng);
+            modoSeleccionUbicacionPortera = false;
+            if (map.getContainer()) map.getContainer().style.cursor = "";
+            return;
+          }
+
+          var latForm = document.getElementById("lat");
+          var lngForm = document.getElementById("lng");
+          if (latForm) latForm.value = e.latlng.lat;
+          if (lngForm) lngForm.value = e.latlng.lng;
 
           if (!dibujando) return;
 
@@ -3694,6 +6050,9 @@
         });
         // CAMBIO DE SECCIÓN
         function mostrarSeccion(s) {
+          if (s === "tanque" && !featureOn("tanques")) {
+            return alert("Función no disponible");
+          }
 
           if (s !== "animales") {
             cerrarMapaFullscreen();
@@ -3717,6 +6076,9 @@
         // AGREGAR
         async function agregarAnimal() {
           if (window.guardandoAnimal) return;
+          if (!featureOn("animales")) {
+            return alert("Función no disponible");
+          }
           window.guardandoAnimal = true;
           const btn = document.getElementById("btnGuardar");
           if (btn) btn.disabled = true;
@@ -3854,7 +6216,55 @@
           toggleSeleccionAnimal(cb);
         }
 
+        function reproducirAlertaAnimales(animalFueraZona) {
+          if (!(animalFueraZona && window.alertasHabilitadas && alertasHabilitadas())) return;
+          notificar("Animal fuera de zona");
+        }
+
+        function verificarAnimalesFueraZona() {
+          if (!window.alertasHabilitadas) {
+            alertaAnimalesActiva = false;
+            if (intervaloAlertaAnimales) {
+              clearInterval(intervaloAlertaAnimales);
+              intervaloAlertaAnimales = null;
+            }
+            actualizarAlertaBarraMapa();
+            return;
+          }
+          if (!alertasHabilitadas()) {
+            alertaAnimalesActiva = false;
+            if (intervaloAlertaAnimales) {
+              clearInterval(intervaloAlertaAnimales);
+              intervaloAlertaAnimales = null;
+            }
+            actualizarAlertaBarraMapa();
+            return;
+          }
+          var hayFuera = animales.some(function (a) {
+            return a.fueraZona === true;
+          });
+          if (hayFuera) {
+            if (!alertaAnimalesActiva) {
+              alertaAnimalesActiva = true;
+              reproducirAlertaAnimales(true);
+              intervaloAlertaAnimales = setInterval(function () {
+                reproducirAlertaAnimales(true);
+              }, 60000);
+            }
+          } else {
+            alertaAnimalesActiva = false;
+            if (intervaloAlertaAnimales) {
+              clearInterval(intervaloAlertaAnimales);
+              intervaloAlertaAnimales = null;
+            }
+          }
+          actualizarAlertaBarraMapa();
+        }
+
         async function eliminarSeleccionados() {
+          if (!featureOn("animales")) {
+            return alert("Función no disponible");
+          }
           if (selectedAnimales.length === 0) return;
 
           if (!confirm("¿Eliminar " + selectedAnimales.length + " animal(es) seleccionado(s)?")) return;
@@ -3880,14 +6290,32 @@
         }
 
         // MOSTRAR
-        function mostrar() {
-          console.log("Animales:", animales);
+        function mostrar(animalesInput) {
+          var listaAnimales = Array.isArray(animalesInput) ? animalesInput : animalesGlobal;
+          if (!listaAnimales.length) return;
+          animales = listaAnimales;
+          console.log("Animales:", listaAnimales);
           console.log("mostrar ejecutando");
 
           let lista = document.getElementById("lista");
           if (!lista) return;
 
           lista.innerHTML = "";
+
+          if (typeof map !== "undefined" && map) {
+            if (window.marcadores && window.marcadores.length) {
+              window.marcadores.forEach(function (m) {
+                map.removeLayer(m);
+              });
+            }
+            window.marcadores = [];
+            if (window.polylinesAnimales && window.polylinesAnimales.length) {
+              window.polylinesAnimales.forEach(function (p) {
+                map.removeLayer(p);
+              });
+            }
+            window.polylinesAnimales = [];
+          }
 
           let texto = "";
           let buscador = document.getElementById("buscador");
@@ -3927,10 +6355,7 @@
             if (filtro !== "todos" && a.lote !== filtro) return;
             if (texto && idStr.indexOf(texto) === -1) return;
 
-            let clase = "normal";
-            if (a.estado === "Enfermo") clase = "enfermo";
-            if (a.estado === "Vacunar") clase = "vacunar";
-            if (a.estado === "Preñado" || a.estado === "Preñada") clase = "prenado";
+            let clase = claseTarjetaEstadoAnimal(a.estado);
 
             var sel = selectedAnimales.some(function (s) { return String(s) === String(a.id); });
             var attrId = escapeAttr(a.id);
@@ -3938,6 +6363,9 @@
             var batNivel = normalizarBateria(a.bateria);
             var batColor = colorBateria(batNivel);
             var batPct = Math.round(batNivel);
+            var btnHistorialCard = featureOn("historial")
+              ? "<button type='button' onclick=\"verHistorial('" + a.id + "')\">📜 Historial</button>"
+              : "";
 
             lista.innerHTML +=
               "<div class=\"" + cardClasses + "\" onclick='onAnimalCardClick(event)'>" +
@@ -3952,6 +6380,12 @@
               "<span class='animal-card-meta-sep'>·</span>" +
               "<span>Lote: " + escapeHtml(a.lote || "—") + "</span>" +
               "</div>" +
+              "<div class='animal-card-estado' onclick='event.stopPropagation()'>" +
+              "<label class='animal-card-estado-label'>Estado</label>" +
+              "<select class='select-estado' data-id=\"" + attrId + "\" style='width:100%;max-width:220px;padding:6px 8px;margin-top:4px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;box-sizing:border-box;'>" +
+              opcionesEstadoHtml(a.estado || "") +
+              "</select>" +
+              "</div>" +
               "<div class='animal-card-peso-wrap'>" +
               "<span class='animal-card-peso-label'>Peso actual</span>" +
               "<span class='animal-card-peso-valor'>" + escapeHtml(String(ultimoPeso)) + " kg</span>" +
@@ -3962,7 +6396,7 @@
               "</div>" +
               "</div>" +
               "<div class='animal-card-actions' onclick='event.stopPropagation()'>" +
-              "<button type='button' onclick=\"verHistorial('" + a.id + "')\">📜 Historial</button>" +
+              btnHistorialCard +
               "<button type='button' onclick=\"mostrarGrafico('" + a.id + "')\">📊 Gráfico</button>" +
               "<button type='button' onclick='editarEstado(" + i + ")'>✏️ Estado</button>" +
               "<button type='button' onclick='editarCaravana(" + i + ")'>🔄 Caravana</button>" +
@@ -3980,6 +6414,20 @@
           }
 
           mostrarRanking(animales);
+
+          lista.querySelectorAll(".select-estado").forEach(function (select) {
+            select.addEventListener("change", async function (e) {
+              var t = e.target;
+              var animalId = t && t.dataset ? t.dataset.id : "";
+              var nuevoEstado = t ? t.value : "";
+              console.log("Cambio de estado:", animalId, nuevoEstado);
+              if (typeof window.actualizarEstadoAnimal === "function") {
+                await window.actualizarEstadoAnimal(animalId, nuevoEstado);
+              }
+            });
+          });
+
+          verificarAnimalesFueraZona();
         }
 
         function iniciarSimulacionDrenajeBateria() {
@@ -4009,15 +6457,35 @@
         // MAPA
         // 🔥 VARIABLES GLOBALES RECUPERADAS
         let dibujando = false;
-        let marcadores = [];
 
         let alertaActiva = false;
         let zonaSeleccionada = null;
         function mostrarEnMapa() {
 
-          // borrar solo marcadores
-          marcadores.forEach(m => map.removeLayer(m));
-          marcadores = [];
+          animales.forEach(function (a) {
+            a.fueraZona = false;
+            var latZ = parseFloat(a.lat);
+            var lngZ = parseFloat(a.lng);
+            if (isNaN(latZ) || isNaN(lngZ)) return;
+            try {
+              a.fueraZona = !estaDentroZona(latZ, lngZ);
+            } catch (e) {
+              a.fueraZona = false;
+            }
+          });
+
+          if (window.marcadores && window.marcadores.length) {
+            window.marcadores.forEach(function (m) {
+              map.removeLayer(m);
+            });
+          }
+          window.marcadores = [];
+          if (window.polylinesAnimales && window.polylinesAnimales.length) {
+            window.polylinesAnimales.forEach(function (p) {
+              map.removeLayer(p);
+            });
+          }
+          window.polylinesAnimales = [];
           let hayFuera = false;
 
           animales.forEach(a => {
@@ -4073,12 +6541,9 @@
                 color = "black"; // ⚫ prioridad máxima
               } else if (!dentro) {
                 color = "red";
-              } else if (a.estado === "Enfermo") {
-                color = "red";
-              } else if (a.estado === "Vacunar") {
-                color = "orange";
-              } else if (a.estado === "Preñado" || a.estado === "Preñada") {
-                color = "green";
+              } else {
+                var colEst = colorMapaPorEstadoAnimal(a.estado);
+                if (colEst !== "blue") color = colEst;
               }
 
               let icono = L.divIcon({
@@ -4149,24 +6614,25 @@
                 }
               }).addTo(map);
 
-              marker.bindPopup(
-                texto +
-                `<br><button onclick="verHistorial('${a.id}')">📜 Historial</button>`
-              );
+              var popupHistorial = featureOn("historial")
+                ? "<br><button onclick=\"verHistorial('" + String(a.id).replace(/'/g, "\\'") + "')\">📜 Historial</button>"
+                : "";
+              marker.bindPopup(texto + popupHistorial);
 
               marker.on("click touchstart", function () {
                 marker.openPopup();
               });
 
-              marcadores.push(marker);
+              window.marcadores.push(marker);
               if (a.movimientos && a.movimientos.length > 1) {
 
                 let recorrido = a.movimientos.map(p => [p.lat, p.lng]);
 
-                L.polyline(recorrido, {
+                var polyRecorrido = L.polyline(recorrido, {
                   color: 'blue',
                   weight: 2
                 }).addTo(map);
+                window.polylinesAnimales.push(polyRecorrido);
               }
 
             } catch (e) {
@@ -4180,7 +6646,7 @@
           let alertaDiv = document.getElementById("alertaZona");
 
           if (alertaDiv) {
-            if (hayFuera) {
+            if (window.alertasHabilitadas && alertasHabilitadas() && hayFuera) {
               alertaDiv.innerHTML = "⚠️ Animales fuera de zona";
             } else {
               alertaDiv.innerHTML = "";
@@ -4258,7 +6724,10 @@
 
           return dentro;
         }
-        function guardarZona() {
+        async function guardarZona() {
+          if (!featureOn("animales")) {
+            return alert("Función no disponible");
+          }
 
           if (puntosZona.length < 3) {
             alert("Marcá al menos 3 puntos");
@@ -4284,14 +6753,25 @@
           });
 
           zonas.push(nuevaZona);
-
-          // 🔥 guardar BIEN
-          let zonasGuardar = zonas.map(z => ({
-            nombre: z.nombre,
-            coords: z.getLatLngs()[0]
-          }));
-
-          localStorage.setItem("zonas", JSON.stringify(zonasGuardar));
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session && session.user && session.user.id) {
+            const coordsArray = serializarCoordsZona(nuevaZona.getLatLngs()[0]);
+            const { data: inserted, error } = await supabase
+              .from("zonas")
+              .insert([{
+                user_id: session.user.id,
+                nombre: nombre,
+                coordenadas: coordsArray
+              }])
+              .select("id")
+              .maybeSingle();
+            if (error) {
+              console.warn("guardarZona insert zonas:", error);
+            } else if (inserted && inserted.id) {
+              nuevaZona.zonaId = inserted.id;
+            }
+          }
+          guardarZonasEnLocalStorage();
 
           if (window.poligonoTemp) {
             map.removeLayer(window.poligonoTemp);
@@ -4303,7 +6783,10 @@
 
 
 
-        function borrarZona() {
+        async function borrarZona() {
+          if (!featureOn("animales")) {
+            return alert("Función no disponible");
+          }
 
           if (!zonaSeleccionada) {
             alert("Seleccioná una zona");
@@ -4311,15 +6794,19 @@
           }
 
           map.removeLayer(zonaSeleccionada);
+          var zonaId = zonaSeleccionada.zonaId || null;
 
           zonas = zonas.filter(z => z !== zonaSeleccionada);
-
-          localStorage.setItem("zonas", JSON.stringify(
-            zonas.map(z => ({
-              nombre: z.nombre,
-              coords: z.getLatLngs()[0]
-            }))
-          ));
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session && session.user && session.user.id && zonaId) {
+            const { error } = await supabase
+              .from("zonas")
+              .delete()
+              .eq("id", zonaId)
+              .eq("user_id", session.user.id);
+            if (error) console.warn("borrarZona delete zonas:", error);
+          }
+          guardarZonasEnLocalStorage();
 
           zonaSeleccionada = null;
         }
@@ -4331,14 +6818,19 @@
             overlay.style.cssText = "position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:9999;";
             const card = document.createElement("div");
             card.style.cssText = "background:white;border-radius:10px;padding:14px;width:min(360px,92vw);box-shadow:0 8px 30px rgba(0,0,0,.25);";
-            card.innerHTML =
+            var htmlEstadoEditor =
               "<h3 style='margin:0 0 10px 0;'>Editar estado</h3>" +
-              "<select id='estadoEditorSelect' style='width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;margin-bottom:8px;'>" + opcionesEstadoHtml(valorActual) + "</select>" +
-              "<button type='button' id='estadoEditorNuevo' style='width:100%;padding:8px;border:none;border-radius:6px;background:#6d28d9;color:white;margin-bottom:8px;'>+ Nuevo Estado</button>" +
+              "<select id='estadoEditorSelect' style='width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;margin-bottom:8px;'>" + opcionesEstadoHtml(valorActual) + "</select>";
+            if (featureOn("estados")) {
+              htmlEstadoEditor +=
+                "<button type='button' id='estadoEditorNuevo' style='width:100%;padding:8px;border:none;border-radius:6px;background:#6d28d9;color:white;margin-bottom:8px;'>+ Nuevo Estado</button>";
+            }
+            htmlEstadoEditor +=
               "<div style='display:flex;gap:8px;'>" +
               "<button type='button' id='estadoEditorCancelar' style='flex:1;padding:8px;border:none;border-radius:6px;background:#64748b;color:white;'>Cancelar</button>" +
               "<button type='button' id='estadoEditorGuardar' style='flex:1;padding:8px;border:none;border-radius:6px;background:#16a34a;color:white;'>Guardar</button>" +
               "</div>";
+            card.innerHTML = htmlEstadoEditor;
             overlay.appendChild(card);
             document.body.appendChild(overlay);
 
@@ -4353,19 +6845,44 @@
             const btnSave = card.querySelector("#estadoEditorGuardar");
             btnCancel.onclick = function () { cerrar(null); };
             btnSave.onclick = function () { cerrar(select ? select.value : ""); };
-            btnNuevo.onclick = async function () {
-              await nuevoEstadoAnimal();
-              if (select) {
-                const prev = select.value;
-                select.innerHTML = opcionesEstadoHtml(prev);
-                select.value = prev || "";
-              }
-            };
+            if (btnNuevo) {
+              btnNuevo.onclick = async function () {
+                await nuevoEstadoAnimal();
+                if (select) {
+                  const prev = select.value;
+                  renderizarSelectEstadoAnimal(prev);
+                  select.value = prev || "";
+                }
+              };
+            }
             overlay.addEventListener("click", function (ev) {
               if (ev.target === overlay) cerrar(null);
             });
           });
         }
+
+        window.actualizarEstadoAnimal = async function (id, estado) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            console.warn("actualizarEstadoAnimal: sin sesión");
+            return;
+          }
+          var estadoDb = normalizarEstadoAnimal(estado);
+          const { data, error } = await supabase
+            .from("animales")
+            .update({ estado: estadoDb })
+            .eq("caravana", id)
+            .eq("user_id", session.user.id)
+            .select();
+
+          console.log("UPDATE RESULT:", data, error);
+
+          if (error) {
+            alert("Error al actualizar estado: " + (error.message || String(error)));
+            return;
+          }
+          await cargarAnimales();
+        };
 
         async function editarEstado(i) {
           const animal = animales[i];
@@ -4373,17 +6890,7 @@
           const nuevo = await seleccionarEstadoConDropdown(animal.estado || "");
           if (nuevo == null) return;
 
-          const actualizado = await actualizarAnimalEnSupabase(animal.id, {
-            estado: normalizarEstadoAnimal(nuevo)
-          });
-
-          if (actualizado) {
-            animales[i].estado = normalizarEstadoAnimal(nuevo);
-            console.log("Estado actualizado:", animal.id);
-            mostrar();
-          } else {
-            alert("Error al actualizar el estado");
-          }
+          await window.actualizarEstadoAnimal(String(animal.id), nuevo);
         }
 
         // ELIMINAR
@@ -4424,6 +6931,9 @@
           });
         }
         function exportarCSV() {
+          if (!featureOn("animales")) {
+            return alert("Función no disponible");
+          }
 
           // Tomar todos los marcadores del mapa
           let capas = Object.values(map._layers);
@@ -4530,6 +7040,9 @@
           });
         }
         function importarPesos() {
+          if (!featureOn("animales")) {
+            return alert("Función no disponible");
+          }
 
           let input = document.getElementById("filePesos");
 
@@ -4637,8 +7150,19 @@
           return inside;
         }
         function reproducirAlerta() {
-          let audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
-          audio.play();
+          if (!window.alertasHabilitadas) return;
+          if (!alertasHabilitadas()) return;
+          if (!sonidoAlertasActivado()) return;
+          if (!audioHabilitado) return;
+          try {
+            var audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+            if (audio && typeof audio.play === "function") {
+              audio.currentTime = 0;
+              audio.play().catch(function () {});
+            }
+          } catch (e) {
+            console.log("Audio no disponible");
+          }
         }
         async function editarCaravana(i) {
 
@@ -4678,6 +7202,9 @@
             return diffHoras >= horas;
           }
           function verHistorial(id) {
+            if (!featureOn("historial")) {
+              return alert("Función no disponible");
+            }
             let animal = animales.find(a => String(a.id) === String(id));
             if (!animal) return;
 
@@ -4827,6 +7354,9 @@
             mostrarSeccion('animales'); // Asegurar que esté en la sección animales
           }
           async function borrarEvento(id, index) {
+            if (!featureOn("historial")) {
+              return alert("Función no disponible");
+            }
 
             let animal = animales.find(a => String(a.id) === String(id));
             if (!animal) return;
@@ -4846,6 +7376,9 @@
           }
 
           async function agregarEvento(id, tipo, detalle) {
+            if (!featureOn("historial")) {
+              return alert("Función no disponible");
+            }
 
             let animal = animales.find(a => String(a.id) === String(id));
             if (!animal) return;
@@ -4879,7 +7412,10 @@
             alert("Actividad reiniciada");
             mostrar();
           }
-          function editarZona() {
+          async function editarZona() {
+            if (!featureOn("animales")) {
+              return alert("Función no disponible");
+            }
 
             if (!zonaSeleccionada) {
               alert("Seleccioná una zona");
@@ -4891,19 +7427,16 @@
             if (!nuevoNombre) return;
 
             zonaSeleccionada.nombre = nuevoNombre;
-
-            // actualizar localStorage
-            let zonasGuardadas = JSON.parse(localStorage.getItem("zonas")) || [];
-
-            zonasGuardadas = zonasGuardadas.map(z => {
-              if (JSON.stringify(z.coords) ===
-                JSON.stringify(zonaSeleccionada.getLatLngs()[0])) {
-                z.nombre = nuevoNombre;
-              }
-              return z;
-            });
-
-            localStorage.setItem("zonas", JSON.stringify(zonasGuardadas));
+            guardarZonasEnLocalStorage();
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && session.user && session.user.id && zonaSeleccionada.zonaId) {
+              const { error } = await supabase
+                .from("zonas")
+                .update({ nombre: nuevoNombre })
+                .eq("id", zonaSeleccionada.zonaId)
+                .eq("user_id", session.user.id);
+              if (error) console.warn("editarZona update zonas:", error);
+            }
 
             alert("Nombre actualizado");
           }
@@ -5015,7 +7548,7 @@
           {
             tema: "Tanque",
             keywords: ["tanque", "agua", "nivel", "litros", "capacidad", "lectura"],
-            respuesta: "En Tanque configure capacidad y nivel. Puede simular lecturas LoRa y consultar el historial para monitoreo de agua."
+            respuesta: "En Tanques puede dar de alta varios depósitos, ver nivel y alertas en cada tarjeta, editar o eliminar, y simular lecturas LoRa con histórico por tanque."
           },
           {
             tema: "Porteras",
@@ -5053,9 +7586,9 @@
             respuesta: "GanadoControl alerta por animales fuera de zona, inactividad o eventos configurados en porteras. Revise panel lateral y popups para detalle."
           },
           {
-            tema: "Estados personalizados",
+            tema: "Estados de animal",
             keywords: ["estado", "estado personalizado", "sano", "enfermo", "prenada", "preñada", "vacunar", "vendido", "tratamiento"],
-            respuesta: "Puede usar estados por defecto o crear nuevos con + Nuevo Estado. Los estados personalizados se guardan localmente y se sincronizan con su cuenta."
+            respuesta: "Los estados disponibles salen de la tabla estados en Supabase (globales y los de su usuario). Con plan que incluya la función, puede agregar más con + Nuevo Estado; se guardan en la base de datos."
           }
         ];
 
@@ -5064,7 +7597,7 @@
           "Pesajes",
           "Cobertura LoRa",
           "Importación/Exportación CSV",
-          "Estados personalizados",
+          "Estados de animal",
           "Cuenta/Login"
         ];
 
@@ -5157,7 +7690,7 @@
             { title: "Información en Mapa", selector: "#map", description: "Tocando un animal en el mapa podrás ver su ficha rápida.", onBefore: function () { mostrarVista("animales"); } },
             { title: "Zonas/Cercos", selector: "#panelControles", description: "Aquí puedes definir zonas permitidas o cercos virtuales.", onBefore: function () { mostrarVista("animales"); } },
             { title: "Rebaños", selector: "#navRebanos", description: "Permite organizar animales en grupos de manejo." },
-            { title: "Tanque", selector: "#navTanque", description: "Aquí controlas nivel, consumo e histórico del tanque." },
+            { title: "Tanque", selector: "#navTanque", description: "Gestionás varios tanques en tarjetas: nivel, alertas, histórico y lecturas LoRa por tanque seleccionado." },
             { title: "Porteras", selector: "#navPorteras", description: "Monitorea apertura/cierre y recibe alertas de seguridad." },
             { title: "Antena LoRa", selector: "#gatewaySettingsPanel", description: "La antena LoRa recibe la señal enviada por los collares. Su cobertura permite conectar animales a larga distancia.", onBefore: function () { mostrarVista("animales"); } },
             { title: "Cobertura LoRa", selector: "#toggleCoberturaBtn", description: "En el mapa podrás ver la cobertura estimada y calidad de señal de la antena.", onBefore: function () { mostrarVista("animales"); } },
@@ -5595,10 +8128,49 @@
         }
 
         // SISTEMA DE VISTAS
+        let vistaActual = "mapa";
+
+        function mostrarMapa() {
+          mostrarVista("animales");
+        }
+
+        function mostrarPorteras() {
+          mostrarVista("porteras");
+        }
+
+        function mostrarTanques() {
+          mostrarVista("tanque");
+        }
+
+        function renderVista() {
+          if (vistaActual === "mapa") mostrarMapa();
+          if (vistaActual === "porteras") mostrarPorteras();
+          if (vistaActual === "tanques") mostrarTanques();
+        }
+
         function mostrarVista(tipo) {
           window.__vistaActiva = tipo;
+          if (tipo === "animales") vistaActual = "mapa";
+          if (tipo === "porteras") vistaActual = "porteras";
+          if (tipo === "tanque") vistaActual = "tanques";
+
           let panel = document.getElementById("panelLateral");
           if (!panel) return;
+
+          if (tipo === "rebanos" && !featureOn("rebanos")) {
+            return alert("Función no disponible");
+          }
+          if (tipo === "animales" || tipo === "ingreso") {
+            if (!featureOn("animales")) {
+              return alert("Función no disponible");
+            }
+          }
+          if (tipo === "tanque" && !featureOn("tanques")) {
+            return alert("Función no disponible");
+          }
+          if (tipo === "porteras" && !featureOn("porteras")) {
+            return alert("Función no disponible");
+          }
 
           mostrarSeccion('animales');
 
@@ -5615,9 +8187,46 @@
             mostrarSeccion('tanque');
             cargarTanqueDesdeSupabase();
           } else if (tipo === 'porteras') {
-            renderPorterasPanel();
+            void cargarPorteras();
           } else if (tipo === 'ayuda') {
             panel.innerHTML = vistaAyuda();
+          } else if (tipo === "configuracion") {
+            panel.innerHTML = vistaConfiguracion();
+            queueMicrotask(function () {
+              var btnCp = document.getElementById("btnCancelarPlan");
+              if (btnCp) {
+                btnCp.addEventListener("click", async function () {
+                  console.log("Click cancelar suscripción");
+                  try {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (!session || !session.user || !session.user.id) {
+                      alert("Iniciá sesión.");
+                      return;
+                    }
+                    const { error } = await supabase.from("solicitudes_plan").insert({
+                      user_id: session.user.id,
+                      tipo: "cancelacion",
+                      estado: "pendiente"
+                    });
+                    if (error) {
+                      console.error("Error cancelación:", error);
+                      alert("No se pudo enviar: " + (error.message || String(error)));
+                      return;
+                    }
+                    alert("Solicitud enviada");
+                  } catch (e) {
+                    console.error("Error cancelación:", e);
+                  }
+                });
+              }
+              void refrescarVistaConfiguracion();
+              var tgl = document.getElementById("settingsToggleSonido");
+              if (tgl) {
+                tgl.onchange = function () {
+                  setSonidoAlertasActivado(!!tgl.checked);
+                };
+              }
+            });
           }
 
           if (typeof cerrarMapaFullscreen === "function") {
@@ -5628,6 +8237,10 @@
           }
           if (typeof invalidateMapSizeDelayed300 === "function") {
             invalidateMapSizeDelayed300();
+          }
+
+          if (typeof aplicarHistorialYEstadosUI === "function") {
+            aplicarHistorialYEstadosUI();
           }
         }
 
@@ -5658,8 +8271,8 @@
           html += '<input id="lat" placeholder="Latitud" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
           html += '<input id="lng" placeholder="Longitud" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
           html += '<input id="peso" placeholder="Peso (kg)" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
-          html += '<select id="estado" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">' + opcionesEstadoHtml("") + '</select>';
-          html += '<button type="button" onclick="nuevoEstadoAnimal()" style="width: 100%; padding: 8px; margin: 0 0 8px 0; background: #6d28d9; color: white; border: none; border-radius: 5px; cursor: pointer;">+ Nuevo Estado</button>';
+          html += '<select id="estado" data-gc-estado-animal="1" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">' + opcionesEstadoHtmlDesdeFilas("") + '</select>';
+          html += '<button type="button" id="btnNuevoEstadoAnimalIngreso" onclick="nuevoEstadoAnimal()" style="width: 100%; padding: 8px; margin: 0 0 8px 0; background: #6d28d9; color: white; border: none; border-radius: 5px; cursor: pointer;">+ Nuevo Estado</button>';
           html += '<button id="btnGuardar" type="button" onclick="agregarAnimal()" style="width: 100%; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px 0; font-weight: bold;">Guardar</button>';
           html += '<button onclick="document.getElementById(\'fileInput\').click()" style="width: 100%; padding: 10px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px 0;">📂 Importar CSV</button>';
           html += '<input type="file" id="fileInput" style="display:none;" onchange="importarCSV()">';
@@ -5684,8 +8297,89 @@
           return html;
         }
 
+        function vistaConfiguracion() {
+          var html = "";
+          html += '<div class="gc-settings">';
+          html += "<h3>⚙️ Configuración</h3>";
+
+          html += '<div class="gc-settings-section">';
+          html += "<h4>🟢 Cuenta</h4>";
+          html += '<div class="gc-settings-field"><label for="settingsEmail">Email</label>';
+          html += '<input type="email" id="settingsEmail" class="gc-settings-readonly" readonly autocomplete="username"></div>';
+          html += '<div class="gc-settings-field"><label for="settingsPassNew">Nueva contraseña</label>';
+          html += '<input type="password" id="settingsPassNew" autocomplete="new-password" placeholder="Mínimo 6 caracteres" class="gc-settings-readonly" style="background:#fff"></div>';
+          html += '<div class="gc-settings-field"><label for="settingsPassConf">Confirmar contraseña</label>';
+          html += '<input type="password" id="settingsPassConf" autocomplete="new-password" placeholder="Repetir contraseña" class="gc-settings-readonly" style="background:#fff"></div>';
+          html += '<button type="button" class="gc-btn gc-btn--primary" onclick="cambiarPasswordDesdeSettings()">Cambiar contraseña</button>';
+          html += '<button type="button" class="gc-btn gc-btn--muted" onclick="cerrarSesionDesdeSettings()">Cerrar sesión</button>';
+          html += "</div>";
+
+          html += '<hr class="gc-settings-divider">';
+
+          html += '<div class="gc-settings-section">';
+          html += "<h4>💰 Plan y suscripción</h4>";
+          html += '<p style="margin:0 0 12px;font-size:15px;line-height:1.45;">Plan actual: <strong id="settingsPlanNombre">—</strong></p>';
+          html += '<div id="settingsUpgradeWrap" style="display:none;">';
+          html += '<button type="button" id="settingsBtnMejorarPlan" class="gc-btn gc-btn--accent" onclick="mostrarOpcionesUpgradePlan()">Mejorar plan</button>';
+          html += '<div id="settingsPlanChoicePanel" class="gc-plan-upgrade" style="display:none;margin-top:12px;">';
+          html += '<p style="margin:0 0 8px;font-size:13px;color:#64748b;">Elegí el plan al que querés pasar (no incluye tu plan actual):</p>';
+          html += '<div class="gc-plan-options">';
+          html += '<label class="gc-plan-option" for="settingsPlanGanado"><input type="radio" name="planSolicitado" value="Ganado" id="settingsPlanGanado"> <span>Plan Ganado</span></label>';
+          html += '<label class="gc-plan-option" for="settingsPlanCompleto"><input type="radio" name="planSolicitado" value="Completo" id="settingsPlanCompleto"> <span>Plan Completo</span></label>';
+          html += "</div>";
+          html += '<button type="button" class="gc-btn gc-btn--primary" onclick="enviarSolicitudPlanDesdePanel()">Solicitar cambio</button>';
+          html += "</div></div>";
+          html += '<div id="settingsSolicitudMsg" class="gc-settings-msg" role="status"></div>';
+          html += '<button type="button" id="btnCancelarPlan" class="gc-btn gc-btn--ghost" style="margin-top:8px">Cancelar suscripción</button>';
+          html += '<button type="button" id="settingsBtnAnularSolicitud" class="gc-btn gc-btn--ghost" style="display:none;margin-top:8px" onclick="anularSolicitudPlan()">Anular solicitud</button>';
+          html += "</div>";
+
+          html += '<hr class="gc-settings-divider">';
+
+          html += '<div class="gc-settings-section">';
+          html += "<h4>🟡 Preferencias</h4>";
+          html += '<div id="settingsAlertasActivasWrap" class="gc-toggle-row" style="display:none;">';
+          html += '<label for="toggleAlertas" style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;">';
+          html += '<input type="checkbox" id="toggleAlertas">';
+          html += "<span>Activar alertas</span></label></div>";
+          html += '<div class="gc-toggle-row"><span>Activar sonido de alertas</span>';
+          html += '<input type="checkbox" id="settingsToggleSonido" aria-label="Sonido de alertas"></div>';
+          html += "</div>";
+
+          html += '<hr class="gc-settings-divider">';
+
+          html += '<div class="gc-settings-section">';
+          html += "<h4>🔵 Producto</h4>";
+          html += '<p style="margin:0;font-size:15px;">Producto activo: <strong id="settingsTipoCliente">—</strong></p>';
+          html += "</div>";
+
+          html += '<hr class="gc-settings-divider">';
+
+          html += '<div class="gc-settings-section">';
+          html += "<h4>🔴 Avanzado</h4>";
+          html += '<p style="margin:0 0 10px;font-size:13px;color:#64748b;">Elimina tus datos en la app y cierra la sesión. La cuenta de correo puede requerir borrado definitivo con soporte.</p>';
+          html += '<button type="button" class="gc-btn gc-btn--danger" onclick="eliminarCuentaUsuarioAvanzado()">Eliminar cuenta</button>';
+          html += "</div>";
+
+          html += "</div>";
+          return html;
+        }
+
         // Handlers inline (onclick / oninput) resuelven en window — exponer funciones del callback
         window.mostrarVista = mostrarVista;
+        window.mostrarMapa = function () {
+          vistaActual = "mapa";
+          renderVista();
+        };
+        window.mostrarPorteras = function () {
+          vistaActual = "porteras";
+          renderVista();
+        };
+        window.mostrarTanques = function () {
+          vistaActual = "tanques";
+          renderVista();
+        };
+        window.renderVista = renderVista;
         window.mostrar = mostrar;
         window.mostrarSeccion = mostrarSeccion;
         window.agregarAnimal = agregarAnimal;
@@ -5723,9 +8417,32 @@
         window.actualizarNivelTanque = actualizarNivelTanque;
         window.simularLecturaTanque = simularLecturaTanque;
         window.cargarTanqueDesdeSupabase = cargarTanqueDesdeSupabase;
+        window.cargarTanquesDesdeSupabase = cargarTanquesDesdeSupabase;
+        window.abrirFormularioTanqueNuevo = abrirFormularioTanqueNuevo;
+        window.abrirFormularioEditarTanque = abrirFormularioEditarTanque;
+        window.cerrarFormularioTanque = cerrarFormularioTanque;
+        window.confirmarFormularioTanque = confirmarFormularioTanque;
+        window.eliminarTanqueConfirm = eliminarTanqueConfirm;
+        window.seleccionarTanque = seleccionarTanque;
+        window.seleccionarTanqueDesdeCard = seleccionarTanqueDesdeCard;
         window.actualizarPortera = actualizarPortera;
         window.guardarConfigPortera = guardarConfigPortera;
-        window.crearPorteraDesdePanel = crearPorteraDesdePanel;
+        window.crearPortera = crearPortera;
+        window.crearPorteraDesdePanel = crearPortera;
+        (function enlazarDelegacionBtnCrearPortera() {
+          var pan = document.getElementById("panelLateral");
+          if (!pan || pan.dataset.crearPorteraDelegacion === "1") return;
+          pan.dataset.crearPorteraDelegacion = "1";
+          pan.addEventListener("click", function (ev) {
+            var t = ev.target;
+            if (!t || t.id !== "btnCrearPortera") return;
+            ev.preventDefault();
+            void window.crearPortera();
+          });
+        })();
+        window.eliminarPortera = eliminarPortera;
+        window.cargarPorteras = cargarPorteras;
+        window.iniciarSeleccionUbicacionPortera = iniciarSeleccionUbicacionPortera;
         window.verificarAlertasPortera = verificarAlertasPortera;
         window.reproducirAlarma = reproducirAlarma;
         window.enviarPush = enviarPush;
@@ -5738,51 +8455,30 @@
         window.eliminarGateway = eliminarGateway;
         window.registrarLecturaSenal = registrarLecturaSenal;
         window.nuevoEstadoAnimal = nuevoEstadoAnimal;
+        window.cargarEstadosDesdeSupabase = cargarEstadosDesdeSupabase;
         window.iniciarTourGuiado = iniciarTourGuiado;
 
-        porteras = cargarPorteras();
-        if (!porteras.length) porteras = defaultPorteras();
         iniciarMonitorPorteras();
 
         const { data: { session } } = await supabase.auth.getSession();
         console.log("SESSION INICIAL:", session);
-        if (session) {
-          console.log("Sesión detectada al iniciar, cargando animales...");
-          await sincronizarEstadosCustomConSupabase();
-          await cargarAnimales();
-          await cargarPerfilUsuario();
-          iniciarSimulacionDrenajeBateria();
+
+        if (!window.authListenerAdded) {
+          supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log("AUTH EVENT:", event);
+            if (event === "SIGNED_OUT") {
+              limpiarUI();
+              return;
+            }
+            if (event === "SIGNED_IN") {
+              await initAppConSesion(session);
+            }
+          });
+          window.authListenerAdded = true;
         }
 
-        supabase.auth.onAuthStateChange(async (event, session) => {
-          console.log("Supabase auth event:", event, session);
-          if (event === "SIGNED_OUT") {
-            detenerSimulacionDrenajeBateria();
-            document.getElementById("loginScreen").style.display = "flex";
-            showLogin();
-            animales = [];
-            selectedAnimales = [];
-            customAnimalStatuses = cargarEstadosCustomLocal();
-            renderizarSelectEstadoAnimal("");
-            perfilUsuario = null;
-            updatePerfilUI();
-            mostrar();
-            return;
-          }
-          if (event === "SIGNED_IN") {
-            const { data: sessWrap } = await supabase.auth.getSession();
-            const active = sessWrap?.session;
-            console.log("SESSION ACTIVA:", active);
-            document.getElementById("loginScreen").style.display = "none";
-            console.log("Usuario listo, cargando datos...");
-            await sincronizarEstadosCustomConSupabase();
-            await cargarAnimales();
-            await cargarPerfilUsuario();
-            iniciarSimulacionDrenajeBateria();
-          }
-        });
-
-        checkLogin(); // UI según sesión; datos: bootstrap getSession + SIGNED_IN
+        await checkLogin();
+        registrarServiceWorkerSiAlertas();
 
         console.log("JS OK");
         ocultarSplashApp();
@@ -5823,3 +8519,4 @@
 </body>
 
 </html>
+
