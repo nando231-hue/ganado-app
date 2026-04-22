@@ -5,7 +5,7 @@
   <title>GanadoControl</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#1c1f1e">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -26,13 +26,55 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --gc-bg: #1c1f1e;
+      --gc-card: #2a2f2d;
+      --gc-primary: rgba(31, 61, 43, 0.55);
+      --gc-text: #e6e6e6;
+      --gc-text-muted: #a0a0a0;
+      --gc-border: #3d4542;
+      --gc-surface: #2a2f2d;
+      --gc-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+      --gc-radius: 10px;
+      --gc-alert-red: #b02a2a;
+      --gc-alert-orange: #b06a2a;
+      --gc-btn-secondary: #4a5350;
+    }
+
     body {
-      font-family: Arial;
-      background-image: url("https://images.unsplash.com/photo-1500382017468-9049fed747ef");
-      background-size: cover;
-      background-position: center;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--gc-text);
+      background: var(--gc-bg);
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      color: var(--gc-text);
+      font-weight: 600;
+    }
+
+    h2,
+    h3 {
+      font-size: 17px;
+      margin: 0 0 12px 0;
+    }
+
+    h4 {
+      font-size: 15px;
+      margin: 0 0 10px 0;
+    }
+
+    p,
+    label,
+    li {
+      font-size: 13px;
+      color: var(--gc-text-muted);
     }
 
     /* ================== MENU ================== */
@@ -40,17 +82,88 @@
       position: fixed;
       width: 200px;
       height: 100%;
-      background: #1e293b;
-      color: white;
-      padding: 15px;
+      background: var(--gc-card);
+      color: var(--gc-text);
+      padding: 0 12px 14px;
+      border-right: 1px solid var(--gc-border);
+      box-shadow: var(--gc-shadow);
+      overflow-y: auto;
+      overflow-x: visible;
+      max-height: none;
+    }
+
+    #menu h2 {
+      font-size: 17px;
+      margin: 0 0 12px 0;
+      color: var(--gc-text);
+      font-weight: 600;
+    }
+
+    #menu button {
+      width: 100%;
+      padding: 10px 14px;
+      margin: 4px 0;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      background: var(--gc-btn-secondary);
+      color: var(--gc-text);
+      border: 1px solid var(--gc-border);
+      box-shadow: none;
+      transform: none;
+    }
+
+    #menu button:hover {
+      filter: brightness(1.08);
+      transform: none;
+      box-shadow: none;
+    }
+
+    #menu #navAnimales {
+      background: rgba(31, 61, 43, 0.52);
+      color: var(--gc-text);
+      border-color: #2d5a3d;
+    }
+
+    #menu #navAyuda {
+      background: var(--gc-btn-secondary);
+    }
+
+    #menu #navConfiguracion {
+      background: rgba(31, 61, 43, 0.52);
+      color: var(--gc-text);
+      border-color: #2d5a3d;
+    }
+
+    #menu #btnLogout {
+      background: var(--gc-btn-secondary);
+      margin-top: 10px;
     }
 
     /* ================== CONTENIDO ================== */
     #contenido {
       margin-left: 220px;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.9);
+      padding: 16px;
+      background: var(--gc-bg);
       min-height: 100vh;
+    }
+
+    .gc-section-card {
+      background: var(--gc-card);
+      border-radius: var(--gc-radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--gc-shadow);
+      border: 1px solid var(--gc-border);
+      border-left: 3px solid rgba(31, 61, 43, 0.55);
+    }
+
+    #animales.gc-section-card {
+      padding: 12px;
+    }
+
+    #alertasContainer .gc-alert-chip {
+      pointer-events: none;
     }
 
     /* ================== LAYOUT ================== */
@@ -66,7 +179,7 @@
       width: 300px;
       max-height: 80vh;
       overflow-y: auto;
-      background: white;
+      background: var(--gc-surface, #2a2f2d);
       padding: 10px;
       border-radius: 10px;
     }
@@ -82,7 +195,7 @@
     /* PANEL LATERAL */
     #panelControles {
       width: 220px;
-      background: white;
+      background: var(--gc-surface, #2a2f2d);
       padding: 10px;
       border-radius: 10px;
       display: flex;
@@ -93,30 +206,30 @@
     .lora-panel {
       margin-top: 8px;
       padding: 10px;
-      border: 1px solid #dbeafe;
+      border: 1px solid var(--gc-border, #3d4542);
       border-radius: 10px;
-      background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
+      background: var(--gc-surface-soft, #343a38);
     }
 
     .lora-panel h4 {
       margin: 0 0 8px 0;
-      color: #1d4ed8;
+      color: var(--gc-text, #e6e6e6);
       font-size: 13px;
     }
 
     .gateway-card {
-      background: #ffffff;
-      border: 1px solid #dbeafe;
+      background: var(--gc-card, #2a2f2d);
+      border: 1px solid var(--gc-border, #3d4542);
       border-radius: 8px;
       padding: 8px;
       margin-bottom: 8px;
-      box-shadow: 0 1px 2px rgba(30, 58, 138, 0.08);
+      box-shadow: none;
     }
 
     .gateway-card label {
       display: block;
       font-size: 11px;
-      color: #1e293b;
+      color: var(--gc-text-muted, #a0a0a0);
       margin: 4px 0 2px 0;
       font-weight: 600;
     }
@@ -223,15 +336,15 @@
     }
 
     .bloqueado {
-      opacity: 0.5;
+      opacity: 0.85;
       cursor: not-allowed;
-      background: #f5f5f5;
-      border: 1px dashed #888;
+      background: var(--gc-surface-soft, #343a38);
+      border: 1px dashed var(--gc-border, #3d4542);
       border-radius: 8px;
       padding: 8px 10px;
       margin: 6px 0;
       font-size: 13px;
-      color: #333;
+      color: var(--gc-text-muted, #a0a0a0);
     }
 
     #appSplash {
@@ -278,20 +391,6 @@
 
       to {
         transform: rotate(360deg);
-      }
-    }
-
-    @keyframes parpadeo {
-      0% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0.3;
-      }
-
-      100% {
-        opacity: 1;
       }
     }
 
@@ -1010,22 +1109,27 @@
       margin: 0;
     }
 
-    /* ================== UI REFRESH OVERRIDES ================== */
+    /* ================== UI REFRESH OVERRIDES (dark) ================== */
     :root {
-      --gc-bg: #0b1220;
-      --gc-surface: #ffffff;
-      --gc-surface-soft: #f8fafc;
-      --gc-border: #e2e8f0;
-      --gc-text: #0f172a;
-      --gc-muted: #64748b;
-      --gc-accent: #2563eb;
-      --gc-radius: 14px;
-      --gc-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+      --gc-bg: #1c1f1e;
+      --gc-card: #2a2f2d;
+      --gc-primary: rgba(31, 61, 43, 0.55);
+      --gc-surface: #2a2f2d;
+      --gc-surface-soft: #343a38;
+      --gc-border: #3d4542;
+      --gc-text: #e6e6e6;
+      --gc-text-muted: #a0a0a0;
+      --gc-muted: #a0a0a0;
+      --gc-accent: #2d5a3d;
+      --gc-radius: 10px;
+      --gc-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+      --gc-alert-red: #b02a2a;
+      --gc-alert-orange: #b06a2a;
+      --gc-btn-secondary: #4a5350;
     }
 
     body {
-      background-image: linear-gradient(180deg, #0b1220 0%, #111827 40%, #0f172a 100%);
-      background-attachment: fixed;
+      background: var(--gc-bg);
       color: var(--gc-text);
     }
 
@@ -1034,33 +1138,33 @@
     }
 
     #menu {
-      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-      border-right: 1px solid rgba(148, 163, 184, 0.25);
-      box-shadow: 4px 0 20px rgba(2, 6, 23, 0.3);
+      background: var(--gc-card);
+      border-right: 1px solid var(--gc-border);
+      box-shadow: var(--gc-shadow);
     }
 
     #menu h2 {
       margin-top: 2px;
       margin-bottom: 12px;
-      font-size: 22px;
+      font-size: 17px;
       letter-spacing: 0.01em;
+      color: var(--gc-text);
     }
 
     #menu button {
-      background: rgba(148, 163, 184, 0.16);
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+      background: var(--gc-btn-secondary);
+      border: 1px solid var(--gc-border);
+      transition: filter 0.12s ease, background 0.12s ease;
     }
 
     #menu button:hover {
-      transform: translateY(-1px);
-      background: rgba(148, 163, 184, 0.24);
-      border-color: rgba(148, 163, 184, 0.35);
+      transform: none;
+      filter: brightness(1.08);
     }
 
     #contenido {
-      background: rgba(241, 245, 249, 0.98);
-      padding: 12px;
+      background: var(--gc-bg);
+      padding: 16px;
       min-height: 100vh;
     }
 
@@ -1099,14 +1203,54 @@
       width: 100%;
       margin: 0 auto;
       padding: 16px 18px 20px;
-      background: var(--gc-surface, #fff);
-      border: 1px solid var(--gc-border, #e2e8f0);
-      border-radius: var(--gc-radius, 12px);
-      box-shadow: var(--gc-shadow, 0 2px 12px rgba(15, 23, 42, 0.06));
+      background: #272c2a;
+      border: 1px solid var(--gc-border);
+      border-left: 3px solid rgba(31, 61, 43, 0.55);
+      border-radius: var(--gc-radius);
+      box-shadow: var(--gc-shadow);
       max-height: 100vh;
       overflow-y: auto;
       text-align: left;
-      color: #0f172a;
+      color: var(--gc-text);
+    }
+
+    .gc-settings .gc-btn--primary {
+      background: rgba(31, 61, 43, 0.58);
+      color: var(--gc-text);
+      border: 1px solid #2d5a3d;
+    }
+
+    .gc-settings .gc-btn--accent {
+      background: rgba(31, 61, 43, 0.46);
+      color: var(--gc-text);
+      border: 1px solid #2d5a3d;
+    }
+
+    .gc-settings .gc-btn--muted {
+      background: var(--gc-btn-secondary);
+      color: var(--gc-text);
+      border: 1px solid var(--gc-border);
+    }
+
+    .gc-settings .gc-btn--danger {
+      background: #4a2a2a;
+      color: var(--gc-text);
+      border: 1px solid #5c3535;
+    }
+
+    .gc-settings .gc-btn--ghost {
+      background: var(--gc-surface-soft);
+      color: var(--gc-text);
+      border: 1px solid var(--gc-border);
+    }
+
+    .gc-settings .gc-btn {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: 8px;
     }
 
     #listaPanel,
@@ -1116,13 +1260,14 @@
     }
 
     #listaAnimales {
-      background: var(--gc-surface);
+      background: #2a2f2d;
       border: 1px solid var(--gc-border);
       border-radius: var(--gc-radius);
       box-shadow: var(--gc-shadow);
       padding: 12px;
       display: flex;
       flex-direction: column;
+      border-left: 3px solid rgba(31, 61, 43, 0.48);
     }
 
     #lista {
@@ -1130,11 +1275,6 @@
       min-height: 0;
       overflow-y: auto;
       padding-right: 2px;
-    }
-
-    #ranking {
-      border-radius: 12px;
-      margin-top: 8px !important;
     }
 
     #mapLayout {
@@ -1172,12 +1312,13 @@
 
     #panelControles {
       width: auto;
-      background: var(--gc-surface);
+      background: #262b29;
       border: 1px solid var(--gc-border);
       border-radius: var(--gc-radius);
       box-shadow: var(--gc-shadow);
       padding: 10px;
       overflow-y: auto;
+      border-left: 3px solid rgba(31, 61, 43, 0.45);
     }
 
     #map {
@@ -1191,43 +1332,57 @@
     input,
     select,
     button {
-      border-radius: 10px;
+      border-radius: 8px;
     }
 
     input,
     select {
-      border: 1px solid #cbd5e1;
-      background: #fff;
-      color: #0f172a;
+      border: 1px solid var(--gc-border);
+      background: var(--gc-surface-soft);
+      color: var(--gc-text);
+      font-size: 14px;
     }
 
     button {
-      background: #1d4ed8;
-      color: #fff;
-      transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+      background: var(--gc-btn-secondary);
+      color: var(--gc-text);
+      border: 1px solid var(--gc-border);
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: filter 0.12s ease;
     }
 
     button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.28);
-      filter: brightness(1.02);
+      transform: none;
+      box-shadow: none;
+      filter: brightness(1.06);
+    }
+
+    #panelControles button {
+      background: var(--gc-btn-secondary);
+      border-color: var(--gc-border);
+      color: var(--gc-text);
     }
 
     .animal-card {
-      border-radius: 14px;
-      background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
-      box-shadow: 0 8px 18px rgba(2, 6, 23, 0.25);
+      border-radius: 10px;
+      background: var(--gc-surface-soft);
+      border: 1px solid var(--gc-border);
+      box-shadow: none;
       padding: 12px 12px 10px;
-      margin-bottom: 7px;
+      margin-bottom: 10px;
       gap: 0 10px;
     }
 
     .animal-card-title {
       font-size: 15px;
+      color: var(--gc-text);
     }
 
     .animal-card-meta {
       font-size: 12px;
+      color: var(--gc-text-muted);
     }
 
     .animal-card-peso-wrap {
@@ -1361,12 +1516,12 @@
         margin: 0 0 10px;
         font-size: 0.95rem;
         font-weight: 700;
-        color: #334155;
+        color: var(--gc-text);
       }
 
       .gc-settings-divider {
         border: none;
-        border-top: 1px solid #e2e8f0;
+        border-top: 1px solid var(--gc-border);
         margin: 16px 0;
       }
 
@@ -1378,7 +1533,7 @@
         display: block;
         font-size: 12px;
         font-weight: 600;
-        color: #64748b;
+        color: var(--gc-text-muted);
         margin-bottom: 4px;
       }
 
@@ -1386,17 +1541,17 @@
         width: 100%;
         box-sizing: border-box;
         padding: 10px 12px;
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--gc-border);
         border-radius: 8px;
-        background: #f8fafc;
+        background: var(--gc-surface-soft);
         font-size: 14px;
-        color: #475569;
+        color: var(--gc-text);
       }
 
       .gc-settings .gc-btn {
         width: 100%;
         padding: 10px 14px;
-        border: none;
+        border: 1px solid var(--gc-border);
         border-radius: 8px;
         font-weight: 600;
         cursor: pointer;
@@ -1405,36 +1560,40 @@
       }
 
       .gc-settings .gc-btn--primary {
-        background: #2563eb;
-        color: #fff;
+        background: var(--gc-primary);
+        color: var(--gc-text);
+        border: 1px solid #2d5a3d;
       }
 
       .gc-settings .gc-btn--accent {
-        background: #059669;
-        color: #fff;
+        background: #2a4a38;
+        color: var(--gc-text);
+        border: 1px solid #2d5a3d;
       }
 
       .gc-settings .gc-btn--muted {
-        background: #64748b;
-        color: #fff;
+        background: var(--gc-btn-secondary);
+        color: var(--gc-text);
+        border: 1px solid var(--gc-border);
       }
 
       .gc-settings .gc-btn--danger {
-        background: #b91c1c;
-        color: #fff;
+        background: #4a2a2a;
+        color: var(--gc-text);
+        border: 1px solid #5c3535;
       }
 
       .gc-settings .gc-btn--ghost {
-        background: #f1f5f9;
-        color: #334155;
-        border: 1px solid #cbd5e1;
+        background: var(--gc-surface-soft);
+        color: var(--gc-text);
+        border: 1px solid var(--gc-border);
       }
 
       .gc-plan-upgrade {
         padding: 12px;
         border-radius: 10px;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background: var(--gc-surface-soft);
+        border: 1px solid var(--gc-border);
       }
 
       .gc-plan-options {
@@ -1450,9 +1609,9 @@
         gap: 10px;
         padding: 10px 12px;
         border-radius: 8px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--gc-border);
         cursor: pointer;
-        background: #fff;
+        background: var(--gc-card);
       }
 
       .gc-settings-msg {
@@ -1460,8 +1619,8 @@
         margin-top: 8px;
         padding: 8px 10px;
         border-radius: 8px;
-        background: #fef3c7;
-        color: #92400e;
+        background: #3a3528;
+        color: #e6d9b8;
         display: none;
       }
 
@@ -1475,9 +1634,10 @@
         justify-content: space-between;
         gap: 12px;
         padding: 10px 12px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--gc-border);
         border-radius: 8px;
-        background: #fff;
+        background: var(--gc-surface-soft);
+        color: var(--gc-text);
       }
 
       input,
@@ -1701,92 +1861,296 @@
         display: none !important;
       }
     }
+
+    /* —— Dark theme: login, porteras panel, map strip, misc —— */
+    .gc-login-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.82);
+      padding: 16px;
+    }
+
+    .gc-login-dialog {
+      background: var(--gc-card);
+      color: var(--gc-text);
+      padding: 28px 24px;
+      border-radius: var(--gc-radius);
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+      max-height: 92vh;
+      overflow-y: auto;
+      border: 1px solid var(--gc-border);
+      box-shadow: var(--gc-shadow);
+    }
+
+    .gc-login-dialog h2 {
+      margin-top: 0;
+    }
+
+    .gc-login-dialog input {
+      background: var(--gc-surface-soft);
+      color: var(--gc-text);
+      border-color: var(--gc-border);
+    }
+
+    .gc-login-dialog #authMessage {
+      color: #e57373 !important;
+    }
+
+    .gc-porteras-panel {
+      text-align: left;
+    }
+
+    .gc-portera-card {
+      border: 1px solid var(--gc-border);
+      border-radius: 8px;
+      padding: 12px;
+      margin: 10px 0;
+      background: var(--gc-surface-soft);
+    }
+
+    .gc-btn-portera {
+      flex: 1;
+      padding: 10px 14px !important;
+      border-radius: 8px !important;
+      border: 1px solid var(--gc-border) !important;
+      font-weight: 600;
+      font-size: 13px;
+      min-height: 40px;
+      width: auto;
+    }
+
+    .gc-btn-portera--open {
+      background: #5a3d3d !important;
+      color: var(--gc-text) !important;
+    }
+
+    .gc-btn-portera--close {
+      background: rgba(31, 61, 43, 0.58) !important;
+      color: var(--gc-text) !important;
+      border-color: #2d5a3d !important;
+    }
+
+    .gc-btn-portera--primary {
+      background: rgba(31, 61, 43, 0.58) !important;
+      color: var(--gc-text) !important;
+      border-color: #2d5a3d !important;
+    }
+
+    .gc-btn-portera--secondary {
+      background: var(--gc-btn-secondary) !important;
+      color: var(--gc-text) !important;
+    }
+
+    .gc-btn-portera--danger {
+      background: #4a2a2a !important;
+      color: var(--gc-text) !important;
+      border-color: #5c3535 !important;
+    }
+
+    #alertaZona {
+      font-size: 13px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: var(--gc-surface-soft);
+      color: var(--gc-text-muted);
+      border: 1px solid var(--gc-border);
+      margin: 8px 0;
+    }
+
+    .bloqueado {
+      background: var(--gc-surface-soft) !important;
+      border-color: var(--gc-border) !important;
+      color: var(--gc-text-muted) !important;
+    }
+
+    #ranking {
+      background: var(--gc-surface-soft) !important;
+      color: var(--gc-text) !important;
+      border: 1px solid var(--gc-border);
+      border-radius: 8px;
+      margin-top: 8px !important;
+    }
+
+    #ranking h3 {
+      color: var(--gc-text);
+    }
+
+    .map-fullscreen-dialog {
+      background: var(--gc-card) !important;
+      border-color: var(--gc-border) !important;
+    }
+
+    .map-fullscreen-toolbar {
+      background: var(--gc-surface-soft) !important;
+      border-bottom-color: var(--gc-border) !important;
+    }
+
+    #panelInfo {
+      font-size: 13px;
+      color: var(--gc-text-muted);
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    .gc-login-dialog #authTabs button {
+      background: var(--gc-btn-secondary) !important;
+      color: var(--gc-text) !important;
+      border: 1px solid var(--gc-border) !important;
+    }
+
+    .sidebar-header {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 220px;
+      min-height: 240px;
+      padding-top: 20px;
+      padding-bottom: 30px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      overflow: visible;
+    }
+
+    .logo-img {
+      max-height: 180px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 6px rgba(31, 61, 43, 0.4)) brightness(1.1);
+      overflow: visible;
+    }
+
+    .sidebar-menu {
+      margin-top: 10px;
+      overflow: visible;
+    }
+
+    .gc-logo-login {
+      height: 80px;
+      width: auto;
+      display: block;
+      margin: 0 auto 20px auto;
+      filter: brightness(1.1);
+    }
+
+    .gc-logo-header {
+      height: 40px;
+      width: auto;
+      display: block;
+      margin: 0 0 8px 0;
+      filter: brightness(1.1);
+    }
+
+    .logo-banner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .logo-banner img {
+      max-width: 400px;
+      width: 100%;
+      height: auto;
+      opacity: 0.8;
+    }
   </style>
 </head>
 
 <body>
   <div id="appSplash">
-    <div class="splash-logo">🐄 GanadoControl</div>
+    <div class="splash-logo"><img src="logo_horizontal.png" alt="GanadoControl" class="gc-logo-header"></div>
     <div class="splash-spinner" aria-hidden="true"></div>
     <div>Cargando datos y entorno offline...</div>
   </div>
   <!-- LOGIN SCREEN -->
-  <div id="loginScreen"
-    style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
-    <div
-      style="background: white; padding: 30px; border-radius: 10px; text-align: center; max-width: 420px; width: 90%; max-height: 92vh; overflow-y: auto;">
-      <h2>🐄 GanadoControl</h2>
+  <div id="loginScreen" class="gc-login-overlay">
+    <div class="gc-login-dialog">
+      <img src="logo_principal.png" alt="GanadoControl" class="gc-logo-login">
       <div id="authTabs" style="display: flex; margin-bottom: 20px;">
         <button id="tabLogin" onclick="showLogin()"
-          style="flex: 1; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px 0 0 5px; cursor: pointer;">Iniciar
+          style="flex: 1; padding: 10px 14px; background: rgba(31,61,43,0.55); color: #e6e6e6; border: 1px solid #3d4542; border-radius: 8px 0 0 8px; cursor: pointer;">Iniciar
           Sesión</button>
         <button id="tabRegister" onclick="showRegister()"
-          style="flex: 1; padding: 10px; background: #ccc; color: black; border: none; border-radius: 0 5px 5px 0; cursor: pointer;">Registrarse</button>
+          style="flex: 1; padding: 10px 14px; background: #4a5350; color: #e6e6e6; border: 1px solid #3d4542; border-radius: 0 8px 8px 0; cursor: pointer;">Registrarse</button>
       </div>
       <div id="loginForm">
         <input id="loginEmail" type="email" placeholder="Email"
-          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #3d4542; border-radius: 8px; box-sizing: border-box; background:#343a38;color:#e6e6e6;">
         <input id="password" type="password" placeholder="Contraseña"
-          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #3d4542; border-radius: 8px; box-sizing: border-box; background:#343a38;color:#e6e6e6;">
         <button id="loginButton" onclick="login()"
-          style="width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;">Iniciar
+          style="width: 100%; padding: 12px 14px; background: rgba(31,61,43,0.55); color: #e6e6e6; border: 1px solid #2d5a3d; border-radius: 8px; cursor: pointer; font-size: 15px; margin-top: 10px;">Iniciar
           Sesión</button>
       </div>
       <div id="registerForm" style="display: none;">
         <input id="registerNombre" type="text" placeholder="Nombre"
-          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #3d4542; border-radius: 8px; box-sizing: border-box; background:#343a38;color:#e6e6e6;">
         <input id="registerApellido" type="text" placeholder="Apellido"
-          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #3d4542; border-radius: 8px; box-sizing: border-box; background:#343a38;color:#e6e6e6;">
         <input id="registerCiudad" type="text" placeholder="Ciudad"
-          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #3d4542; border-radius: 8px; box-sizing: border-box; background:#343a38;color:#e6e6e6;">
         <input id="registerTelefono" type="tel" placeholder="Teléfono"
-          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #3d4542; border-radius: 8px; box-sizing: border-box; background:#343a38;color:#e6e6e6;">
         <label for="registerTipoCliente"
-          style="display: block; text-align: left; font-size: 13px; margin: 10px 0 4px; color: #333;">Producto</label>
+          style="display: block; text-align: left; font-size: 13px; margin: 10px 0 4px; color: #a0a0a0;">Producto</label>
         <select id="registerTipoCliente"
-          style="width: 100%; padding: 10px; margin: 0 0 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+          style="width: 100%; padding: 10px; margin: 0 0 10px 0; border: 1px solid #3d4542; border-radius: 8px; box-sizing: border-box; background:#343a38;color:#e6e6e6;">
           <option value="collar_ganado">Collar de ganado</option>
           <option value="control_portera">Control de portera</option>
           <option value="control_tanque">Control de tanque</option>
         </select>
         <input id="email" type="email" placeholder="Email"
-          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #3d4542; border-radius: 8px; box-sizing: border-box; background:#343a38;color:#e6e6e6;">
         <input type="password" id="registerPass" placeholder="Contraseña"
-          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+          style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #3d4542; border-radius: 8px; box-sizing: border-box; background:#343a38;color:#e6e6e6;">
         <button id="registerButton" onclick="register()"
-          style="width: 100%; padding: 12px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px;">Registrarse</button>
+          style="width: 100%; padding: 12px 14px; background: rgba(31,61,43,0.55); color: #e6e6e6; border: 1px solid #2d5a3d; border-radius: 8px; cursor: pointer; font-size: 15px; margin-top: 10px;">Registrarse</button>
       </div>
-      <div id="authMessage" style="margin-top: 15px; color: red;"></div>
+      <div id="authMessage" style="margin-top: 15px; color: #e57373;"></div>
     </div>
   </div>
 
   <div id="appContent">
     <div id="menu">
-      <h2>🐄 GanadoControl</h2>
-      <div id="userProfileLabel" style="display: none; padding: 6px 10px; margin: 4px 0 8px 0; font-size: 13px; color: #1b4332; background: #e8f5e9; border-radius: 6px; text-align: left;"></div>
-      <div id="panelSolicitudPlan" style="display: none; margin: 0 0 10px 0; padding: 10px; background: #fef9c3; border: 1px solid #eab308; border-radius: 8px; font-size: 12px; color: #713f12; text-align: left;">
+      <div class="sidebar-header">
+        <img src="logo_icono.png" alt="GanadoControl" class="logo-img">
+      </div>
+      <div class="sidebar-menu">
+      <div id="userProfileLabel" style="display: none; padding: 6px 10px; margin: 4px 0 8px 0; font-size: 13px; color: #e6e6e6; background: #343a38; border: 1px solid #3d4542; border-radius: 8px; text-align: left;"></div>
+      <div id="panelSolicitudPlan" style="display: none; margin: 0 0 10px 0; padding: 10px; background: #3a3528; border: 1px solid #5c5340; border-radius: 8px; font-size: 12px; color: #e6d9b8; text-align: left;">
         <div id="solicitudPlanMensaje"></div>
         <button type="button" id="btnAnularSolicitudPlan" style="display: none; margin-top: 8px; width: 100%; padding: 8px; background: #b45309; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Anular solicitud</button>
       </div>
       <div id="seccionAnimales">
-      <button id="navAnimales" onclick="mostrarVista('animales')">🐄 Animales</button>
+      <button id="navAnimales" onclick="mostrarVista('animales')">🐄 Ganado</button>
       <button id="navIngresar" onclick="mostrarVista('ingreso')">➕ Ingresar</button>
       <button id="navRebanos" onclick="mostrarVista('rebanos')">🐑 Rebaños</button>
       <div id="bloqueadoRebanos" class="bloqueado" style="display:none;">🔒 Rebaños (Disponible en plan Ganado)</div>
       </div>
-      <button id="navTanque" onclick="mostrarVista('tanque')">💧 Tanque</button>
+      <button id="navTanque" onclick="mostrarVista('tanque')">💧 Tanques</button>
       <div id="seccionPorteras">
-      <button id="navPorteras" onclick="mostrarVista('porteras')">🚧 Porteras</button>
+      <button id="navPorteras" onclick="mostrarVista('porteras')">🚪 Porteras</button>
       </div>
       <button id="navAyuda" onclick="mostrarVista('ayuda')">❓ Ayuda</button>
       <button type="button" id="navConfiguracion" onclick="mostrarVista('configuracion')">⚙️ Configuración</button>
       <button type="button" id="btnLogout">Cerrar sesión</button>
+      </div>
     </div>
 
     <div id="contenido">
 
       <!-- ANIMALES -->
-      <div id="animales">
+      <div id="animales" class="gc-section-card">
         <div id="layoutAnimales">
 
           <!-- 🐄 PANEL LATERAL -->
@@ -1794,7 +2158,7 @@
             <div id="listaPanel">
               <div id="listaAnimales">
 
-                <h3>Animales</h3>
+                <h3>🐄 Ganado</h3>
 
                 <input id="buscador" placeholder="Buscar caravana..." oninput="mostrar()">
                 <button id="btnEliminarSeleccionados" type="button" onclick="eliminarSeleccionados()" style="width: 100%; padding: 8px; margin: 0 0 8px 0; background: #c62828; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Eliminar seleccionados</button>
@@ -1888,8 +2252,8 @@ box-sizing: border-box;
       </div>
 
       <!-- FORMULARIO -->
-      <div id="formulario" style="display:none;">
-        <h2>Ingresar Animal</h2>
+      <div id="formulario" class="gc-section-card" style="display:none;">
+        <h2>➕ Ingresar Animal</h2>
 
         <input id="id" placeholder="Caravana">
         <input id="edad" placeholder="Edad">
@@ -1909,10 +2273,10 @@ box-sizing: border-box;
       </div>
 
       <!-- TANQUES AGUA (LoRa) — multi-tanque -->
-      <div id="seccionTanques">
+      <div id="seccionTanques" class="gc-section-card">
       <div id="tanque" style="display:none;">
-        <h2>💧 Tanques de agua</h2>
-        <p style="color:#64748b;font-size:14px;margin-top:0;">Listado de tanques · nivel y compatible con lecturas LoRa</p>
+        <h2>💧 Tanques</h2>
+        <p style="color:#a0a0a0;font-size:13px;margin-top:0;">Listado de tanques · nivel y compatible con lecturas LoRa</p>
 
         <button type="button" onclick="abrirFormularioTanqueNuevo()" style="width:100%;margin-top:8px;">+ Agregar tanque</button>
 
@@ -1976,6 +2340,10 @@ box-sizing: border-box;
         </div>
       </div>
 
+      <div class="logo-banner">
+        <img src="logo_banner.png" alt="GanadoControl">
+      </div>
+
     </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -2017,8 +2385,32 @@ box-sizing: border-box;
       let perfilUsuario = null;
       let solicitudPlanActiva = null;
       window.solicitudes = [];
-      window.alertasActivas = { animal: false, portera: false };
-      window.alertasHabilitadas = true;
+      window.estadoApp = window.estadoApp || {
+        alertas: { animal: false, portera: false },
+        alertasHabilitadas: true
+      };
+      if (!window.estadoApp.alertas) {
+        window.estadoApp.alertas = { animal: false, portera: false };
+      }
+      if (typeof window.estadoApp.alertasHabilitadas !== "boolean") {
+        window.estadoApp.alertasHabilitadas = true;
+      }
+      window.alertasActivas = window.estadoApp.alertas;
+      try {
+        Object.defineProperty(window, "alertasHabilitadas", {
+          get: function () {
+            return !!(window.estadoApp && window.estadoApp.alertasHabilitadas);
+          },
+          set: function (v) {
+            if (window.estadoApp) window.estadoApp.alertasHabilitadas = !!v;
+          },
+          configurable: true,
+          enumerable: true
+        });
+      } catch (defErr) {
+        console.log("Error controlado:", defErr);
+      }
+      console.log("Estado:", window.estadoApp);
       const nativeAlert = typeof window.alert === "function" ? window.alert.bind(window) : null;
       window.alert = function (mensaje) {
         if (!window.alertasHabilitadas) {
@@ -2029,18 +2421,9 @@ box-sizing: border-box;
       };
       /** Nombre/código del plan actual (tabla planes o fallback). */
       let planActualUi = { nombre: "—", codigo: "", planId: null };
-      const GC_LS_SONIDO_ALERTAS = "ganadocontrol_sonido_alertas_v1";
       // Fallbacks globales para evitar crashes si se invocan fuera de alcance.
       function iniciarSimulacionDrenajeBateria() {}
       function detenerSimulacionDrenajeBateria() {}
-
-      function sonidoAlertasActivado() {
-        return localStorage.getItem(GC_LS_SONIDO_ALERTAS) !== "0";
-      }
-
-      function setSonidoAlertasActivado(activo) {
-        localStorage.setItem(GC_LS_SONIDO_ALERTAS, activo ? "1" : "0");
-      }
 
       function notificar(mensaje) {
         try {
@@ -2067,6 +2450,10 @@ box-sizing: border-box;
           }
           if (!alertasHabilitadas()) return;
           if (color === undefined || color === null) color = "red";
+          var c = String(color).toLowerCase();
+          var bg = color;
+          if (c === "red" || c === "#f00" || c === "#ff0000") bg = "#b02a2a";
+          if (c === "orange" || c === "#ffa500") bg = "#b06a2a";
           var sid = String(id || "alerta").replace(/[^a-zA-Z0-9_-]/g, "_");
           var cont = document.getElementById("alertasContainer");
           if (!cont) return;
@@ -2074,20 +2461,22 @@ box-sizing: border-box;
           if (!existente) {
             var div = document.createElement("div");
             div.id = "alerta_" + sid;
-            div.style.background = color;
-            div.style.color = "white";
-            div.style.padding = "8px 16px";
-            div.style.borderRadius = "6px";
-            div.style.fontWeight = "bold";
-            div.style.animation = "parpadeo 1s infinite";
+            div.className = "gc-alert-chip";
+            div.style.background = bg;
+            div.style.color = "#f0f0f0";
+            div.style.padding = "10px 16px";
+            div.style.borderRadius = "8px";
+            div.style.fontWeight = "600";
             div.style.textAlign = "center";
             div.style.boxSizing = "border-box";
             div.style.maxWidth = "100%";
+            div.style.border = "1px solid rgba(0,0,0,0.2)";
+            div.style.boxShadow = "0 2px 10px rgba(0,0,0,0.25)";
             div.innerText = String(mensaje || "");
             cont.appendChild(div);
           } else {
             existente.innerText = String(mensaje || "");
-            existente.style.background = color;
+            existente.style.background = bg;
           }
         } catch (e) {
           console.log("mostrarAlerta:", e);
@@ -2108,37 +2497,35 @@ box-sizing: border-box;
 
       function renderAlertas() {
         try {
-          if (!window.alertasActivas) {
-            window.alertasActivas = { animal: false, portera: false };
-          }
           if (!window.alertasHabilitadas || !alertasHabilitadas()) {
             ocultarAlerta("animal");
             ocultarAlerta("portera");
             return;
           }
-          if (window.alertasActivas.animal) {
+          if (window.estadoApp.alertas.animal) {
             mostrarAlerta("animal", "🐄 Animal fuera de zona", "red");
           } else {
             ocultarAlerta("animal");
           }
-          if (window.alertasActivas.portera) {
+          if (window.estadoApp.alertas.portera) {
             mostrarAlerta("portera", "🚪 Portera abierta", "orange");
           } else {
             ocultarAlerta("portera");
           }
         } catch (e) {
-          console.log("renderAlertas:", e);
+          console.log("Error controlado:", e);
         }
       }
       window.renderAlertas = renderAlertas;
 
       function ocultarTodasAlertasMapa() {
-        if (!window.alertasActivas) {
-          window.alertasActivas = { animal: false, portera: false };
+        try {
+          window.estadoApp.alertas.animal = false;
+          window.estadoApp.alertas.portera = false;
+          renderAlertas();
+        } catch (e) {
+          console.log("Error controlado:", e);
         }
-        window.alertasActivas.animal = false;
-        window.alertasActivas.portera = false;
-        renderAlertas();
       }
       window.ocultarTodasAlertasMapa = ocultarTodasAlertasMapa;
 
@@ -2529,8 +2916,10 @@ box-sizing: border-box;
           const { data: { user } } = await supabase.auth.getUser();
           if (!user) {
             perfilUsuario = null;
+            window.__perfilAlertasHydrado = false;
             window.alertasHabilitadas = true;
             updatePerfilUI();
+            renderAlertas();
             return;
           }
           const { data, error } = await supabase
@@ -2541,17 +2930,23 @@ box-sizing: border-box;
           if (error) {
             console.warn("cargarPerfilUsuario:", error);
             perfilUsuario = null;
+            window.__perfilAlertasHydrado = false;
             window.alertasHabilitadas = true;
           } else {
             perfilUsuario = data;
-            window.alertasHabilitadas = data ? (data.alertas_activas ?? true) : true;
+            if (!window.__perfilAlertasHydrado) {
+              window.alertasHabilitadas = data ? (data.alertas_activas ?? true) : true;
+              window.__perfilAlertasHydrado = true;
+            }
           }
         } catch (e) {
           console.warn("cargarPerfilUsuario:", e);
           perfilUsuario = null;
+          window.__perfilAlertasHydrado = false;
           window.alertasHabilitadas = true;
         }
         updatePerfilUI();
+        renderAlertas();
       }
 
       async function solicitarCambioPlanUsuario(planSolicitado) {
@@ -2600,7 +2995,6 @@ box-sizing: border-box;
         const planEl = document.getElementById("settingsPlanNombre");
         const prodEl = document.getElementById("settingsTipoCliente");
         const upgradeWrap = document.getElementById("settingsUpgradeWrap");
-        const sonidoToggle = document.getElementById("settingsToggleSonido");
 
         try {
           await cargarPerfilUsuario();
@@ -2610,21 +3004,6 @@ box-sizing: border-box;
 
         const { data: { session } } = await supabase.auth.getSession();
         var featsEarly = window.features || {};
-        if (featsEarly.alertas === true && session && session.user && session.user.id) {
-          try {
-            const { data: profAlerta, error: errAlerta } = await supabase
-              .from("profiles")
-              .select("alertas_activas")
-              .eq("id", session.user.id)
-              .maybeSingle();
-            if (!errAlerta && profAlerta) {
-              if (perfilUsuario) {
-                perfilUsuario.alertas_activas = profAlerta.alertas_activas;
-              }
-              window.alertasHabilitadas = profAlerta.alertas_activas ?? true;
-            }
-          } catch (ignore) {}
-        }
         if (emailEl) {
           emailEl.value = session && session.user && session.user.email ? session.user.email : "";
         }
@@ -2647,10 +3026,6 @@ box-sizing: border-box;
           btnMej.style.display = "none";
           pnlChoice.style.display = "none";
         }
-        if (sonidoToggle) {
-          sonidoToggle.checked = sonidoAlertasActivado();
-        }
-
         var alertasWrap = document.getElementById("settingsAlertasActivasWrap");
         var toggleAlertas = document.getElementById("toggleAlertas");
         var feats = featsEarly;
@@ -2658,20 +3033,18 @@ box-sizing: border-box;
           alertasWrap.style.display = feats.alertas === true ? "flex" : "none";
         }
         if (toggleAlertas && feats.alertas === true) {
-          var aa = perfilUsuario && Object.prototype.hasOwnProperty.call(perfilUsuario, "alertas_activas")
-            ? perfilUsuario.alertas_activas
-            : null;
-          toggleAlertas.checked = aa !== false;
-          window.alertasHabilitadas = toggleAlertas.checked;
+          toggleAlertas.checked = window.estadoApp.alertasHabilitadas;
           toggleAlertas.onchange = async function (e) {
             try {
               var t = e.target;
               var checked = !!(t && t.checked);
-              window.alertasHabilitadas = checked;
+              window.estadoApp.alertasHabilitadas = checked;
+              renderAlertas();
               const { data: { session } } = await supabase.auth.getSession();
               if (!session || !session.user || !session.user.id) {
-                window.alertasHabilitadas = !checked;
+                window.estadoApp.alertasHabilitadas = !checked;
                 if (t) t.checked = !checked;
+                renderAlertas();
                 return;
               }
               const { error } = await supabase
@@ -2681,7 +3054,8 @@ box-sizing: border-box;
               if (error) {
                 console.warn("alertas_activas:", error);
                 if (t) t.checked = !checked;
-                window.alertasHabilitadas = !checked;
+                window.estadoApp.alertasHabilitadas = !checked;
+                renderAlertas();
                 return;
               }
               if (perfilUsuario) perfilUsuario.alertas_activas = checked;
@@ -2707,6 +3081,7 @@ box-sizing: border-box;
         if (btnCancelPlan) {
           btnCancelPlan.style.display = session && session.user && session.user.id ? "inline-block" : "none";
         }
+        renderAlertas();
       }
 
       async function cambiarPasswordDesdeSettings() {
@@ -3197,6 +3572,8 @@ box-sizing: border-box;
         perfilUsuario = null;
         solicitudPlanActiva = null;
         window.solicitudes = [];
+        window.__perfilAlertasHydrado = false;
+        window.estadoApp.alertasHabilitadas = true;
         window.FEATURES_MODO_FALLBACK = true;
         window.features = featuresAccesoCompletoPorDefecto();
         aplicarFeaturesDesdePlan();
@@ -3284,20 +3661,20 @@ box-sizing: border-box;
       function showLogin() {
         document.getElementById("loginForm").style.display = "block";
         document.getElementById("registerForm").style.display = "none";
-        document.getElementById("tabLogin").style.background = "#4CAF50";
-        document.getElementById("tabLogin").style.color = "white";
-        document.getElementById("tabRegister").style.background = "#ccc";
-        document.getElementById("tabRegister").style.color = "black";
+        document.getElementById("tabLogin").style.background = "rgba(31,61,43,0.55)";
+        document.getElementById("tabLogin").style.color = "#e6e6e6";
+        document.getElementById("tabRegister").style.background = "#4a5350";
+        document.getElementById("tabRegister").style.color = "#e6e6e6";
         document.getElementById("authMessage").innerText = "";
       }
 
       function showRegister() {
         document.getElementById("loginForm").style.display = "none";
         document.getElementById("registerForm").style.display = "block";
-        document.getElementById("tabRegister").style.background = "#2196F3";
-        document.getElementById("tabRegister").style.color = "white";
-        document.getElementById("tabLogin").style.background = "#ccc";
-        document.getElementById("tabLogin").style.color = "black";
+        document.getElementById("tabRegister").style.background = "rgba(31,61,43,0.55)";
+        document.getElementById("tabRegister").style.color = "#e6e6e6";
+        document.getElementById("tabLogin").style.background = "#4a5350";
+        document.getElementById("tabLogin").style.color = "#e6e6e6";
         document.getElementById("authMessage").innerText = "";
       }
 
@@ -3536,35 +3913,6 @@ box-sizing: border-box;
         }
       }
 
-      function actualizarTiempoPorteras() {
-        try {
-          var list = window.porteras;
-          if (!Array.isArray(list)) return;
-          var ahora = new Date();
-          list.forEach(function (p) {
-            if (!p || p.id == null) return;
-            var el = document.getElementById("tiempo_portera_" + String(p.id));
-            if (!el) return;
-            var abierta = p.estado === "abierta";
-            var raw = p.abierta_desde != null ? p.abierta_desde : p.abiertaDesde;
-            if (!abierta || raw == null) {
-              el.innerText = "0 min";
-              return;
-            }
-            var inicio = new Date(raw);
-            if (isNaN(inicio.getTime())) {
-              el.innerText = "0 min";
-              return;
-            }
-            var diff = (ahora - inicio) / 60000;
-            if (diff < 0) diff = 0;
-            el.innerText = diff.toFixed(1) + " min";
-          });
-        } catch (e) {
-          console.log("actualizarTiempoPorteras:", e);
-        }
-      }
-      window.actualizarTiempoPorteras = actualizarTiempoPorteras;
       let alertaAnimalesActiva = false;
       let intervaloAlertaAnimales = null;
       let audioCtx = null;
@@ -3643,6 +3991,12 @@ box-sizing: border-box;
       const SIGNAL_READINGS_STORAGE_KEY = "agrotrack_signal_readings_v1";
       const PORTERA_ALERT_COOLDOWN_MS = 5 * 60 * 1000;
       document.addEventListener("DOMContentLoaded", async function () {
+        if (window.appInicializada) {
+          console.log("App ya inicializada");
+          return;
+        }
+        window.appInicializada = true;
+        console.log("Init ejecutado una vez");
         attachAuthListeners();
         var btnMapa = document.getElementById("navAnimales");
         var btnPorteras = document.getElementById("navPorteras");
@@ -3732,37 +4086,44 @@ box-sizing: border-box;
         window.cargarAnimales = cargarAnimales;
 
         function inicializarRealtimeAnimales() {
-          if (window.realtimeSub) {
-            try {
-              if (typeof supabase.removeChannel === "function") {
-                supabase.removeChannel(window.realtimeSub);
-              } else {
-                window.realtimeSub.unsubscribe();
-              }
-            } catch (e) {
+          try {
+            if (window.realtimeSub) {
               try {
                 window.realtimeSub.unsubscribe();
+              } catch (e) {
+                console.log("Error controlado:", e);
+              }
+              try {
+                if (typeof supabase.removeChannel === "function") {
+                  supabase.removeChannel(window.realtimeSub);
+                }
               } catch (e2) {
-                console.warn("No se pudo cerrar realtime previo:", e2);
+                console.log("Error controlado:", e2);
               }
             }
+            window.realtimeSub = supabase
+              .channel("animales-changes")
+              .on(
+                "postgres_changes",
+                {
+                  event: "*",
+                  schema: "public",
+                  table: "animales"
+                },
+                async function (payload) {
+                  try {
+                    console.log("Realtime cambio:", payload);
+                    await cargarAnimales();
+                  } catch (e3) {
+                    console.log("Error controlado:", e3);
+                  }
+                }
+              )
+              .subscribe();
+            console.log("Realtime activo animales");
+          } catch (e4) {
+            console.log("Error controlado:", e4);
           }
-          window.realtimeSub = supabase
-            .channel("animales-changes")
-            .on(
-              "postgres_changes",
-              {
-                event: "*",
-                schema: "public",
-                table: "animales"
-              },
-              async function (payload) {
-                console.log("Realtime cambio:", payload);
-                await cargarAnimales();
-              }
-            )
-            .subscribe();
-          console.log("Realtime activo animales");
         }
 
         async function asegurarRealtimeAnimales() {
@@ -3777,7 +4138,7 @@ box-sizing: border-box;
             await asegurarRealtimeAnimales();
             await cargarAnimales();
           } catch (e) {
-            console.warn("visibilitychange recarga animales:", e);
+            console.log("Error controlado:", e);
           }
         });
 
@@ -3960,18 +4321,6 @@ box-sizing: border-box;
           const ahora = new Date();
           const hora = ahora.toTimeString().slice(0, 5);
           return hora >= p.horarioPermitido.desde && hora <= p.horarioPermitido.hasta;
-        }
-
-        function minutosAbierta(p) {
-          if (p.estado !== "abierta") return 0;
-          var rawAbierta = p.abierta_desde != null ? p.abierta_desde : p.abiertaDesde;
-          if (rawAbierta == null) return 0;
-          const inicio = new Date(rawAbierta);
-          const ahora = new Date();
-          if (isNaN(inicio.getTime())) return 0;
-          let diff = (ahora - inicio) / 60000;
-          if (diff < 0) diff = 0;
-          return diff;
         }
 
         function mostrarNotificacionUI(msg) {
@@ -4260,16 +4609,16 @@ box-sizing: border-box;
         }
 
         function obtenerEstadoVisualPortera(p) {
-          if (p.estado !== "abierta") return { texto: "🟢 Cerrada", color: "#1b5e20" };
-          if (!dentroHorario(p)) return { texto: "🟡 Abierta fuera de horario", color: "#f57f17" };
-          return { texto: "🔴 Abierta", color: "#b71c1c" };
+          if (p.estado !== "abierta") return { texto: "Cerrada", color: "#7a9a86" };
+          if (!dentroHorario(p)) return { texto: "Abierta fuera de horario", color: "#c4a574" };
+          return { texto: "Abierta", color: "#c49a7a" };
         }
 
         function renderPorterasPanel() {
           const panel = document.getElementById("panelLateral");
           if (!panel) return;
-          let html = '<div style="padding:15px; background:white; border-radius:10px; max-height:80vh; overflow-y:auto;">';
-          html += "<h3>🚧 Monitoreo de porteras</h3>";
+          let html = '<div class="gc-porteras-panel gc-section-card" style="max-height:80vh; overflow-y:auto;">';
+          html += "<h3>🚪 Porteras</h3>";
 
           if (!porteras.length) {
             html += "<p><em>No hay porteras configuradas.</em></p>";
@@ -4277,13 +4626,10 @@ box-sizing: border-box;
 
           porteras.forEach(function (p) {
             const visual = obtenerEstadoVisualPortera(p);
-            const mins = minutosAbierta(p);
-            const tiempoTxt = p.estado === "abierta" ? mins.toFixed(1) + " min" : "0 min";
-            html += '<div style="border:1px solid #ddd; border-radius:8px; padding:10px; margin:10px 0;">';
+            html += '<div class="gc-portera-card">';
             html += "<h4 style='margin:0 0 6px 0;'>" + p.nombre + "</h4>";
             html += "<p style='margin:4px 0;color:" + visual.color + ";'><strong>" + visual.texto + "</strong></p>";
             html += "<p style='margin:4px 0;'>Horario permitido: <strong>" + p.horarioPermitido.desde + " - " + p.horarioPermitido.hasta + "</strong></p>";
-            html += "<p style='margin:4px 0;'>Tiempo abierta: <strong><span id='tiempo_portera_" + escapeAttr(String(p.id)) + "'>" + tiempoTxt + "</span></strong></p>";
             html += "<p style='margin:4px 0;'>Máximo permitido: <strong>" + p.tiempoMaxAbierta + " min</strong></p>";
             html += "<p style='margin:8px 0 4px 0;font-size:12px;'><strong>Ubicación (mapa)</strong></p>";
             html += "<div style='display:grid; grid-template-columns:1fr 1fr; gap:8px;'>";
@@ -4291,16 +4637,16 @@ box-sizing: border-box;
             html += "<input id='portera_lng_" + p.id + "' type='number' step='any' placeholder='Lng' value='" + (p.lng != null && Number.isFinite(Number(p.lng)) ? escapeAttr(String(p.lng)) : "") + "'>";
             html += "</div>";
             html += "<div style='display:flex; gap:8px; margin-top:8px;'>";
-            html += "<button type='button' onclick=\"actualizarPortera('" + escapeAttr(String(p.id)) + "','abierta')\" style='flex:1; padding:7px; border:none; border-radius:5px; background:#e53935; color:white;'>Abrir</button>";
-            html += "<button type='button' onclick=\"actualizarPortera('" + escapeAttr(String(p.id)) + "','cerrada')\" style='flex:1; padding:7px; border:none; border-radius:5px; background:#2e7d32; color:white;'>Cerrar</button>";
+            html += "<button type='button' class=\"gc-btn-portera gc-btn-portera--open\" onclick=\"actualizarPortera('" + escapeAttr(String(p.id)) + "','abierta')\">Abrir</button>";
+            html += "<button type='button' class=\"gc-btn-portera gc-btn-portera--close\" onclick=\"actualizarPortera('" + escapeAttr(String(p.id)) + "','cerrada')\">Cerrar</button>";
             html += "</div>";
             html += "<div style='display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;'>";
             html += "<input id='portera_desde_" + p.id + "' type='time' value='" + p.horarioPermitido.desde + "'>";
             html += "<input id='portera_hasta_" + p.id + "' type='time' value='" + p.horarioPermitido.hasta + "'>";
             html += "</div>";
             html += "<input id='portera_max_" + p.id + "' type='number' min='1' value='" + p.tiempoMaxAbierta + "' style='width:100%; margin-top:8px;' placeholder='Tiempo máximo abierta (min)'>";
-            html += "<button type='button' onclick=\"guardarConfigPortera('" + escapeAttr(String(p.id)) + "')\" style='width:100%; margin-top:8px; padding:8px; border:none; border-radius:5px; background:#1976d2; color:white;'>Guardar configuración</button>";
-            html += "<button type='button' onclick=\"eliminarPortera('" + escapeAttr(String(p.id)) + "')\" style='width:100%; margin-top:8px; padding:8px; border:none; border-radius:5px; background:#b71c1c; color:white;'>Eliminar portera</button>";
+            html += "<button type='button' class=\"gc-btn-portera gc-btn-portera--primary\" style='width:100%;margin-top:8px' onclick=\"guardarConfigPortera('" + escapeAttr(String(p.id)) + "')\">Guardar configuración</button>";
+            html += "<button type='button' class=\"gc-btn-portera gc-btn-portera--danger\" style='width:100%;margin-top:8px' onclick=\"eliminarPortera('" + escapeAttr(String(p.id)) + "')\">Eliminar portera</button>";
             html += "</div>";
           });
 
@@ -4318,8 +4664,8 @@ box-sizing: border-box;
           html += "<input id='nuevaPorteraLat' type='number' step='any' placeholder='Latitud'>";
           html += "<input id='nuevaPorteraLng' type='number' step='any' placeholder='Longitud'>";
           html += "</div>";
-          html += "<button type='button' onclick='iniciarSeleccionUbicacionPortera()' style='width:100%; margin:8px 0; padding:8px; border:1px solid #5e35b1; border-radius:5px; background:#ede9fe; color:#4c1d95; font-weight:600;'>Seleccionar en mapa</button>";
-          html += "<button type='button' id='btnCrearPortera' style='width:100%; padding:9px; background:#5e35b1; color:white; border:none; border-radius:5px;'>Crear portera</button>";
+          html += "<button type='button' class=\"gc-btn-portera gc-btn-portera--secondary\" style='width:100%;margin:8px 0' onclick='iniciarSeleccionUbicacionPortera()'>Seleccionar en mapa</button>";
+          html += "<button type='button' id='btnCrearPortera' class=\"gc-btn-portera gc-btn-portera--primary\" style='width:100%'>Crear portera</button>";
           html += "</div>";
           panel.innerHTML = html;
         }
@@ -4342,12 +4688,7 @@ box-sizing: border-box;
 
         function actualizarAlertaBarraMapa() {
           try {
-            if (!window.alertasActivas) {
-              window.alertasActivas = { animal: false, portera: false };
-            }
             if (!alertasHabilitadas()) {
-              window.alertasActivas.animal = false;
-              window.alertasActivas.portera = false;
               var azClear = document.getElementById("alertaZona");
               if (azClear) azClear.innerHTML = "";
               renderAlertas();
@@ -4356,25 +4697,32 @@ box-sizing: border-box;
             var hayFuera = Array.isArray(animales) && animales.some(function (a) {
               return a.fueraZona === true;
             });
-            window.alertasActivas.animal = !!hayFuera;
+            window.estadoApp.alertas.animal = !!hayFuera;
             var hayPorteraAbierta = featureOn("porteras") && Array.isArray(porteras) && porteras.some(function (p) {
               return p && p.estado === "abierta";
             });
-            window.alertasActivas.portera = !!hayPorteraAbierta;
+            window.estadoApp.alertas.portera = !!hayPorteraAbierta;
             renderAlertas();
           } catch (e) {
-            console.log("actualizarAlertaBarraMapa:", e);
+            console.log("Error controlado:", e);
           }
         }
         window.actualizarAlertaBarraMapa = actualizarAlertaBarraMapa;
 
         function iniciarMonitorPorteras() {
-          if (porteraMonitorIntervalId) clearInterval(porteraMonitorIntervalId);
-          porteraMonitorIntervalId = setInterval(verificarTodasPorteras, 30000);
-          if (!window.timerPorteras) {
-            window.timerPorteras = setInterval(function () {
-              actualizarTiempoPorteras();
-            }, 1000);
+          try {
+            if (porteraMonitorIntervalId) clearInterval(porteraMonitorIntervalId);
+            porteraMonitorIntervalId = setInterval(verificarTodasPorteras, 30000);
+            if (window.intervaloPortera) {
+              clearInterval(window.intervaloPortera);
+              window.intervaloPortera = null;
+            }
+            if (window.timerPorteras) {
+              clearInterval(window.timerPorteras);
+              window.timerPorteras = null;
+            }
+          } catch (e) {
+            console.log("Error controlado:", e);
           }
         }
 
@@ -7152,7 +7500,6 @@ box-sizing: border-box;
         function reproducirAlerta() {
           if (!window.alertasHabilitadas) return;
           if (!alertasHabilitadas()) return;
-          if (!sonidoAlertasActivado()) return;
           if (!audioHabilitado) return;
           try {
             var audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
@@ -8220,12 +8567,6 @@ box-sizing: border-box;
                 });
               }
               void refrescarVistaConfiguracion();
-              var tgl = document.getElementById("settingsToggleSonido");
-              if (tgl) {
-                tgl.onchange = function () {
-                  setSonidoAlertasActivado(!!tgl.checked);
-                };
-              }
             });
           }
 
@@ -8246,14 +8587,14 @@ box-sizing: border-box;
 
         function vistaAnimales() {
           let html = '<div id="listaPanel" style="padding: 10px;"><div id="listaAnimales">';
-          html += '<h3>🐄 Animales</h3>';
-          html += '<input id="buscador" placeholder="Buscar caravana..." oninput="mostrar()" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px;">';
-          html += '<button id="btnEliminarSeleccionados" type="button" onclick="eliminarSeleccionados()" style="width: 100%; padding: 8px; margin: 0 0 8px 0; background: #c62828; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Eliminar seleccionados</button>';
+          html += '<h3>🐄 Ganado</h3>';
+          html += '<input id="buscador" placeholder="Buscar caravana..." oninput="mostrar()" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #3d4542; border-radius: 8px; background:#343a38;color:#e6e6e6;">';
+          html += '<button id="btnEliminarSeleccionados" type="button" onclick="eliminarSeleccionados()" style="width: 100%; padding: 10px 14px; margin: 0 0 8px 0; background: #4a2a2a; color: #e6e6e6; border: 1px solid #5c3535; border-radius: 8px; cursor: pointer; font-weight: 600;">Eliminar seleccionados</button>';
           html += '<h4>Filtrar por lote</h4>';
-          html += '<select id="filtroLote" onchange="mostrar()" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px;">';
+          html += '<select id="filtroLote" onchange="mostrar()" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #3d4542; border-radius: 8px; background:#343a38;color:#e6e6e6;">';
           html += '<option value="todos">Todos</option></select>';
           html += '<div id="lista"></div>';
-          html += '<div id="ranking" style="padding: 10px; background: #111; color: white; margin: 10px 0; border-radius: 5px;">';
+          html += '<div id="ranking" style="padding: 12px; margin: 10px 0; border-radius: 8px;">';
           html += '<h3>📊 Ranking</h3>';
           html += '<div id="top"></div><div id="peor"></div></div>';
           html += '</div></div>';
@@ -8261,7 +8602,7 @@ box-sizing: border-box;
         }
 
         function vistaIngreso() {
-          let html = '<div style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;">';
+          let html = '<div class="gc-section-card" style="max-height: 80vh; overflow-y: auto;">';
           html += '<h3>➕ Ingresar Animal</h3>';
           html += '<input id="id" placeholder="Caravana" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
           html += '<input id="edad" placeholder="Edad" style="width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">';
@@ -8281,7 +8622,7 @@ box-sizing: border-box;
         }
 
         function vistaRebaños() {
-          return '<div id="rebanosPanel" style="padding: 15px; background: white; border-radius: 10px; max-height: 80vh; overflow-y: auto;"><h3>🐑 Rebaños</h3><div id="rebanosContenido"></div></div>';
+          return '<div id="rebanosPanel" class="gc-section-card" style="max-height: 80vh; overflow-y: auto;"><h3>🐑 Rebaños</h3><div id="rebanosContenido"></div></div>';
         }
 
         function vistaAyuda() {
@@ -8307,9 +8648,9 @@ box-sizing: border-box;
           html += '<div class="gc-settings-field"><label for="settingsEmail">Email</label>';
           html += '<input type="email" id="settingsEmail" class="gc-settings-readonly" readonly autocomplete="username"></div>';
           html += '<div class="gc-settings-field"><label for="settingsPassNew">Nueva contraseña</label>';
-          html += '<input type="password" id="settingsPassNew" autocomplete="new-password" placeholder="Mínimo 6 caracteres" class="gc-settings-readonly" style="background:#fff"></div>';
+          html += '<input type="password" id="settingsPassNew" autocomplete="new-password" placeholder="Mínimo 6 caracteres" class="gc-settings-readonly"></div>';
           html += '<div class="gc-settings-field"><label for="settingsPassConf">Confirmar contraseña</label>';
-          html += '<input type="password" id="settingsPassConf" autocomplete="new-password" placeholder="Repetir contraseña" class="gc-settings-readonly" style="background:#fff"></div>';
+          html += '<input type="password" id="settingsPassConf" autocomplete="new-password" placeholder="Repetir contraseña" class="gc-settings-readonly"></div>';
           html += '<button type="button" class="gc-btn gc-btn--primary" onclick="cambiarPasswordDesdeSettings()">Cambiar contraseña</button>';
           html += '<button type="button" class="gc-btn gc-btn--muted" onclick="cerrarSesionDesdeSettings()">Cerrar sesión</button>';
           html += "</div>";
@@ -8322,7 +8663,7 @@ box-sizing: border-box;
           html += '<div id="settingsUpgradeWrap" style="display:none;">';
           html += '<button type="button" id="settingsBtnMejorarPlan" class="gc-btn gc-btn--accent" onclick="mostrarOpcionesUpgradePlan()">Mejorar plan</button>';
           html += '<div id="settingsPlanChoicePanel" class="gc-plan-upgrade" style="display:none;margin-top:12px;">';
-          html += '<p style="margin:0 0 8px;font-size:13px;color:#64748b;">Elegí el plan al que querés pasar (no incluye tu plan actual):</p>';
+          html += '<p style="margin:0 0 8px;font-size:13px;color:#a0a0a0;">Elegí el plan al que querés pasar (no incluye tu plan actual):</p>';
           html += '<div class="gc-plan-options">';
           html += '<label class="gc-plan-option" for="settingsPlanGanado"><input type="radio" name="planSolicitado" value="Ganado" id="settingsPlanGanado"> <span>Plan Ganado</span></label>';
           html += '<label class="gc-plan-option" for="settingsPlanCompleto"><input type="radio" name="planSolicitado" value="Completo" id="settingsPlanCompleto"> <span>Plan Completo</span></label>';
@@ -8342,8 +8683,6 @@ box-sizing: border-box;
           html += '<label for="toggleAlertas" style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;">';
           html += '<input type="checkbox" id="toggleAlertas">';
           html += "<span>Activar alertas</span></label></div>";
-          html += '<div class="gc-toggle-row"><span>Activar sonido de alertas</span>';
-          html += '<input type="checkbox" id="settingsToggleSonido" aria-label="Sonido de alertas"></div>';
           html += "</div>";
 
           html += '<hr class="gc-settings-divider">';
@@ -8357,7 +8696,7 @@ box-sizing: border-box;
 
           html += '<div class="gc-settings-section">';
           html += "<h4>🔴 Avanzado</h4>";
-          html += '<p style="margin:0 0 10px;font-size:13px;color:#64748b;">Elimina tus datos en la app y cierra la sesión. La cuenta de correo puede requerir borrado definitivo con soporte.</p>';
+          html += '<p style="margin:0 0 10px;font-size:13px;color:#a0a0a0;">Elimina tus datos en la app y cierra la sesión. La cuenta de correo puede requerir borrado definitivo con soporte.</p>';
           html += '<button type="button" class="gc-btn gc-btn--danger" onclick="eliminarCuentaUsuarioAvanzado()">Eliminar cuenta</button>';
           html += "</div>";
 
@@ -8458,30 +8797,38 @@ box-sizing: border-box;
         window.cargarEstadosDesdeSupabase = cargarEstadosDesdeSupabase;
         window.iniciarTourGuiado = iniciarTourGuiado;
 
-        iniciarMonitorPorteras();
+        try {
+          iniciarMonitorPorteras();
 
-        const { data: { session } } = await supabase.auth.getSession();
-        console.log("SESSION INICIAL:", session);
+          const { data: { session } } = await supabase.auth.getSession();
+          console.log("SESSION INICIAL:", session);
 
-        if (!window.authListenerAdded) {
-          supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log("AUTH EVENT:", event);
-            if (event === "SIGNED_OUT") {
-              limpiarUI();
-              return;
-            }
-            if (event === "SIGNED_IN") {
-              await initAppConSesion(session);
-            }
-          });
-          window.authListenerAdded = true;
+          if (!window.authListenerAdded) {
+            supabase.auth.onAuthStateChange(async (event, session) => {
+              try {
+                console.log("AUTH EVENT:", event);
+                if (event === "SIGNED_OUT") {
+                  limpiarUI();
+                  return;
+                }
+                if (event === "SIGNED_IN") {
+                  await initAppConSesion(session);
+                }
+              } catch (authEvErr) {
+                console.log("Error controlado:", authEvErr);
+              }
+            });
+            window.authListenerAdded = true;
+          }
+
+          await checkLogin();
+          registrarServiceWorkerSiAlertas();
+
+          console.log("JS OK");
+          ocultarSplashApp();
+        } catch (bootErr) {
+          console.log("Error controlado:", bootErr);
         }
-
-        await checkLogin();
-        registrarServiceWorkerSiAlertas();
-
-        console.log("JS OK");
-        ocultarSplashApp();
       });
       window.addEventListener("load", function () {
         setTimeout(ocultarSplashApp, 300);
@@ -8519,4 +8866,3 @@ box-sizing: border-box;
 </body>
 
 </html>
-
